@@ -214,8 +214,21 @@ tbody tr:hover{background:#f0f5ec}
 .tdue.late{background:#fbe4e2;color:#c0271f}
 .tcard.done .tt{text-decoration:line-through;opacity:.55}
 .tempty{font-size:11px;color:var(--muted);text-align:center;padding:14px 4px;border:1px dashed var(--line);border-radius:10px}
-@media(max-width:900px){.tboard{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.tboard{grid-template-columns:1fr}}
+/* visao por pessoa */
+.tboard-3{grid-template-columns:repeat(3,1fr)}
+.tcol-p{background:#fff;border:1px solid var(--line)}
+.tcol-p h4{padding-bottom:9px;border-bottom:1px solid var(--line)}
+.tav{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;margin-right:7px;flex:0 0 auto}
+.tcol h4{gap:0}
+.tetapa{font-size:10px;font-weight:700;background:#eef1ea;color:var(--green-dk);padding:2px 8px;border-radius:20px}
+.tdot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.twho{display:inline-flex;align-items:center}
+/* alternador de visao */
+.tviews{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.tviews button{background:transparent;color:var(--muted);border:0;padding:8px 13px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:none}
+.tviews button.on{background:var(--green);color:#fff}
+@media(max-width:900px){.tboard{grid-template-columns:repeat(2,1fr)}.tboard-3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.tboard,.tboard-3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -352,8 +365,12 @@ tbody tr:hover{background:#f0f5ec}
 
   <section class="view" id="tarefas">
    <div class="panel" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-    <div><h3>✅ Tarefas da equipe</h3><div class="mini" style="color:var(--muted)">Arraste o cartão entre as etapas. Tudo que você mexe aqui fica salvo pra todo mundo.</div></div>
+    <div><h3>✅ Tarefas da equipe</h3><div class="mini" style="color:var(--muted)">Arraste o cartão entre as colunas. Tudo que você mexe aqui fica salvo pra todo mundo.</div></div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+     <div class="tviews">
+      <button id="tv_etapa" class="on" onclick="tSetView('etapa')" title="Ver o trabalho dos três juntos, por etapa">Por etapa</button>
+      <button id="tv_pessoa" onclick="tSetView('pessoa')" title="Uma coluna para cada um">Por pessoa</button>
+     </div>
      <select id="tFiltro" onchange="renderTarefas()" style="padding:8px 10px;border:1px solid var(--line);border-radius:9px;font-size:13px"><option value="">Todos</option></select>
      <button class="btn ghost" onclick="tarefasCarregar()">🔄 Atualizar</button>
      <button class="btn" onclick="tAbrir(null)">➕ Nova tarefa</button>
@@ -823,6 +840,10 @@ var T_ETAPAS=["A fazer","Fazendo","Aguardando","Feito"];
 var T_URG=[["baixa","Baixa"],["media","Media"],["alta","Alta"],["urgente","Urgente"]];
 var T_CORES={baixa:"#8fb996",media:"#3b82c4",alta:"#dca24e",urgente:"#c0271f"};
 var T_EQUIPE=["Luan","Felipe","Enzo"];
+/* uma cor fixa por socio. Cor e mais rapida de ler que texto - bate o olho no
+   quadro e ja sabe de quem e, sem precisar ler nome nenhum. */
+var T_PESSOA_COR={"Luan":"#2e7d46","Felipe":"#c2693f","Enzo":"#3b82c4"};
+function tCorPessoa(n){return T_PESSOA_COR[n]||"#7a8676";}
 var tarefas=[],tAtual=null,_tDragId=null;
 
 function tCor(u){return T_CORES[u]||T_CORES.media;}
@@ -865,6 +886,21 @@ async function tSync(row){
 
 function tFiltroAtual(){var f=document.getElementById('tFiltro');return f?f.value:"";}
 
+/* Duas visoes do mesmo dado. "Por etapa" e o quadro geral - onde da pra ver o
+   trabalho dos tres de uma vez. "Por pessoa" agrupa por responsavel, que e o
+   equivalente ao "group by" do Monday: cada um enxerga a propria coluna sem
+   precisar filtrar. Arrastar entre colunas de pessoa TROCA o responsavel. */
+var tView='etapa';
+function tSetView(v){
+ tView=v;
+ ['etapa','pessoa'].forEach(function(k){
+  var b=document.getElementById('tv_'+k);if(b)b.classList.toggle('on',k===v);
+ });
+ renderTarefas();
+}
+
+function tIniciais(nome){return (nome||'?').trim().charAt(0).toUpperCase();}
+
 function renderTarefas(){
  var el=document.getElementById('tBoard');if(!el)return;
  /* popula o filtro de responsavel uma vez */
@@ -872,30 +908,84 @@ function renderTarefas(){
  if(f&&f.options.length<=1){T_EQUIPE.forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;f.appendChild(o);});}
  var filtro=tFiltroAtual();
  var vis=tarefas.filter(function(t){return !filtro||t.responsavel===filtro;});
- el.innerHTML=T_ETAPAS.map(function(et){
+ el.className='tboard'+(tView==='pessoa'?' tboard-3':'');
+ el.innerHTML=(tView==='pessoa')?tColsPessoa(vis):tColsEtapa(vis);
+}
+
+function tColsEtapa(vis){
+ return T_ETAPAS.map(function(et){
   var lista=vis.filter(function(t){return (t.etapa||T_ETAPAS[0])===et;})
                .sort(function(a,b){return (a.pos||0)-(b.pos||0);});
-  var cards=lista.map(function(t){return tCard(t,et==="Feito");}).join('')
+  var cards=lista.map(function(t){return tCard(t,et==="Feito",false);}).join('')
     ||'<div class="tempty">Solte uma tarefa aqui</div>';
-  return '<div class="tcol" data-etapa="'+esc(et)+'" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
+  return '<div class="tcol" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
    +'<h4>'+esc(et)+'<span class="cnt">'+lista.length+'</span></h4>'+cards+'</div>';
  }).join('');
 }
 
-function tCard(t,feito){
+function tColsPessoa(vis){
+ /* quem nao tem responsavel vira uma coluna propria, senao a tarefa some da tela */
+ var donos=T_EQUIPE.slice();
+ var orfas=vis.filter(function(t){return !t.responsavel||donos.indexOf(t.responsavel)<0;});
+ if(orfas.length)donos.push('');
+ var ordem={};T_ETAPAS.forEach(function(e,i){ordem[e]=i;});
+ return donos.map(function(p){
+  var lista=vis.filter(function(t){
+    return p?(t.responsavel===p):(!t.responsavel||T_EQUIPE.indexOf(t.responsavel)<0);
+   }).sort(function(a,b){
+    var d=(ordem[a.etapa||T_ETAPAS[0]]||0)-(ordem[b.etapa||T_ETAPAS[0]]||0);
+    return d!==0?d:((a.pos||0)-(b.pos||0));
+   });
+  var abertas=lista.filter(function(t){return (t.etapa||T_ETAPAS[0])!=="Feito";}).length;
+  var atrasadas=lista.filter(function(t){return t.prazo&&t.prazo<todayISO()&&(t.etapa||T_ETAPAS[0])!=="Feito";}).length;
+  var cards=lista.map(function(t){return tCard(t,(t.etapa||T_ETAPAS[0])==="Feito",true);}).join('')
+    ||'<div class="tempty">Solte aqui para passar para '+(p?esc(p):'ninguém')+'</div>';
+  var cor=tCorPessoa(p);
+  return '<div class="tcol tcol-p" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDropPessoa(event,\''+esc(p)+'\')">'
+   +'<h4><span class="tav" style="background:'+cor+'">'+esc(tIniciais(p||'?'))+'</span>'
+   +esc(p||'Sem responsável')
+   +'<span class="cnt">'+abertas+(atrasadas?' · <b style="color:#c0271f">'+atrasadas+' atrasada'+(atrasadas>1?'s':'')+'</b>':'')+'</span></h4>'
+   +cards+'</div>';
+ }).join('');
+}
+
+/* soltar numa coluna de pessoa = passar a tarefa para ela */
+async function tDropPessoa(ev,pessoa){
+ ev.preventDefault();ev.stopPropagation();
+ document.querySelectorAll('.tcol.over').forEach(function(c){c.classList.remove('over');});
+ var id=_tDragId;_tDragId=null;if(!id)return;
+ var t=tarefas.find(function(x){return x.id===id;});if(!t)return;
+ var de=t.responsavel||'sem responsável';
+ if((t.responsavel||'')===pessoa)return;
+ t.responsavel=pessoa;
+ renderTarefas();
+ setSave("saving");
+ var ok=await tSync(tPick(t));
+ if(ok&&typeof logAct==='function')logAct('passou a tarefa "'+(t.titulo||'').slice(0,60)+'" de '+de+' para '+(pessoa||'sem responsável'));
+}
+
+function tCard(t,feito,mostrarEtapa){
  var hoje=todayISO(),cls="",lbl="";
  if(t.prazo){lbl=t.prazo.split('-').reverse().slice(0,2).join('/');
   if(!feito&&t.prazo<hoje)cls=" late";else if(!feito&&t.prazo===hoje)cls=" hoje";}
  var urg=t.urgencia||'media';
  var urgLbl=(T_URG.find(function(u){return u[0]===urg;})||T_URG[1])[1];
+ var etapa=t.etapa||T_ETAPAS[0];
+ /* na visao por pessoa o cartao mostra a ETAPA (o responsavel ja e a coluna);
+    na visao por etapa mostra o RESPONSAVEL. Nunca os dois - vira poluicao. */
+ var arrasta=(tView==='pessoa')
+   ? ' ondragover="tOver(event,this.parentNode)"'
+   : ' ondragover="tOver(event,this.parentNode)" ondrop="tDrop(event,\''+esc(etapa)+'\','+t.id+')"';
  return '<div class="tcard'+(feito?' done':'')+'" draggable="true" data-id="'+t.id+'"'
   +' ondragstart="tDragStart(event,'+t.id+')" ondragend="tDragEnd(this)"'
-  +' ondragover="tOver(event,this.parentNode)" ondrop="tDrop(event,\''+esc(t.etapa||T_ETAPAS[0])+'\','+t.id+')"'
+  +arrasta
   +' onclick="tAbrir('+t.id+')" style="border-left-color:'+tCor(urg)+'">'
   +'<div class="tt">'+esc(t.titulo||'(sem titulo)')+'</div>'
   +'<div class="tmeta">'
   +'<span class="tpill" style="background:'+tCor(urg)+'">'+urgLbl+'</span>'
-  +(t.responsavel?'<span class="twho">'+esc(t.responsavel)+'</span>':'')
+  +(mostrarEtapa
+     ? '<span class="tetapa">'+esc(etapa)+'</span>'
+     : (t.responsavel?'<span class="twho" style="background:'+tCorPessoa(t.responsavel)+'22;color:'+tCorPessoa(t.responsavel)+'"><i class="tdot" style="background:'+tCorPessoa(t.responsavel)+'"></i>'+esc(t.responsavel)+'</span>':''))
   +(lbl?'<span class="tdue'+cls+'">📅 '+lbl+'</span>':'')
   +'</div></div>';
 }
