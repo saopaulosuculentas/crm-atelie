@@ -195,6 +195,27 @@ tbody tr:hover{background:#f0f5ec}
 .mval{font-size:10px;font-weight:800;color:var(--green-dk);white-space:nowrap;height:14px}
 .mlbl{font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap}
 @media(max-width:760px){.mchart{height:165px;gap:9px;overflow-x:auto;overflow-y:hidden;justify-content:flex-start;padding-bottom:8px;-webkit-overflow-scrolling:touch}.mcol{flex:0 0 auto;min-width:44px}.mval{font-size:9px}.mlbl{font-size:9px}.mtrack{max-width:34px}}
+/* ===== Quadro de tarefas ===== */
+.tboard{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start}
+.tcol{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:10px;min-height:140px;transition:background .12s,border-color .12s}
+.tcol.over{background:var(--moss);border-color:var(--green2)}
+.tcol h4{margin:0 0 10px;font-size:13px;font-weight:800;color:var(--green-dk);display:flex;justify-content:space-between;align-items:center;gap:6px}
+.tcol h4 .cnt{background:#fff;border:1px solid var(--line);border-radius:20px;font-size:11px;padding:1px 8px;color:var(--muted);font-weight:700}
+.tcard{background:#fff;border:1px solid var(--line);border-left:4px solid var(--sage);border-radius:11px;padding:10px 11px;margin-bottom:9px;cursor:grab;box-shadow:0 2px 6px rgba(28,67,39,.05);transition:box-shadow .12s,transform .12s}
+.tcard:hover{box-shadow:0 5px 14px rgba(28,67,39,.13);transform:translateY(-1px)}
+.tcard:active{cursor:grabbing}
+.tcard.drag{opacity:.4}
+.tcard .tt{font-size:13px;font-weight:700;color:var(--ink);line-height:1.35;margin-bottom:7px;word-break:break-word}
+.tcard .tmeta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.tpill{font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;color:#fff;letter-spacing:.02em}
+.twho{font-size:10px;font-weight:700;background:var(--moss);color:var(--green-dk);padding:2px 8px;border-radius:20px}
+.tdue{font-size:10px;font-weight:700;background:#f0f0ea;color:var(--muted);padding:2px 8px;border-radius:20px}
+.tdue.hoje{background:#fdf1dc;color:#9a6a17}
+.tdue.late{background:#fbe4e2;color:#c0271f}
+.tcard.done .tt{text-decoration:line-through;opacity:.55}
+.tempty{font-size:11px;color:var(--muted);text-align:center;padding:14px 4px;border:1px dashed var(--line);border-radius:10px}
+@media(max-width:900px){.tboard{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.tboard{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -221,6 +242,7 @@ tbody tr:hover{background:#f0f5ec}
   <button data-v="painel" class="active"><span class="ic">📊</span> Painel</button>
   <button data-v="atendimentos"><span class="ic">💬</span> Atendimentos</button>
   <button data-v="cadastros"><span class="ic">📥</span> Cadastros</button>
+  <button data-v="tarefas"><span class="ic">✅</span> Tarefas</button>
   <button data-v="clientes"><span class="ic">👥</span> Clientes</button>
   <button data-v="produtos"><span class="ic">🪴</span> Produtos &amp; Custos</button>
   <button data-v="caixa"><span class="ic">💰</span> Caixa</button>
@@ -328,6 +350,18 @@ tbody tr:hover{background:#f0f5ec}
    <div id="cadList"></div>
   </section>
 
+  <section class="view" id="tarefas">
+   <div class="panel" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+    <div><h3>✅ Tarefas da equipe</h3><div class="mini" style="color:var(--muted)">Arraste o cartão entre as etapas. Tudo que você mexe aqui fica salvo pra todo mundo.</div></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+     <select id="tFiltro" onchange="renderTarefas()" style="padding:8px 10px;border:1px solid var(--line);border-radius:9px;font-size:13px"><option value="">Todos</option></select>
+     <button class="btn ghost" onclick="tarefasCarregar()">🔄 Atualizar</button>
+     <button class="btn" onclick="tAbrir(null)">➕ Nova tarefa</button>
+    </div>
+   </div>
+   <div id="tBoard" class="tboard"></div>
+  </section>
+
  </div>
 </div>
 
@@ -369,6 +403,26 @@ tbody tr:hover{background:#f0f5ec}
  </div>
 </div>
 
+<div class="overlay" id="tOverlay">
+ <div class="modal">
+  <div class="mhead" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2 id="tTitle">Nova tarefa</h2><button type="button" onclick="tFechar()" aria-label="Fechar" title="Fechar" style="background:transparent;border:0;color:#fff;font-size:24px;line-height:1;cursor:pointer;padding:0 6px">✕</button></div>
+  <div class="mbody"><div class="fgrid">
+    <div class="field full"><label>Tarefa</label><input type="text" id="t_titulo" placeholder="Ex.: Gravar os 3 vídeos da Rosemary"></div>
+    <div class="field full"><label>Descrição</label><textarea id="t_descr" rows="3" placeholder="Detalhes, links, o que precisa ficar pronto..."></textarea></div>
+    <div class="field"><label>Responsável</label><select id="t_resp"></select></div>
+    <div class="field"><label>Prazo</label><input type="date" id="t_prazo"></div>
+    <div class="field"><label>Urgência</label><select id="t_urg"></select></div>
+    <div class="field"><label>Etapa</label><select id="t_etapa"></select></div>
+  </div></div>
+  <div class="mfoot">
+   <button class="btn ghost" id="tDelBtn" onclick="tExcluir()" style="color:#c0271f">Excluir</button>
+   <div style="flex:1"></div>
+   <button class="btn ghost" onclick="tFechar()">Cancelar</button>
+   <button class="btn" onclick="tSalvar()">Salvar</button>
+  </div>
+ </div>
+</div>
+
 <script>
 const STAGES=["Lead novo","Em conversa","Orçamento enviado","Negociação","Fechado (ganho)","Em produção","Entregue","Pós-venda","Perdido"];
 const DONE=["Entregue","Pós-venda","Perdido"];
@@ -382,7 +436,7 @@ const PRODUTOS=["Suculenta + Rótulo Personalizado","Suculenta + Rótulo Pronto"
 const STAGE_COLORS={"Lead novo":"#8a94a6","Em conversa":"#3b82c4","Orçamento enviado":"#d99a2b","Negociação":"#c2693f","Fechado (ganho)":"#2e7d46","Em produção":"#1f8a8a","Entregue":"#1c4327","Pós-venda":"#6aa17a","Perdido":"#b00020"};
 const PAY_COLORS={"Pago":"#2e7d46","Sinal pago":"#d99a2b","Pendente":"#b00020","Estornado":"#8a94a6"};
 const SINAL_PCT=0.30; // sinal = 30% do valor
-const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O dinheiro de verdade: defina o saldo inicial, lance entradas e saídas e acompanhe mês a mês.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique."};
+const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O dinheiro de verdade: defina o saldo inicial, lance entradas e saídas e acompanhe mês a mês.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo."};
 
 const KEY="crm_atelie_v1";let state,currentId=null,viewMode="table",memFallback=null;
 /* ===== CONEXAO COM A NUVEM (Supabase) ===== */
@@ -464,7 +518,7 @@ document.getElementById('nav').addEventListener('click',e=>{const b=e.target.clo
  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.v).classList.add('active');
  const v=b.dataset.v;document.getElementById('ttl').textContent=b.textContent.trim();document.getElementById('sub').textContent=SUBS[v];
- if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();document.body.classList.remove('menu-open');});
+ if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();document.body.classList.remove('menu-open');});
 function toggleMenu(){document.body.classList.toggle('menu-open');}
 function setView(m){viewMode=m;[['vbTable','table'],['vbSheet','sheet'],['vbKanban','kanban']].forEach(function(x){var b=document.getElementById(x[0]);if(b)b.classList.toggle('active',m===x[1]);});
  document.getElementById('tableView').style.display=m==='table'?'':'none';document.getElementById('sheetView').style.display=m==='sheet'?'':'none';document.getElementById('kanbanView').style.display=m==='kanban'?'':'none';renderAtend();}
@@ -758,6 +812,191 @@ async function beat(){if(!SHEET_URL)return;var me=userName()||"Equipe";try{await
 var _beatIv=null;function startPresence(){beat();if(!_beatIv)_beatIv=setInterval(beat,25000);}
 async function refreshToken(){if(!_sess||!_sess.refresh_token)return false;try{var r=await fetch(SUPA_URL+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"apikey":SUPA_ANON,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:_sess.refresh_token})});var j=await r.json();if(r.ok&&j.access_token){ACCESS=j.access_token;_sess.access_token=j.access_token;if(j.refresh_token)_sess.refresh_token=j.refresh_token;saveSess(_sess);return true;}}catch(e){}return false;}
 async function gate(){_sess=loadSess();if(_sess&&_sess.refresh_token&&await refreshToken()){SHEET_URL=SUPA_URL;var _n=userName();if(!_n||_n==="Equipe")_n=(_sess.email&&_sess.email.split("@")[0])||"";afterAuth(_n);return;}showLogin();}
+/* ===================== TAREFAS (quadro estilo Trello) =====================
+   Uma tabela so (tarefas). As etapas ficam aqui no JS de proposito: sao 3
+   socios e 4 colunas fixas, criar tabela de quadros/colunas seria burocracia.
+   Arrastar usa HTML5 nativo, igual ao resto do arquivo - nada de biblioteca,
+   o CRM continua um HTML unico que abre com dois cliques.
+   A posicao e FRACIONARIA: mover um cartao grava 1 linha, nao a coluna toda.
+========================================================================== */
+var T_ETAPAS=["A fazer","Fazendo","Aguardando","Feito"];
+var T_URG=[["baixa","Baixa"],["media","Media"],["alta","Alta"],["urgente","Urgente"]];
+var T_CORES={baixa:"#8fb996",media:"#3b82c4",alta:"#dca24e",urgente:"#c0271f"};
+var T_EQUIPE=["Luan","Felipe","Enzo"];
+var tarefas=[],tAtual=null,_tDragId=null;
+
+function tCor(u){return T_CORES[u]||T_CORES.media;}
+function tNovoId(){return Date.now()*1000+Math.floor(Math.random()*999);}
+function tLocalSave(){try{localStorage.setItem("crm_tarefas",JSON.stringify(tarefas));}catch(e){}}
+function tLocalLoad(){try{return JSON.parse(localStorage.getItem("crm_tarefas")||"[]");}catch(e){return[];}}
+
+/* posicao no meio de duas outras; se nao houver vizinho, afasta 1000 */
+function tEntre(a,b){
+ if(a==null&&b==null)return 1000;
+ if(a==null)return b-1000;
+ if(b==null)return a+1000;
+ return (a+b)/2;
+}
+
+async function tarefasCarregar(){
+ if(!SHEET_URL){tarefas=tLocalLoad();renderTarefas();return;}
+ var el=document.getElementById('tBoard');
+ if(el&&!tarefas.length)el.innerHTML='<div class="mini" style="padding:16px;color:#888">Carregando...</div>';
+ try{
+  var r=await fetch(sbUrl("tarefas?select=*&order=pos.asc"),{headers:sbHeaders()});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  tarefas=await r.json();
+ }catch(e){
+  if(el)el.innerHTML='<div class="mini" style="padding:16px;color:#c0271f">Nao consegui carregar as tarefas. '+esc(String(e.message||e))+'<br>Se a tabela ainda nao existe, rode o SQL da tabela <b>tarefas</b> no Supabase.</div>';
+  return;
+ }
+ renderTarefas();
+}
+
+/* grava uma tarefa (upsert). Otimista: a tela ja mudou antes disso. */
+async function tSync(row){
+ if(!SHEET_URL){tLocalSave();return true;}
+ try{
+  var r=await fetch(sbUrl("tarefas?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([row])});
+  if(!r.ok)throw new Error('HTTP '+r.status+' '+(await r.text()).slice(0,140));
+  setSave("ok");return true;
+ }catch(e){setSave("err");alert("Nao consegui salvar a tarefa.\n\n"+String(e.message||e));return false;}
+}
+
+function tFiltroAtual(){var f=document.getElementById('tFiltro');return f?f.value:"";}
+
+function renderTarefas(){
+ var el=document.getElementById('tBoard');if(!el)return;
+ /* popula o filtro de responsavel uma vez */
+ var f=document.getElementById('tFiltro');
+ if(f&&f.options.length<=1){T_EQUIPE.forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;f.appendChild(o);});}
+ var filtro=tFiltroAtual();
+ var vis=tarefas.filter(function(t){return !filtro||t.responsavel===filtro;});
+ el.innerHTML=T_ETAPAS.map(function(et){
+  var lista=vis.filter(function(t){return (t.etapa||T_ETAPAS[0])===et;})
+               .sort(function(a,b){return (a.pos||0)-(b.pos||0);});
+  var cards=lista.map(function(t){return tCard(t,et==="Feito");}).join('')
+    ||'<div class="tempty">Solte uma tarefa aqui</div>';
+  return '<div class="tcol" data-etapa="'+esc(et)+'" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
+   +'<h4>'+esc(et)+'<span class="cnt">'+lista.length+'</span></h4>'+cards+'</div>';
+ }).join('');
+}
+
+function tCard(t,feito){
+ var hoje=todayISO(),cls="",lbl="";
+ if(t.prazo){lbl=t.prazo.split('-').reverse().slice(0,2).join('/');
+  if(!feito&&t.prazo<hoje)cls=" late";else if(!feito&&t.prazo===hoje)cls=" hoje";}
+ var urg=t.urgencia||'media';
+ var urgLbl=(T_URG.find(function(u){return u[0]===urg;})||T_URG[1])[1];
+ return '<div class="tcard'+(feito?' done':'')+'" draggable="true" data-id="'+t.id+'"'
+  +' ondragstart="tDragStart(event,'+t.id+')" ondragend="tDragEnd(this)"'
+  +' ondragover="tOver(event,this.parentNode)" ondrop="tDrop(event,\''+esc(t.etapa||T_ETAPAS[0])+'\','+t.id+')"'
+  +' onclick="tAbrir('+t.id+')" style="border-left-color:'+tCor(urg)+'">'
+  +'<div class="tt">'+esc(t.titulo||'(sem titulo)')+'</div>'
+  +'<div class="tmeta">'
+  +'<span class="tpill" style="background:'+tCor(urg)+'">'+urgLbl+'</span>'
+  +(t.responsavel?'<span class="twho">'+esc(t.responsavel)+'</span>':'')
+  +(lbl?'<span class="tdue'+cls+'">📅 '+lbl+'</span>':'')
+  +'</div></div>';
+}
+
+/* ---------- arrastar ---------- */
+function tDragStart(ev,id){_tDragId=id;ev.dataTransfer.effectAllowed="move";
+ try{ev.dataTransfer.setData("text/plain",String(id));}catch(e){}
+ var c=ev.target.closest?ev.target.closest('.tcard'):null;if(c)setTimeout(function(){c.classList.add('drag');},0);}
+function tDragEnd(elm){if(elm&&elm.classList)elm.classList.remove('drag');
+ document.querySelectorAll('.tcol.over').forEach(function(c){c.classList.remove('over');});}
+function tOver(ev,col){ev.preventDefault();ev.dataTransfer.dropEffect="move";
+ if(col&&col.classList&&col.classList.contains('tcol')){
+  document.querySelectorAll('.tcol.over').forEach(function(c){if(c!==col)c.classList.remove('over');});
+  col.classList.add('over');}}
+function tLeave(col){if(col&&col.classList)col.classList.remove('over');}
+
+/* solta na coluna (alvoId=null -> fim) ou em cima de um cartao (entra antes dele) */
+async function tDrop(ev,etapa,alvoId){
+ ev.preventDefault();ev.stopPropagation();
+ document.querySelectorAll('.tcol.over').forEach(function(c){c.classList.remove('over');});
+ var id=_tDragId;_tDragId=null;if(!id)return;
+ var t=tarefas.find(function(x){return x.id===id;});if(!t)return;
+ if(id===alvoId)return;
+ var naEtapa=tarefas.filter(function(x){return x.id!==id&&(x.etapa||T_ETAPAS[0])===etapa;})
+                    .sort(function(a,b){return (a.pos||0)-(b.pos||0);});
+ var nova;
+ if(alvoId==null){nova=tEntre(naEtapa.length?naEtapa[naEtapa.length-1].pos:null,null);}
+ else{var i=naEtapa.findIndex(function(x){return x.id===alvoId;});
+      if(i<0)nova=tEntre(naEtapa.length?naEtapa[naEtapa.length-1].pos:null,null);
+      else nova=tEntre(i>0?naEtapa[i-1].pos:null,naEtapa[i].pos);}
+ var de=t.etapa||T_ETAPAS[0];
+ t.etapa=etapa;t.pos=nova;
+ t.concluido_em=(etapa==="Feito")?(t.concluido_em||new Date().toISOString()):null;
+ renderTarefas();                                   /* atualizacao otimista */
+ setSave("saving");
+ var ok=await tSync(tPick(t));
+ if(ok&&de!==etapa&&typeof logAct==='function')logAct('moveu a tarefa "'+(t.titulo||'').slice(0,60)+'" de '+de+' para '+etapa);
+}
+
+function tPick(t){return{id:t.id,titulo:t.titulo||"",descricao:t.descricao||"",responsavel:t.responsavel||"",
+ prazo:t.prazo||null,urgencia:t.urgencia||"media",etapa:t.etapa||T_ETAPAS[0],pos:t.pos||1000,
+ criado_por:t.criado_por||"",concluido_em:t.concluido_em||null,pedido_id:t.pedido_id||null};}
+
+/* ---------- modal ---------- */
+function tFill(sel,arr,pares){var s=document.getElementById(sel);if(!s)return;s.innerHTML="";
+ arr.forEach(function(v){var o=document.createElement('option');
+  if(pares){o.value=v[0];o.textContent=v[1];}else{o.value=v;o.textContent=v;}s.appendChild(o);});}
+
+function tAbrir(id){
+ tAtual=id||null;
+ tFill('t_resp',T_EQUIPE);tFill('t_urg',T_URG,true);tFill('t_etapa',T_ETAPAS);
+ var t=id?tarefas.find(function(x){return x.id===id;}):null;
+ document.getElementById('tTitle').textContent=t?'Editar tarefa':'Nova tarefa';
+ document.getElementById('tDelBtn').style.display=t?'':'none';
+ document.getElementById('t_titulo').value=t?(t.titulo||""):"";
+ document.getElementById('t_descr').value=t?(t.descricao||""):"";
+ document.getElementById('t_resp').value=t?(t.responsavel||T_EQUIPE[0]):(userName()&&T_EQUIPE.indexOf(userName())>=0?userName():T_EQUIPE[0]);
+ document.getElementById('t_prazo').value=t?(t.prazo||""):"";
+ document.getElementById('t_urg').value=t?(t.urgencia||"media"):"media";
+ document.getElementById('t_etapa').value=t?(t.etapa||T_ETAPAS[0]):T_ETAPAS[0];
+ document.getElementById('tOverlay').classList.add('open');
+ setTimeout(function(){var i=document.getElementById('t_titulo');if(i&&!tAtual)i.focus();},60);
+}
+function tFechar(){document.getElementById('tOverlay').classList.remove('open');tAtual=null;}
+
+async function tSalvar(){
+ var titulo=(document.getElementById('t_titulo').value||"").trim();
+ if(!titulo){alert("Escreva o nome da tarefa.");return;}
+ var etapa=document.getElementById('t_etapa').value;
+ var t=tAtual?tarefas.find(function(x){return x.id===tAtual;}):null;
+ var novo=!t;
+ if(novo){
+  var naEtapa=tarefas.filter(function(x){return (x.etapa||T_ETAPAS[0])===etapa;}).sort(function(a,b){return (a.pos||0)-(b.pos||0);});
+  t={id:tNovoId(),pos:tEntre(naEtapa.length?naEtapa[naEtapa.length-1].pos:null,null),criado_por:userName()};
+  tarefas.push(t);
+ }
+ t.titulo=titulo;
+ t.descricao=(document.getElementById('t_descr').value||"").trim();
+ t.responsavel=document.getElementById('t_resp').value;
+ t.prazo=document.getElementById('t_prazo').value||null;
+ t.urgencia=document.getElementById('t_urg').value;
+ if((t.etapa||T_ETAPAS[0])!==etapa)t.etapa=etapa;
+ t.etapa=etapa;
+ t.concluido_em=(etapa==="Feito")?(t.concluido_em||new Date().toISOString()):null;
+ tFechar();renderTarefas();setSave("saving");
+ var ok=await tSync(tPick(t));
+ if(ok&&typeof logAct==='function')logAct((novo?'criou':'editou')+' a tarefa "'+titulo.slice(0,60)+'"');
+}
+
+async function tExcluir(){
+ if(!tAtual)return;
+ var t=tarefas.find(function(x){return x.id===tAtual;});if(!t)return;
+ if(!confirm('Apagar a tarefa "'+(t.titulo||"")+'"? Nao da pra desfazer.'))return;
+ var id=tAtual,titulo=t.titulo||"";
+ tarefas=tarefas.filter(function(x){return x.id!==id;});
+ tFechar();renderTarefas();
+ if(SHEET_URL){try{await fetch(sbUrl("tarefas?id=eq."+id),{method:"DELETE",headers:sbHeaders()});}catch(e){}}
+ else tLocalSave();
+ if(typeof logAct==='function')logAct('apagou a tarefa "'+titulo.slice(0,60)+'"');
+}
+
 gate();
 </script>
 </body>
