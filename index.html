@@ -229,7 +229,69 @@ tbody tr:hover{background:#f0f5ec}
 .tviews button.on{background:var(--green);color:#fff}
 @media(max-width:900px){.tboard{grid-template-columns:repeat(2,1fr)}.tboard-3{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.tboard,.tboard-3{grid-template-columns:1fr}}
+
+/* ===================== TEMA ESCURO =====================
+   O arquivo tem ~100 cores fixas no CSS (27 sao #fff), entao nao bastou
+   trocar as variaveis do :root - foi preciso pegar os seletores que
+   escrevem branco na mao. Se criar componente novo, use var(--card) e
+   var(--ink) em vez de #fff/#243029 que ele ja nasce funcionando nos dois.
+======================================================== */
+:root[data-tema="escuro"]{
+ --green-dk:#8ed4a3;--green:#3f9c5c;--green2:#6fbe86;--sage:#5f8f6c;--moss:#26372b;
+ --bg:#121814;--cream:#19211b;--card:#1b241e;--terra:#d98a5f;--gold:#e0b56a;
+ --ink:#e9efe9;--muted:#93a396;--line:#2d3b31;--shadow:0 6px 20px rgba(0,0,0,.45);
+}
+[data-tema="escuro"] body{background:var(--bg);color:var(--ink)}
+[data-tema="escuro"] .side{background:#0f1511;border-right:1px solid var(--line)}
+[data-tema="escuro"] .side .data button{background:#1b241e;color:var(--ink);border:1px solid var(--line)}
+[data-tema="escuro"] .bar-track,[data-tema="escuro"] .mtrack{background:#243029}
+[data-tema="escuro"] .kcol{background:#151d18}
+[data-tema="escuro"] .toolbar input[type=text],[data-tema="escuro"] .toolbar select,
+[data-tema="escuro"] .sheet input,[data-tema="escuro"] .sheet select,
+[data-tema="escuro"] .field input,[data-tema="escuro"] .field select,[data-tema="escuro"] .field textarea,
+[data-tema="escuro"] .kcard select,[data-tema="escuro"] #tFiltro{
+ background:#141c17;color:var(--ink);border-color:var(--line)}
+[data-tema="escuro"] .field input::placeholder,[data-tema="escuro"] .field textarea::placeholder{color:#6f7d72}
+[data-tema="escuro"] .chk{background:#141c17;border-color:var(--line)}
+[data-tema="escuro"] .btn.ghost{background:#1b241e;color:var(--ink);border-color:var(--line)}
+[data-tema="escuro"] .btn.ghost.active{background:var(--moss);color:var(--green-dk)}
+[data-tema="escuro"] .seg{background:#141c17;border-color:var(--line)}
+[data-tema="escuro"] .seg button{color:var(--muted)}
+[data-tema="escuro"] .seg button.active{background:var(--green);color:#fff}
+[data-tema="escuro"] th{background:#141c17;color:var(--ink);border-color:var(--line)}
+[data-tema="escuro"] td{background:var(--card);color:var(--ink);border-color:var(--line)}
+[data-tema="escuro"] tbody tr:nth-child(even) td{background:#18201a}
+[data-tema="escuro"] tbody tr:hover td{background:#223026}
+[data-tema="escuro"] .itable td{background:var(--card);color:var(--ink)}
+[data-tema="escuro"] .note{background:#1f2a22;color:var(--ink)}
+[data-tema="escuro"] .kcard,[data-tema="escuro"] .panel,[data-tema="escuro"] .card{background:var(--card);border-color:var(--line)}
+[data-tema="escuro"] .kcol h4 .cnt{background:#141c17;color:var(--muted);border-color:var(--line)}
+[data-tema="escuro"] .modal{background:var(--card);color:var(--ink)}
+[data-tema="escuro"] .hamb{background:#1b241e;color:var(--ink);border-color:var(--line)}
+[data-tema="escuro"] .login{background:linear-gradient(160deg,#101711,#0b120d)}
+[data-tema="escuro"] .login .box{background:var(--card);color:var(--ink)}
+[data-tema="escuro"] .login h2{color:var(--green-dk)}
+[data-tema="escuro"] .login input{background:#141c17;color:var(--ink);border-color:var(--line)}
+[data-tema="escuro"] .login input::placeholder{color:#6f7d72}
+[data-tema="escuro"] .login .skip:hover{color:var(--green2)}
+/* quadro de tarefas */
+[data-tema="escuro"] .tcol{background:#151d18;border-color:var(--line)}
+[data-tema="escuro"] .tcol.over{background:#22352a;border-color:var(--green2)}
+[data-tema="escuro"] .tcol h4 .cnt{background:#141c17;color:var(--muted);border-color:var(--line)}
+[data-tema="escuro"] .tcard{background:var(--card);border-color:var(--line);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+[data-tema="escuro"] .tcard:hover{box-shadow:0 5px 14px rgba(0,0,0,.45)}
+[data-tema="escuro"] .tcol-p{background:var(--card)}
+[data-tema="escuro"] .tetapa{background:#243029;color:var(--green-dk)}
+[data-tema="escuro"] .tdue{background:#243029;color:var(--muted)}
+[data-tema="escuro"] .tdue.hoje{background:#3a2f14;color:#e0b56a}
+[data-tema="escuro"] .tdue.late{background:#3d1e1b;color:#f08a80}
+[data-tema="escuro"] .tviews{background:#141c17;border-color:var(--line)}
+[data-tema="escuro"] .tempty{border-color:var(--line);color:var(--muted)}
 </style>
+<script>
+/* aplica o tema ANTES da pagina pintar - senao pisca branco e depois escurece */
+(function(){try{var t=localStorage.getItem("crm_tema");if(t==="escuro")document.documentElement.setAttribute("data-tema","escuro");}catch(e){}})();
+</script>
 </head>
 <body>
 <div class="login" id="loginScreen">
@@ -265,6 +327,7 @@ tbody tr:hover{background:#f0f5ec}
  <div class="data">
   <button onclick="reloadData()">🔄 Atualizar</button>
   <button onclick="salvarTudo()">💾 Salvar tudo</button>
+  <button id="btnTema" onclick="alternarTema()">🌙 Tema escuro</button>
   <button onclick="sair()">🔒 Sair</button>
   <div class="hint" id="whoami" style="margin-top:8px"></div>
   <div class="hint">☁ Salva sozinho. Se aparecer "⚠ não salvou" no topo, toque em "Salvar tudo".</div>
@@ -373,6 +436,7 @@ tbody tr:hover{background:#f0f5ec}
      </div>
      <select id="tFiltro" onchange="renderTarefas()" style="padding:8px 10px;border:1px solid var(--line);border-radius:9px;font-size:13px"><option value="">Todos</option></select>
      <button class="btn ghost" onclick="tarefasCarregar()">🔄 Atualizar</button>
+     <button class="btn ghost" onclick="tSalvarTudo()" title="Empurra todas as tarefas pra nuvem agora">💾 Salvar tarefas</button>
      <button class="btn" onclick="tAbrir(null)">➕ Nova tarefa</button>
     </div>
    </div>
@@ -1086,6 +1150,41 @@ async function tExcluir(){
  else tLocalSave();
  if(typeof logAct==='function')logAct('apagou a tarefa "'+titulo.slice(0,60)+'"');
 }
+
+/* ---------- salvar tarefas na mao ----------
+   O quadro ja grava sozinho a cada acao (otimista). Este botao existe pra
+   quando alguem mexeu offline, ou pra ter certeza depois de uma sequencia
+   grande de mudancas - empurra TODAS as tarefas de uma vez. */
+async function tSalvarTudo(){
+ if(!SHEET_URL){tLocalSave();alert("Você está em modo local (sem nuvem). As tarefas ficaram salvas neste navegador.");return;}
+ if(!tarefas.length){alert("Não há tarefa para salvar ainda.");return;}
+ setSave("saving");
+ try{
+  var rows=tarefas.map(tPick);
+  for(var i=0;i<rows.length;i+=200){
+   var r=await fetch(sbUrl("tarefas?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify(rows.slice(i,i+200))});
+   if(!r.ok)throw new Error("HTTP "+r.status+" "+(await r.text()).slice(0,160));
+  }
+  setSave("ok");
+  alert(rows.length+(rows.length>1?" tarefas salvas":" tarefa salva")+" na nuvem ✓");
+ }catch(e){
+  setSave("err");
+  alert("Não consegui salvar as tarefas.\n\n"+String(e.message||e)+"\n\nSe a tabela 'tarefas' ainda não existe, rode o schema_tarefas.sql no Supabase.");
+ }
+}
+
+/* ---------- tema claro / escuro ---------- */
+function temaAtual(){try{return localStorage.getItem("crm_tema")==="escuro"?"escuro":"claro";}catch(e){return "claro";}}
+function aplicarTema(t){
+ var escuro=(t==="escuro");
+ if(escuro)document.documentElement.setAttribute("data-tema","escuro");
+ else document.documentElement.removeAttribute("data-tema");
+ try{localStorage.setItem("crm_tema",escuro?"escuro":"claro");}catch(e){}
+ var b=document.getElementById("btnTema");
+ if(b)b.textContent=escuro?"☀️ Tema claro":"🌙 Tema escuro";
+}
+function alternarTema(){aplicarTema(temaAtual()==="escuro"?"claro":"escuro");}
+aplicarTema(temaAtual());
 
 gate();
 </script>
