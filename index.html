@@ -7,6 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
+ /* superficies e estados que o tema escuro precisa reescrever. Antes estavam
+    fixas no CSS e no JS, e por isso a barra do topo e a planilha ficavam
+    ilegiveis no escuro. Cor nova daqui pra frente nasce aqui. */
+ --topbar:rgba(246,243,234,.85);--input:#ffffff;--zebra:#faf8f1;--hover:#eef5ea;
+ --scroll:#cdd4c8;--pill:#f0f0ea;--warn:#fdf3e3;--warnln:#ecd9b0;--kdrag:#deebd5;
+ --danger:#c0271f;--good:#2e7d46;--titulo:#1c4327;
  --green-dk:#1c4327;--green:#2e7d46;--green2:#56a36a;--sage:#8fb996;--moss:#cfe3c3;
  --bg:#eef2ea;--cream:#f6f3ea;--card:#ffffff;--terra:#c2693f;--gold:#dca24e;
  --ink:#243029;--muted:#7a8676;--line:#e6e2d4;--shadow:0 6px 20px rgba(28,67,39,.07);
@@ -15,8 +21,8 @@
 html,body{margin:0;height:100%}
 body{font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;display:flex}
 h1,h2,h3,h4{font-family:Georgia,'Times New Roman',serif;margin:0}
-button{font-family:inherit;cursor:pointer;border:0}
-::-webkit-scrollbar{height:10px;width:10px}::-webkit-scrollbar-thumb{background:#cdd4c8;border-radius:8px}
+button{font-family:inherit;cursor:pointer;border:0;color:inherit}
+::-webkit-scrollbar{height:10px;width:10px}::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px}
 
 /* ---- SIDEBAR ---- */
 .side{width:226px;flex-shrink:0;background:linear-gradient(180deg,#1c4327,#15331e);color:#eaf2e6;height:100vh;position:sticky;top:0;display:flex;flex-direction:column;padding:18px 14px;gap:6px}
@@ -37,7 +43,7 @@ button{font-family:inherit;cursor:pointer;border:0}
 
 /* ---- MAIN ---- */
 .main{flex:1;min-width:0;height:100vh;overflow:auto}
-.topbar{background:rgba(246,243,234,.85);backdrop-filter:blur(6px);position:sticky;top:0;z-index:20;padding:20px 30px 14px;border-bottom:1px solid var(--line)}
+.topbar{background:var(--topbar);backdrop-filter:blur(6px);position:sticky;top:0;z-index:20;padding:20px 30px 14px;border-bottom:1px solid var(--line)}
 .topbar h2{font-size:23px;color:var(--green-dk)}
 .topbar p{margin:3px 0 0;color:var(--muted);font-size:13px;max-width:760px}
 .content{padding:22px 30px 70px}
@@ -72,13 +78,13 @@ button{font-family:inherit;cursor:pointer;border:0}
 .btn.ghost{background:#fff;color:var(--green-dk);border:1px solid var(--line);box-shadow:none}
 .btn.ghost.active{background:var(--green-dk);color:#fff;border-color:var(--green-dk)}
 .seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.seg button{background:#fff;color:var(--muted);padding:9px 15px;font-weight:600;font-size:13px}
+.seg button{background:transparent;color:var(--muted);padding:9px 15px;font-weight:600;font-size:13px}
 .seg button.active{background:var(--green-dk);color:#fff}
 .sheet table{min-width:1700px}
 .sheet td{padding:2px 3px}
 .sheet input,.sheet select{width:100%;border:1px solid transparent;background:transparent;padding:7px 6px;font-size:12.5px;border-radius:7px;font-family:inherit}
-.sheet input:hover,.sheet select:hover{border-color:var(--line);background:#fff}
-.sheet input:focus,.sheet select:focus{border-color:var(--green);background:#fff;outline:2px solid #2e7d4633}
+.sheet input:hover,.sheet select:hover{border-color:var(--line);background:var(--input)}
+.sheet input:focus,.sheet select:focus{border-color:var(--green);background:var(--input);outline:2px solid #2e7d4633}
 .sheet td.ro{padding:8px 9px;color:var(--muted);font-size:12.5px;white-space:nowrap;text-align:right}
 .sheet .delx{background:none;border:0;cursor:pointer;opacity:.45;font-size:14px}.sheet .delx:hover{opacity:1}
 .kpi .delta{font-size:11.5px;font-weight:700;margin-top:3px}.kpi .delta.up{color:#2e7d46}.kpi .delta.down{color:#b00020}
@@ -93,13 +99,18 @@ tbody tr:hover{background:#eef5ea}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 td.cli,th.cli{position:sticky;left:0;background:inherit;z-index:2;font-weight:700}
 th.cli{background:var(--green-dk);z-index:4}
-tbody tr:nth-child(even) td.cli{background:#faf8f1}tbody tr:nth-child(odd) td.cli{background:#fff}tbody tr:hover td.cli{background:#eef5ea}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+tbody tr:nth-child(even) td.cli{background:var(--zebra)}tbody tr:nth-child(odd) td.cli{background:var(--card)}tbody tr:hover td.cli{background:var(--hover)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;
+ --c:#8a94a6;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}
+/* no escuro a cor crua do estagio (verde #1c4327) some no card. Clareia o
+   texto e reforca o fundo, sem precisar redesenhar nada no JS. */
+[data-tema="escuro"] .badge{background:color-mix(in srgb,var(--c) 30%,transparent);
+ color:color-mix(in srgb,var(--c) 45%,#ffffff)}
 .row-actions button{background:transparent;font-size:15px;padding:3px 6px;border-radius:7px}
-.row-actions button:hover{background:#e7eae2}
+.row-actions button:hover{background:var(--hover)}
 .wa{color:#1f9d55;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .wa:hover{text-decoration:underline}.wa.empty{color:var(--terra)}
-.overdue{color:#c0271f;font-weight:700}
+.overdue{color:var(--danger);font-weight:700}
 .celledit{width:108px;border:1px solid var(--line);border-radius:7px;padding:5px 7px;font-size:12px}
 
 /* ---- kanban ---- */
@@ -114,7 +125,7 @@ tbody tr:nth-child(even) td.cli{background:#faf8f1}tbody tr:nth-child(odd) td.cl
 .kcard .kc-val{font-weight:700;color:var(--green-dk);font-size:13.5px}
 .kcard select{margin-top:7px;width:100%;font-size:11px;padding:4px;border-radius:7px;border:1px solid var(--line);background:#fbfbf8}
 .kempty{color:#aab1a3;font-size:12px;text-align:center;padding:14px 0}
-.kcol.drag{outline:2px dashed var(--green2);outline-offset:-4px;background:#deebd5}
+.kcol.drag{outline:2px dashed var(--green2);outline-offset:-4px;background:var(--kdrag)}
 
 /* ---- produtos ---- */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
@@ -159,7 +170,7 @@ tbody tr:nth-child(even) td.cli{background:#faf8f1}tbody tr:nth-child(odd) td.cl
 .login input{width:100%;padding:11px 12px;border:1px solid #e6e2d4;border-radius:10px;font-size:14px}
 .login button{width:100%;margin-top:18px;background:#2e7d46;color:#fff;padding:12px;border-radius:10px;font-weight:700;font-size:14px}
 .login button:hover{background:#1c4327}
-.login .err{color:#c0271f;font-size:12.5px;margin-top:10px;min-height:16px}
+.login .err{color:var(--danger);font-size:12.5px;margin-top:10px;min-height:16px}
 .login .skip{background:none;border:0;color:#7a8676;font-size:12px;margin-top:12px;text-decoration:underline}
 .login .skip:hover{color:#1c4327}
 
@@ -285,7 +296,7 @@ tbody tr:hover{background:#f0f5ec}
 .twho{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center}
 .tdue{font-size:10px;font-weight:700;background:#f0f0ea;color:var(--muted);padding:2px 8px;border-radius:20px}
 .tdue.hoje{background:#fdf1dc;color:#9a6a17}
-.tdue.late{background:#fbe4e2;color:#c0271f}
+.tdue.late{background:#fbe4e2;color:var(--danger)}
 .tcard.done .tt{text-decoration:line-through;opacity:.55}
 .tempty{font-size:11px;color:var(--muted);text-align:center;padding:14px 4px;border:1px dashed var(--line);border-radius:10px}
 .tetapa{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;border:1px solid transparent;white-space:nowrap}
@@ -374,13 +385,27 @@ tbody tr:hover{background:#f0f5ec}
 .tcom .txt{font-size:12.5px;color:var(--ink);line-height:1.45;white-space:pre-wrap;word-break:break-word;margin-top:2px}
 .tcom .txt a{color:var(--green-dk);font-weight:700}
 .tcom .del{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:12px;padding:0 4px;box-shadow:none;flex:0 0 auto}
-.tcom .del:hover{color:#c0271f}
+.tcom .del:hover{color:var(--danger)}
 .tcomnovo{display:flex;gap:8px;margin-top:10px;align-items:flex-start;border:1px solid var(--line);
  border-radius:10px;padding:7px 8px 7px 11px;background:var(--card)}
 .tcomnovo:focus-within{border-color:var(--green2)}
 .tcomnovo textarea{flex:1;min-height:34px;border:0;outline:0;font-size:13px;font-family:inherit;
  resize:vertical;background:transparent;color:var(--ink);padding:4px 0}
 .tcomvazio{font-size:11.5px;color:var(--muted);padding:8px 2px}
+/* mencao: @nome vira pilula na cor do socio, dentro do comentario */
+.tmencao{font-weight:800;padding:1px 5px;border-radius:5px;white-space:nowrap}
+.tcom .txt .tmencao{font-size:12.5px}
+/* a listinha do @ sobe por cima da caixa, ancorada nela */
+.tcomwrap{position:relative}
+.tmenlist{position:absolute;left:0;bottom:calc(100% + 4px);z-index:5;background:var(--card);
+ border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:4px;min-width:190px}
+.tmen{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:transparent;
+ border:0;box-shadow:none;cursor:pointer;padding:7px 9px;border-radius:7px;font-size:13px;
+ font-weight:600;color:var(--ink);font-family:inherit}
+.tmen:hover,.tmen.sel{background:var(--hover)}
+.tmen .av{width:22px;height:22px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:800;
+ display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+.tmenhint{font-size:11px;color:var(--muted);margin-top:5px}
 
 @media(max-width:900px){.tboard{grid-template-columns:repeat(2,1fr)}.tboard-3{grid-template-columns:repeat(2,1fr)}
  .cu-cols{display:none}.cu-row{grid-template-columns:minmax(0,1fr) auto;row-gap:4px}
@@ -397,6 +422,9 @@ tbody tr:hover{background:#f0f5ec}
  --green-dk:#8ed4a3;--green:#3f9c5c;--green2:#6fbe86;--sage:#5f8f6c;--moss:#26372b;
  --bg:#121814;--cream:#19211b;--card:#1b241e;--terra:#d98a5f;--gold:#e0b56a;
  --ink:#e9efe9;--muted:#93a396;--line:#2d3b31;--shadow:0 6px 20px rgba(0,0,0,.45);
+ --topbar:rgba(16,22,18,.88);--input:#141c17;--zebra:#18201a;--hover:#223026;
+ --scroll:#36463b;--pill:#243029;--warn:#2e2617;--warnln:#4d4126;--kdrag:#22352a;
+ --danger:#ff7b7b;--good:#6cc98a;--titulo:#8ed4a3;
 }
 [data-tema="escuro"] body{background:var(--bg);color:var(--ink)}
 [data-tema="escuro"] .side{background:#0f1511;border-right:1px solid var(--line)}
@@ -454,8 +482,11 @@ tbody tr:hover{background:#f0f5ec}
 [data-tema="escuro"] .cu-titulo::placeholder,[data-tema="escuro"] .cu-novo input::placeholder{color:#6f7d72}
 </style>
 <script>
-/* aplica o tema ANTES da pagina pintar - senao pisca branco e depois escurece */
-(function(){try{var t=localStorage.getItem("crm_tema");if(t==="escuro")document.documentElement.setAttribute("data-tema","escuro");}catch(e){}})();
+/* Escuro e o PADRAO (pedido do Luan em 14/08/2026). Aplicado ANTES da pagina
+   pintar - senao pisca branco e depois escurece. So sai do escuro quem pediu
+   "claro" explicitamente pelo botao. */
+(function(){try{if(localStorage.getItem("crm_tema")!=="claro")document.documentElement.setAttribute("data-tema","escuro");}
+ catch(e){document.documentElement.setAttribute("data-tema","escuro");}})();
 </script>
 </head>
 <body>
@@ -551,7 +582,7 @@ tbody tr:hover{background:#f0f5ec}
     <div class="seg"><button id="vbTable" class="active" onclick="setView('table')">Tabela</button><button id="vbSheet" onclick="setView('sheet')">✏️ Planilha</button><button id="vbKanban" onclick="setView('kanban')">Kanban</button></div>
    </div>
    <div id="atendResumo" class="mini" style="margin:-2px 0 12px;color:var(--green-dk);font-weight:700;font-size:13px"></div>
-   <div id="selBar" style="display:none;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px;padding:9px 13px;background:#eef4e9;border-radius:12px;font-size:13px"><b><span id="selCount">0</span> selecionado(s)</b><button class="btn ghost" onclick="exportarSelecionados()">⬇ Exportar p/ planilha</button><button class="btn ghost" style="color:#c0271f" onclick="excluirSelecionados()">🗑 Excluir selecionados</button><button class="btn ghost" onclick="limparSel()">Limpar</button></div>
+   <div id="selBar" style="display:none;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px;padding:9px 13px;background:var(--moss);border-radius:12px;font-size:13px"><b><span id="selCount">0</span> selecionado(s)</b><button class="btn ghost" onclick="exportarSelecionados()">⬇ Exportar p/ planilha</button><button class="btn ghost" style="color:var(--danger)" onclick="excluirSelecionados()">🗑 Excluir selecionados</button><button class="btn ghost" onclick="limparSel()">Limpar</button></div>
    <div id="tableView" class="tablewrap"></div>
    <div id="sheetView" class="tablewrap sheet" style="display:none"></div>
    <div id="kanbanView" class="kanban" style="display:none"></div>
@@ -641,7 +672,7 @@ tbody tr:hover{background:#f0f5ec}
     </div>
   </div></div>
   <div class="mfoot">
-   <button class="btn ghost" id="delBtn" onclick="deleteCurrent()" style="color:#c0271f">Excluir</button>
+   <button class="btn ghost" id="delBtn" onclick="deleteCurrent()" style="color:var(--danger)">Excluir</button>
    <div style="flex:1"></div>
    <button class="btn ghost" onclick="closeForm()">Cancelar</button>
    <button class="btn" onclick="saveForm()">Salvar</button>
@@ -680,13 +711,17 @@ tbody tr:hover{background:#f0f5ec}
 
    <div class="cu-sec" style="margin-top:20px">Atividade</div>
    <div id="tComsBox" class="tcoms"></div>
-   <div class="tcomnovo" id="tComNovo">
-    <textarea id="t_com" rows="1" placeholder="Escreva um comentário..." onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey))tComentar()"></textarea>
-    <button type="button" class="btn" style="padding:7px 14px;font-size:12.5px" onclick="tComentar()">Enviar</button>
+   <div class="tcomwrap">
+    <div class="tcomnovo" id="tComNovo">
+     <textarea id="t_com" rows="1" placeholder="Escreva um comentário... use @ para marcar alguém"
+       onkeydown="tComTecla(event)" oninput="tMencaoDigitou(event)" onblur="setTimeout(tFecharMencoes,140)"></textarea>
+     <button type="button" class="btn" style="padding:7px 14px;font-size:12.5px" onclick="tComentar()">Enviar</button>
+    </div>
+    <div id="tMencoes" class="tmenlist" style="display:none"></div>
    </div>
   </div>
   <div class="cu-foot">
-   <button class="btn ghost" id="tDelBtn" onclick="tExcluir()" style="color:#c0271f;padding:7px 13px;font-size:12.5px">Excluir</button>
+   <button class="btn ghost" id="tDelBtn" onclick="tExcluir()" style="color:var(--danger);padding:7px 13px;font-size:12.5px">Excluir</button>
    <div style="flex:1"></div>
    <button class="btn ghost" style="padding:7px 13px;font-size:12.5px" onclick="tFechar()">Cancelar</button>
    <button class="btn" style="padding:7px 18px;font-size:12.5px" onclick="tSalvar()">Salvar</button>
@@ -755,7 +790,7 @@ async function renderAtividades(){const el=document.getElementById("actFeed");if
  if(!SHEET_URL){el.innerHTML='<div class="mini">Disponível apenas conectado à nuvem.</div>';return;}
  const acts=await actFetch();
  if(acts===null){el.innerHTML='<div class="mini">Tabela de atividades ainda não criada — rode o SQL "criar_tabela_atividades.sql" no Supabase.</div>';return;}
- el.innerHTML=acts.length?acts.map(a=>'<div style="display:flex;gap:9px;padding:7px 4px;border-bottom:1px solid #f0efe6;font-size:12.5px"><span>🔔</span><div><b style="color:var(--green-dk)">'+esc(a.usuario)+'</b> '+esc(a.acao)+'<div style="color:#9aa496;font-size:11px">'+fmtTs(a.ts)+'</div></div></div>').join(''):'<div class="mini">Nenhuma atividade registrada ainda.</div>';}
+ el.innerHTML=acts.length?acts.map(a=>'<div style="display:flex;gap:9px;padding:7px 4px;border-bottom:1px solid var(--line);font-size:12.5px"><span>🔔</span><div><b style="color:var(--green-dk)">'+esc(a.usuario)+'</b> '+esc(a.acao)+'<div style="color:var(--muted);font-size:11px">'+fmtTs(a.ts)+'</div></div></div>').join(''):'<div class="mini">Nenhuma atividade registrada ainda.</div>';}
 function syncOrder(o){if(SHEET_URL)apiPost("upsert",o);}
 function syncDelete(id){if(SHEET_URL)apiPost("delete",{id});}
 function syncConfig(){if(SHEET_URL)apiPost("config",{insumos:state.insumos,precos:state.precos,clientsMeta:state.clientsMeta,fixos:state.fixos,caixaBase:state.caixaBase||0,resetMarco:state.resetMarco||""});}
@@ -872,15 +907,15 @@ function renderTable(){const rows=filtered();setResumo(rows);
    <td>${o.whats?`<a class="wa" target="_blank" href="https://wa.me/55${o.whats.replace(/\D/g,'')}">🟢 ${esc(o.whats)}</a>`:'<span class="wa empty">+ add</span>'}</td>
    <td>${esc(o.cidade)}</td><td>${esc(o.canal)}</td><td>${esc(o.tipoCli)}</td><td>${esc(o.tipoEv)}</td><td>${dBR(o.dataEv)}</td>
    <td>${esc(o.produto)}</td><td class="num">${o.qtd}</td><td class="num">${BRL(o.valorUnit)}</td><td class="num">${BRL(c.vt)}</td><td class="num">${BRL(c.ct)}</td><td class="num">${BRL(c.de)}</td><td class="num">${BRL(c.mg)}</td><td class="num">${PCT(c.mp)}</td>
-   <td><span class="badge" style="background:${(STAGE_COLORS[o.estagio]||'#ccc')}22;color:${STAGE_COLORS[o.estagio]||'#555'}">${esc(o.estagio)}</span></td>
-   <td>${o.statusPag?`<span class="badge" style="background:${(PAY_COLORS[o.statusPag]||'#999')}22;color:${PAY_COLORS[o.statusPag]||'#555'}">${esc(o.statusPag)}</span>`:''}</td>
+   <td><span class="badge" style="--c:${STAGE_COLORS[o.estagio]||'#8a94a6'}">${esc(o.estagio)}</span></td>
+   <td>${o.statusPag?`<span class="badge" style="--c:${PAY_COLORS[o.statusPag]||'#8a94a6'}">${esc(o.statusPag)}</span>`:''}</td>
    <td class="${od?'overdue':''}">${dBR(o.followup)}</td><td class="row-actions"><button onclick="event.stopPropagation();openForm(${o.id})">✏️</button></td></tr>`;});
  h+='</tbody></table>';document.getElementById('tableView').innerHTML=h;updateSelBar();}
 function selCell(id,key,val,arr){return '<select onchange="updCell('+id+',\''+key+'\',this.value)">'+arr.map(v=>'<option value="'+esc(v)+'"'+(v===val?' selected':'')+'>'+(esc(v)||'—')+'</option>').join('')+'</select>';}
 function inCell(id,key,val,type,w){return '<input type="'+(type||'text')+'" value="'+esc(val==null?'':val)+'" '+(w?'style="min-width:'+w+'px"':'')+' onchange="updCell('+id+',\''+key+'\',this.value)">';}
 function renderSheet(){const rows=filtered();setResumo(rows);
  const head=["#","Data","Cliente","WhatsApp","Cidade","Canal","Tipo","Evento","Data ev.","Produto","Qtd","V.unit","V.total","Sinal 30%","Margem","Estágio","Pgto","Forma","Entrega","Custo entr.","Follow-up","Obs",""];
- let h='<div style="padding:10px 12px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;background:#fbfaf5"><button class="btn" onclick="quickAdd()">＋ Linha rápida</button><span class="mini">Clique em qualquer célula e edite direto — salva sozinho ao sair do campo. Dê Tab para ir para a próxima.</span></div>';
+ let h='<div style="padding:10px 12px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;background:var(--cream)"><button class="btn" onclick="quickAdd()">＋ Linha rápida</button><span class="mini">Clique em qualquer célula e edite direto — salva sozinho ao sair do campo. Dê Tab para ir para a próxima.</span></div>';
  h+='<table><thead><tr>'+head.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>';
  if(!rows.length)h+='<tr><td colspan="23" style="padding:24px;text-align:center;color:#999">Nada aqui. Clique em "＋ Linha rápida" para começar.</td></tr>';
  rows.forEach(o=>{const c=calc(o);
@@ -946,7 +981,7 @@ function renderCaixa(){
   const P=cxSums(cx.filter(o=>(o.data||"").slice(0,7)===pm));
   dE=delta(K.e,P.e);dS=delta(K.s,P.s);dR=delta(K.r,P.r);}
  document.getElementById("cxKpis").innerHTML=
-  '<div class="kpi g"><div class="ic">🏁</div><div class="lbl">Saldo inicial (base do caixa)</div><div class="val" style="display:flex;align-items:center;gap:4px">R$ <input type="number" step="0.01" value="'+(state.caixaBase||0)+'" onchange="cxSetBase(this.value)" style="width:120px;border:1px dashed var(--line);border-radius:8px;padding:4px 8px;font-size:18px;font-weight:800;color:var(--green-dk);background:#fff"></div></div>'
+  '<div class="kpi g"><div class="ic">🏁</div><div class="lbl">Saldo inicial (base do caixa)</div><div class="val" style="display:flex;align-items:center;gap:4px">R$ <input type="number" step="0.01" value="'+(state.caixaBase||0)+'" onchange="cxSetBase(this.value)" style="width:120px;border:1px dashed var(--line);border-radius:8px;padding:4px 8px;font-size:18px;font-weight:800;color:var(--green-dk);background:var(--card)"></div></div>'
   +[["Entradas"+(mSel==="tudo"?"":" · "+mesLabel(mSel)),BRL(K.e),"","📥",dE],["Saídas"+(mSel==="tudo"?"":" · "+mesLabel(mSel)),BRL(K.s),"t","📤",dS],["Resultado"+(mSel==="tudo"?"":" do mês"),BRL(K.r),K.r>=0?"":"t","🧮",dR],["SALDO ATUAL (base + tudo)",BRL(saldo),saldo>=0?"g":"t","🏦",""]].map(x=>'<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div>'+(x[4]||"")+'</div>').join("");
  (function(){var sIn=0,s70=0,realizado=0,nAb=0,rMes=0,r3m=0,rMarco=0;var cm=todayISO().slice(0,7);var _d3=new Date();_d3.setUTCMonth(_d3.getUTCMonth()-2);var lim3=_d3.toISOString().slice(0,7);var marco=(state.resetMarco||"");(state.orders||[]).forEach(function(o){var c=calc(o);if(o.statusPag==="Sinal pago"){sIn+=c.sinal;s70+=c.saldo;nAb++;}else if(o.statusPag==="Pago"){realizado+=c.vt;var mk=(o.data||"").slice(0,7);if(mk===cm)rMes+=c.vt;if(mk>=lim3)r3m+=c.vt;if(marco&&(o.data||"")>=marco)rMarco+=c.vt;}});var totAb=sIn+s70;var elS=document.getElementById("cxSinais");if(elS){elS.innerHTML='<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:0 0 10px">'+'<div class="kpi g"><div class="ic">💵</div><div class="lbl">Sinais 30% já no caixa (pedidos em aberto)</div><div class="val">'+BRL(sIn)+'</div></div>'+'<div class="kpi t"><div class="ic">📥</div><div class="lbl">Falta entrar (70% desses pedidos)</div><div class="val">'+BRL(s70)+'</div></div>'+'<div class="kpi"><div class="ic">🧾</div><div class="lbl">Valor total desses pedidos (100%)</div><div class="val">'+BRL(totAb)+'</div></div>'+'<div class="kpi"><div class="ic">✅</div><div class="lbl">Já realizado · TOTAL (histórico todo)</div><div class="val">'+BRL(realizado)+'</div></div>'+'</div>'+'<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(165px,1fr));margin:0 0 8px">'+'<div class="kpi"><div class="ic">📅</div><div class="lbl">Realizado · este mês</div><div class="val">'+BRL(rMes)+'</div></div>'+'<div class="kpi"><div class="ic">📆</div><div class="lbl">Realizado · últimos 3 meses</div><div class="val">'+BRL(r3m)+'</div></div>'+'<div class="kpi '+(marco?'g':'')+'"><div class="ic">📌</div><div class="lbl">Realizado · desde o reset'+(marco?' ('+dBR(marco)+')':'')+'</div><div class="val">'+(marco?BRL(rMarco):'—')+'</div></div>'+'</div>'+'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px"><span class="mini" style="color:var(--muted)">📌 Marco do reset (início da fase atual):</span><input type="date" value="'+esc(marco)+'" onchange="setMarco(this.value)" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:13px"><span class="mini" style="color:var(--muted)">separa o histórico antigo do atual</span></div>'+'<p class="mini" style="color:var(--muted);margin:0">São '+nAb+' pedido(s) em aberto. O sinal de 30% ('+BRL(sIn)+') já está no caixa, mas é de pedido que ainda não fechou. Quando entra o 70% e você finaliza, o pedido vira 100% realizado e sai desta lista. O TOTAL inclui todo o histórico (inclusive a fase antiga em que as finanças estavam misturadas); use o mês, os 3 meses ou o marco do reset pra ver só a fase atual.</p>';}})();
  let h='<table><thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th><th>Valor (R$)</th><th>Quem</th><th></th></tr></thead><tbody>';
@@ -962,21 +997,21 @@ function renderCaixa(){
  const byM={};cx.forEach(o=>{const m=(o.data||"").slice(0,7);if(!m)return;byM[m]=byM[m]||{e:0,s:0};const v=Number(o.valor)||0;o.tipo==="Entrada"?byM[m].e+=v:byM[m].s+=v;});
  const mk=Object.keys(byM).sort();let acc=state.caixaBase||0;
  let mh='<table><thead><tr><th>Mês</th><th class="num">Entradas</th><th class="num">Saídas</th><th class="num">Resultado</th><th class="num">vs mês anterior</th><th class="num">Saldo do caixa</th></tr></thead><tbody>';
- mh+='<tr style="background:#f4f7ef"><td><b>🏁 Saldo inicial</b></td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num"><b>'+BRL(state.caixaBase||0)+'</b></td></tr>';
+ mh+='<tr style="background:var(--cream)"><td><b>🏁 Saldo inicial</b></td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num"><b>'+BRL(state.caixaBase||0)+'</b></td></tr>';
  let prevR=null;
  mk.forEach(m=>{const r=byM[m].e-byM[m].s;acc+=r;
-  const cmp=prevR===null?"—":(r>=prevR?'<span style="color:#2e7d46;font-weight:700">▲ '+BRL(r-prevR)+'</span>':'<span style="color:#b00020;font-weight:700">▼ '+BRL(r-prevR)+'</span>');
-  mh+='<tr'+(m===curM?' style="background:#eef5ea;font-weight:700"':'')+'><td>'+mesLabel(m)+'</td><td class="num">'+BRL(byM[m].e)+'</td><td class="num">'+BRL(byM[m].s)+'</td><td class="num" style="color:'+(r>=0?"#2e7d46":"#b00020")+'">'+BRL(r)+'</td><td class="num">'+cmp+'</td><td class="num">'+BRL(acc)+'</td></tr>';
+  const cmp=prevR===null?"—":(r>=prevR?'<span style="color:var(--good);font-weight:700">▲ '+BRL(r-prevR)+'</span>':'<span style="color:var(--danger);font-weight:700">▼ '+BRL(r-prevR)+'</span>');
+  mh+='<tr'+(m===curM?' style="background:var(--hover);font-weight:700"':'')+'><td>'+mesLabel(m)+'</td><td class="num">'+BRL(byM[m].e)+'</td><td class="num">'+BRL(byM[m].s)+'</td><td class="num" style="color:'+(r>=0?"#2e7d46":"#b00020")+'">'+BRL(r)+'</td><td class="num">'+cmp+'</td><td class="num">'+BRL(acc)+'</td></tr>';
   prevR=r;});
  mh+='</tbody></table>';document.getElementById("cxMeses").innerHTML=mh;}
 function renderSazonal(){const el=document.getElementById("cxSazonal");if(!el)return;const today=new Date();const tISO=todayISO();
  const items=SAZONAL.map(x=>{const y=today.getFullYear();let d=y+"-"+x[0];if(d<tISO)d=(y+1)+"-"+x[0];
   const dias=Math.round((new Date(d+"T12:00:00")-new Date(tISO+"T12:00:00"))/864e5);return {d,dias,nome:x[1],dica:x[2],pico:x[3]};}).sort((a,b)=>a.dias-b.dias);
  el.innerHTML=items.map(it=>{const urg=it.dias<=45;
-  return '<div style="display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:11px;margin-bottom:5px;'+(urg?'background:#fdf3e3;border:1px solid #ecd9b0':'background:#fafaf4')+'">'
-   +'<div style="min-width:64px;text-align:center"><div style="font-weight:800;font-size:15px;color:'+(it.pico?"#c2693f":"#2e7d46")+'">'+dBR(it.d).slice(0,5)+'</div><div style="font-size:10px;color:#999">'+(it.dias===0?"HOJE":"em "+it.dias+"d")+'</div></div>'
-   +'<div><div style="font-weight:800;font-size:13px;color:#1c4327">'+(it.pico?"⭐ ":"")+it.nome+(urg?' <span style="background:#c2693f;color:#fff;border-radius:99px;padding:1px 8px;font-size:10px;margin-left:4px">PREPARAR AGORA</span>':"")+'</div>'
-   +'<div style="font-size:11.5px;color:#7a8676">'+it.dica+'</div></div></div>';}).join('');}
+  return '<div style="display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:11px;margin-bottom:5px;'+(urg?'background:var(--warn);border:1px solid var(--warnln)':'background:var(--card)')+'">'
+   +'<div style="min-width:64px;text-align:center"><div style="font-weight:800;font-size:15px;color:'+(it.pico?"var(--terra)":"var(--good)")+'">'+dBR(it.d).slice(0,5)+'</div><div style="font-size:10px;color:var(--muted)">'+(it.dias===0?"HOJE":"em "+it.dias+"d")+'</div></div>'
+   +'<div><div style="font-weight:800;font-size:13px;color:var(--titulo)">'+(it.pico?"⭐ ":"")+it.nome+(urg?' <span style="background:#c2693f;color:#fff;border-radius:99px;padding:1px 8px;font-size:10px;margin-left:4px">PREPARAR AGORA</span>':"")+'</div>'
+   +'<div style="font-size:11.5px;color:var(--muted)">'+it.dica+'</div></div></div>';}).join('');}
 function renderKanban(){const rows=filtered(),box=document.getElementById('kanbanView');setResumo(rows);
  box.innerHTML=STAGES.map(st=>{const list=rows.filter(o=>o.estagio===st),col=STAGE_COLORS[st]||'#999',tot=list.reduce((s,o)=>s+calc(o).vt,0);
   return `<div class="kcol" data-stage="${esc(st)}" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="dropCard(event,this)"><h4 style="border-left-color:${col}"><span>${st}</span><span class="cnt">${list.length} · ${BRL(tot)}</span></h4>`+
@@ -1010,7 +1045,7 @@ function renderClientes(){const q=(document.getElementById('searchCli').value||'
    <td>${esc(c.cidade)}</td><td>${esc(c.canal)}</td><td class="num">${c.pedidos}</td><td class="num">${BRL(c.total)}</td><td class="num">${BRL(c.total/c.pedidos)}</td><td>${dBR(c.ultima)}</td>
    <td><select class="celledit" data-cli="${esc(c.cliente)}" data-k="optin" style="width:70px"><option value=""></option><option ${meta.optin==='Sim'?'selected':''}>Sim</option><option ${meta.optin==='Não'?'selected':''}>Não</option></select></td>
    <td><input class="celledit" data-cli="${esc(c.cliente)}" data-k="tags" value="${esc(meta.tags||'')}" placeholder="casamento..."></td>
-   <td>${status?`<span class="badge" style="background:${status==='Ativo'?'#2e7d4622':'#dca24e33'};color:${status==='Ativo'?'#2e7d46':'#946812'}">${status}</span>`:''}</td></tr>`;});
+   <td>${status?`<span class="badge" style="--c:${status==='Ativo'?'#2e7d46':'#dca24e'}">${status}</span>`:''}</td></tr>`;});
  h+='</tbody></table>';document.getElementById('clientesView').innerHTML=h;
  document.querySelectorAll('#clientesView [data-cli]').forEach(el=>el.addEventListener('change',()=>{const cli=el.dataset.cli,k=el.dataset.k;state.clientsMeta[cli]=state.clientsMeta[cli]||{};state.clientsMeta[cli][k]=el.value;save();syncConfig();}));}
 
@@ -1019,11 +1054,11 @@ function renderProdutos(){if(!state.fixos)state.fixos=defaultData().fixos;const 
  let h='<table class="itable"><thead><tr><th>Insumo</th><th>Valor</th><th>Unid.</th><th class="num">Custo/un</th></tr></thead><tbody>';
  ins.forEach(([k,nm,u])=>{const cu=k==='pedraSaco'?pedraUnit():(k==='palitoPacote'?palitoUnit():(k==='pedraGramas'?null:i[k]));h+=`<tr><td>${nm}</td><td><input type="number" step="0.01" value="${i[k]}" data-ins="${k}"></td><td>${u}</td><td class="num">${k==='pedraGramas'?'—':BRL(cu)}</td></tr>`;});
  h+='</tbody></table>';
- h+='<div style="margin-top:16px;font-weight:700;color:#1c4327;font-family:Georgia,serif">Custos fixos / operação</div>';
+ h+='<div style="margin-top:16px;font-weight:700;color:var(--titulo);font-family:Georgia,serif">Custos fixos / operação</div>';
  h+='<table class="itable" style="margin-top:8px"><thead><tr><th>Item</th><th>Valor</th><th>Período</th><th class="num">Por mês (≈)</th></tr></thead><tbody>';
  h+='<tr><td>Salário do funcionário</td><td><input type="number" step="1" value="'+f.salarioSemana+'" data-fixo="salarioSemana"></td><td>por semana</td><td class="num">'+BRL(f.salarioSemana*52/12)+'</td></tr>';
  h+='<tr><td>Investimento em anúncios</td><td><input type="number" step="1" value="'+f.anunciosDia+'" data-fixo="anunciosDia"></td><td>por dia</td><td class="num">'+BRL(f.anunciosDia*365/12)+'</td></tr>';
- h+='<tr style="background:#f1f5ee"><td><b>Total de custos fixos</b></td><td></td><td></td><td class="num"><b>'+BRL(f.salarioSemana*52/12+f.anunciosDia*365/12)+'</b></td></tr>';
+ h+='<tr style="background:var(--hover)"><td><b>Total de custos fixos</b></td><td></td><td></td><td class="num"><b>'+BRL(f.salarioSemana*52/12+f.anunciosDia*365/12)+'</b></td></tr>';
  h+='</tbody></table>';
  document.getElementById('insumosBox').innerHTML=h;
  let p='<table class="itable"><thead><tr><th>Produto</th><th class="num">Custo</th><th>Preço</th><th class="num">Margem</th><th class="num">%</th></tr></thead><tbody>';
@@ -1066,7 +1101,7 @@ async function init(){
  save();initFilters();renderAll();setStatus();
 }
 function reloadData(){init();}
-function renderCadastros(){var el=document.getElementById('cadList');if(!el)return;if(!SHEET_URL){el.innerHTML='<div class="mini" style="padding:16px">Entre na nuvem (faça login) para ver os cadastros.</div>';return;}el.innerHTML='<div class="mini" style="padding:16px;color:#888">Carregando...</div>';fetch(sbUrl("cadastros?select=*&order=id.desc"),{headers:sbHeaders()}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(rows){state.cadastros=rows;var nv=rows.filter(function(x){return (x.status||'novo')==='novo';}).length;var c=document.getElementById('cadCount');if(c)c.textContent=nv;if(!rows.length){el.innerHTML='<div class="mini" style="padding:22px;text-align:center;color:#999">Nenhum cadastro ainda. Quando um cliente preencher o formulário, aparece aqui.</div>';return;}el.innerHTML=rows.map(function(o){var imp=(o.status==='importado');return '<div style="border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:'+(imp?'#f4f7ef':'#fff')+'">'+'<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">'+'<div><b style="color:var(--green-dk);font-size:15px">'+esc(o.nome||'(sem nome)')+'</b> <span class="mini" style="color:var(--muted)">'+esc(o.whats||'')+'</span></div>'+(imp?'<span class="mini" style="color:var(--green2);font-weight:800">✓ virou atendimento</span>':'<button class="btn" onclick="cadConverter('+o.id+')">➕ Virar atendimento</button>')+' <button class="btn ghost" style="color:#c0271f" onclick="cadDelete('+o.id+')" title="Apagar cadastro">🗑</button>'+'</div><div class="mini" style="color:#4a554a;margin-top:8px;line-height:1.6">'+'📅 Evento: '+esc(o.data_evento||'-')+' · 📦 '+esc(o.produto||'-')+' · Qtd: '+esc(o.qtd||'-')+'<br>'+'✏️ '+esc(o.personalizacao||'-')+'<br>'+'🎨 '+esc(o.tema||'-')+'<br>'+'📍 '+esc(o.endereco||'-')+' · CEP '+esc(o.cep||'-')+(o.cpf?' · CPF '+esc(o.cpf):'')+'</div></div>';}).join('');}).catch(function(e){el.innerHTML='<div class="mini" style="padding:16px;color:#c0271f">Não consegui carregar. '+esc(String(e.message||e))+'</div>';});}
+function renderCadastros(){var el=document.getElementById('cadList');if(!el)return;if(!SHEET_URL){el.innerHTML='<div class="mini" style="padding:16px">Entre na nuvem (faça login) para ver os cadastros.</div>';return;}el.innerHTML='<div class="mini" style="padding:16px;color:#888">Carregando...</div>';fetch(sbUrl("cadastros?select=*&order=id.desc"),{headers:sbHeaders()}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(rows){state.cadastros=rows;var nv=rows.filter(function(x){return (x.status||'novo')==='novo';}).length;var c=document.getElementById('cadCount');if(c)c.textContent=nv;if(!rows.length){el.innerHTML='<div class="mini" style="padding:22px;text-align:center;color:#999">Nenhum cadastro ainda. Quando um cliente preencher o formulário, aparece aqui.</div>';return;}el.innerHTML=rows.map(function(o){var imp=(o.status==='importado');return '<div style="border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:'+(imp?'var(--cream)':'var(--card)')+'">'+'<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">'+'<div><b style="color:var(--green-dk);font-size:15px">'+esc(o.nome||'(sem nome)')+'</b> <span class="mini" style="color:var(--muted)">'+esc(o.whats||'')+'</span></div>'+(imp?'<span class="mini" style="color:var(--green2);font-weight:800">✓ virou atendimento</span>':'<button class="btn" onclick="cadConverter('+o.id+')">➕ Virar atendimento</button>')+' <button class="btn ghost" style="color:var(--danger)" onclick="cadDelete('+o.id+')" title="Apagar cadastro">🗑</button>'+'</div><div class="mini" style="color:var(--ink);margin-top:8px;line-height:1.6">'+'📅 Evento: '+esc(o.data_evento||'-')+' · 📦 '+esc(o.produto||'-')+' · Qtd: '+esc(o.qtd||'-')+'<br>'+'✏️ '+esc(o.personalizacao||'-')+'<br>'+'🎨 '+esc(o.tema||'-')+'<br>'+'📍 '+esc(o.endereco||'-')+' · CEP '+esc(o.cep||'-')+(o.cpf?' · CPF '+esc(o.cpf):'')+'</div></div>';}).join('');}).catch(function(e){el.innerHTML='<div class="mini" style="padding:16px;color:var(--danger)">Não consegui carregar. '+esc(String(e.message||e))+'</div>';});}
 function cadConverter(id){var o=(state.cadastros||[]).find(function(x){return x.id===id;});if(!o)return;if(!confirm('Criar um atendimento a partir do cadastro de '+(o.nome||'')+'?'))return;var novo={id:state.seq++,data:todayISO(),cliente:o.nome||'',whats:o.whats||'',cidade:o.endereco||'',canal:'Formulário',tipoCli:'Evento',tipoEv:'',dataEv:o.data_evento||'',produto:o.produto||PRODUTOS[0],descr:o.personalizacao||'',qtd:Number(o.qtd)||30,valorUnit:state.precos[o.produto]||0,estagio:'Fechado (ganho)',statusPag:'Sinal pago',formaPag:'Pix',entrega:'',custoEntrega:0,followup:'',obs:'Tema/cores: '+(o.tema||'')+(o.cpf?' | CPF: '+o.cpf:'')+' | CEP: '+(o.cep||'')};state.orders.unshift(novo);if(typeof logAct==='function')logAct('importou o cadastro de '+(o.nome||'')+' como atendimento #'+novo.id);save();syncOrder(novo);o.status='importado';if(SHEET_URL)fetch(sbUrl("cadastros?id=eq."+id),{method:'PATCH',headers:sbHeaders(),body:JSON.stringify({status:'importado'})}).catch(function(e){});renderCadastros();if(typeof renderAtend==='function')renderAtend();if(typeof renderPainel==='function')renderPainel();alert('Pronto! Virou o atendimento #'+novo.id+', já está na aba Atendimentos.');}
 var lastSaveErr="";
 function setSave(st){var e=document.getElementById("saveStat");if(!e)return;if(st==="saving"){e.textContent="⏳ Salvando…";e.style.color="#c2872b";}else if(st==="ok"){e.textContent="✓ Salvo";e.style.color="#2e7d46";setTimeout(function(){if(e&&e.textContent==="✓ Salvo")e.textContent="";},1500);}else{e.textContent="⚠ não salvou · toque em Salvar tudo";e.style.color="#c0271f";}}
@@ -1184,7 +1219,7 @@ async function tarefasCarregar(){
   if(!r.ok)throw new Error('HTTP '+r.status);
   tarefas=await r.json();
  }catch(e){
-  if(el)el.innerHTML='<div class="cu-vazio" style="color:#c0271f">Nao consegui carregar as tarefas. '+esc(String(e.message||e))+'<br>Se a tabela ainda nao existe, rode o SQL da tabela <b>tarefas</b> no Supabase.</div>';
+  if(el)el.innerHTML='<div class="cu-vazio" style="color:var(--danger)">Nao consegui carregar as tarefas. '+esc(String(e.message||e))+'<br>Se a tabela ainda nao existe, rode o SQL da tabela <b>tarefas</b> no Supabase.</div>';
   return;
  }
  await tChecarColunas();
@@ -1387,7 +1422,7 @@ function tColsPessoa(vis){
   return '<div class="tcol tcol-p" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDropPessoa(event,\''+esc(p)+'\')">'
    +'<h4><span class="hd"><span class="tav" style="background:'+cor+'">'+esc(tIniciais(p||'?'))+'</span>'
    +'<span style="color:var(--ink)">'+esc(p||'Sem responsável')+'</span></span>'
-   +'<span class="cnt">'+abertas+(atrasadas?' · <b style="color:#c0271f">'+atrasadas+' atrasada'+(atrasadas>1?'s':'')+'</b>':'')+'</span></h4>'
+   +'<span class="cnt">'+abertas+(atrasadas?' · <b style="color:var(--danger)">'+atrasadas+' atrasada'+(atrasadas>1?'s':'')+'</b>':'')+'</span></h4>'
    +cards+'</div>';
  }).join('');
 }
@@ -1627,12 +1662,85 @@ function tRenderAnexos(){
 }
 
 /* ===================== COMENTARIOS ===================== */
-/* transforma URL solta em link clicavel DEPOIS do esc() - a ordem importa,
-   se linkar antes o esc() come as aspas do href e nao vira link nenhum */
+/* transforma URL solta em link clicavel e @nome em mencao, DEPOIS do esc() -
+   a ordem importa: se linkar antes, o esc() come as aspas do href e nao vira
+   link nenhum. A mencao so pinta se o nome for de alguem da equipe; @qualquer
+   coisa fica texto normal, para nao prometer notificacao que nao existe. */
 function tLinkar(txt){
- return esc(txt).replace(/(https?:\/\/[^\s<]+)/g,function(u){
+ var h=esc(txt).replace(/(https?:\/\/[^\s<]+)/g,function(u){
   return '<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>';
  });
+ return h.replace(/@([A-Za-zÀ-ÿ]{2,20})/g,function(todo,nome){
+  var quem=T_EQUIPE.find(function(p){return p.toLowerCase()===nome.toLowerCase();});
+  if(!quem)return todo;
+  var c=tCorPessoa(quem);
+  return '<span class="tmencao" style="background:'+c+'2e;color:'+c+'">@'+esc(quem)+'</span>';
+ });
+}
+
+/* quem foi citado num texto (usado pra avisar a pessoa ao enviar) */
+function tCitados(txt){
+ var achados=[],re=/@([A-Za-zÀ-ÿ]{2,20})/g,m;
+ while((m=re.exec(txt))){
+  var quem=T_EQUIPE.find(function(p){return p.toLowerCase()===m[1].toLowerCase();});
+  if(quem&&achados.indexOf(quem)<0)achados.push(quem);
+ }
+ return achados;
+}
+
+/* ---------- lista do @ enquanto digita ----------
+   Sem biblioteca: le o texto ate o cursor, ve se tem um "@palavra" colado no
+   fim e mostra os nomes que casam. Seta/Enter/Tab escolhem, Esc fecha. */
+var _menIdx=0,_menLista=[];
+function tMencaoAberta(){var b=document.getElementById('tMencoes');return b&&b.style.display!=='none';}
+function tFecharMencoes(){var b=document.getElementById('tMencoes');if(b){b.style.display='none';b.innerHTML='';}_menLista=[];_menIdx=0;}
+
+function tMencaoParcial(ta){
+ var ate=ta.value.slice(0,ta.selectionStart);
+ var m=/(^|[\s(])@([A-Za-zÀ-ÿ]*)$/.exec(ate);
+ return m?m[2]:null;
+}
+
+function tMencaoDigitou(ev){
+ var ta=document.getElementById('t_com');if(!ta)return;
+ var parcial=tMencaoParcial(ta);
+ if(parcial===null){tFecharMencoes();return;}
+ _menLista=T_EQUIPE.filter(function(p){return p.toLowerCase().indexOf(parcial.toLowerCase())===0;});
+ if(!_menLista.length){tFecharMencoes();return;}
+ _menIdx=0;tRenderMencoes();
+}
+
+function tRenderMencoes(){
+ var b=document.getElementById('tMencoes');if(!b)return;
+ b.innerHTML=_menLista.map(function(p,i){
+  var c=tCorPessoa(p);
+  return '<button type="button" class="tmen'+(i===_menIdx?' sel':'')+'" onmousedown="event.preventDefault();tEscolherMencao('+i+')">'
+   +'<i class="av" style="background:'+c+'">'+esc(tIniciais(p))+'</i>'+esc(p)+'</button>';
+ }).join('');
+ b.style.display='';
+}
+
+function tEscolherMencao(i){
+ var ta=document.getElementById('t_com');if(!ta)return;
+ var quem=_menLista[i];if(!quem)return;
+ var pos=ta.selectionStart, antes=ta.value.slice(0,pos), depois=ta.value.slice(pos);
+ antes=antes.replace(/@([A-Za-zÀ-ÿ]*)$/,'@'+quem+' ');
+ ta.value=antes+depois;
+ var novo=antes.length;
+ ta.focus();ta.setSelectionRange(novo,novo);
+ tFecharMencoes();
+}
+
+/* teclado da caixa de comentario: se a lista do @ esta aberta ela come as
+   setas e o Enter; senao Ctrl+Enter envia, como antes */
+function tComTecla(ev){
+ if(tMencaoAberta()){
+  if(ev.key==='ArrowDown'){ev.preventDefault();_menIdx=(_menIdx+1)%_menLista.length;tRenderMencoes();return;}
+  if(ev.key==='ArrowUp'){ev.preventDefault();_menIdx=(_menIdx-1+_menLista.length)%_menLista.length;tRenderMencoes();return;}
+  if(ev.key==='Enter'||ev.key==='Tab'){ev.preventDefault();tEscolherMencao(_menIdx);return;}
+  if(ev.key==='Escape'){ev.preventDefault();tFecharMencoes();return;}
+ }
+ if(ev.key==='Enter'&&(ev.ctrlKey||ev.metaKey))tComentar();
 }
 
 async function tCarregarComentarios(id){
@@ -1646,7 +1754,7 @@ async function tCarregarComentarios(id){
   if(!r.ok)throw new Error("HTTP "+r.status);
   tComentarios=await r.json();
  }catch(e){
-  el.innerHTML='<div class="tcomvazio" style="color:#c0271f">Não consegui carregar os comentários. Se a tabela ainda não existe, rode o <b>schema_tarefas_v2.sql</b> no Supabase.</div>';
+  el.innerHTML='<div class="tcomvazio" style="color:var(--danger)">Não consegui carregar os comentários. Se a tabela ainda não existe, rode o <b>schema_tarefas_v2.sql</b> no Supabase.</div>';
   return;
  }
  tRenderComentarios();
@@ -1674,14 +1782,20 @@ async function tComentar(){
  if(!txt)return;
  if(!tAtual){alert("Salve a tarefa primeiro. Depois é só reabrir e comentar.");return;}
  if(!SHEET_URL){alert("Comentário precisa da nuvem. Entre com e-mail e senha.");return;}
+ var citados=tCitados(txt);
  var row={id:tNovoId(),tarefa_id:tAtual,autor:userName(),texto:txt.slice(0,4000),criado_em:new Date().toISOString()};
- tComentarios.push(row);tRenderComentarios();ta.value="";   /* otimista, igual ao resto do quadro */
+ tComentarios.push(row);tRenderComentarios();ta.value="";tFecharMencoes();   /* otimista, igual ao resto do quadro */
  try{
   var r=await fetch(sbUrl("tarefa_comentarios"),{method:"POST",headers:sbHeaders(),body:JSON.stringify([row])});
   if(!r.ok)throw new Error("HTTP "+r.status+" "+(await r.text()).slice(0,160));
   tComCount[tAtual]=(tComCount[tAtual]||0)+1;renderTarefas();
   var t=tarefas.find(function(x){return x.id===tAtual;});
-  if(typeof logAct==='function')logAct('comentou na tarefa "'+((t&&t.titulo)||'').slice(0,60)+'"');
+  if(typeof logAct==='function'){
+   logAct('comentou na tarefa "'+((t&&t.titulo)||'').slice(0,60)+'"');
+   /* a mencao aparece no feed de atividades do Painel, que e onde os tres
+      olham. Nao existe push/e-mail aqui - nao prometer o que nao tem. */
+   if(citados.length)logAct('marcou '+citados.join(' e ')+' num comentário de "'+((t&&t.titulo)||'').slice(0,50)+'"');
+  }
  }catch(e){
   tComentarios=tComentarios.filter(function(c){return c.id!==row.id;});tRenderComentarios();
   alert("Não consegui enviar o comentário.\n\n"+String(e.message||e)+"\n\nSe a tabela ainda não existe, rode o schema_tarefas_v2.sql no Supabase.");
@@ -1826,7 +1940,8 @@ async function tSalvarTudo(){
 }
 
 /* ---------- tema claro / escuro ---------- */
-function temaAtual(){try{return localStorage.getItem("crm_tema")==="escuro"?"escuro":"claro";}catch(e){return "claro";}}
+/* escuro e o padrao: so fica claro quem escolheu claro */
+function temaAtual(){try{return localStorage.getItem("crm_tema")==="claro"?"claro":"escuro";}catch(e){return "escuro";}}
 function aplicarTema(t){
  var escuro=(t==="escuro");
  if(escuro)document.documentElement.setAttribute("data-tema","escuro");
