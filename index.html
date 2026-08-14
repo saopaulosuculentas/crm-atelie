@@ -230,6 +230,61 @@ tbody tr:hover{background:#f0f5ec}
 @media(max-width:900px){.tboard{grid-template-columns:repeat(2,1fr)}.tboard-3{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.tboard,.tboard-3{grid-template-columns:1fr}}
 
+/* ---------- cor por ETAPA (estilo ClickUp: bolinha + pilula na cor) ----------
+   Antes as 4 etapas saiam todas no mesmo verde, entao na visao "por pessoa"
+   nao dava pra saber num relance o que estava parado e o que ja tinha ido.
+   A cor vem inline do JS (tCorEtapa) porque muda com o tema. */
+.tetapa{display:inline-flex;align-items:center;border:1px solid transparent;white-space:nowrap}
+.tcol h4 .hd{display:inline-flex;align-items:center;gap:7px;min-width:0}
+.tcol h4 .hd .tdot{width:9px;height:9px;margin:0;flex:0 0 auto}
+.tcol.et{border-top:3px solid var(--line)}
+
+/* ---------- selo de anexo / comentario no cartao ---------- */
+.tbadge{font-size:10px;font-weight:700;background:#f0f0ea;color:var(--muted);padding:2px 7px;border-radius:20px}
+
+/* ---------- botao de tema na barra do topo (fica sempre a vista) ---------- */
+.temaTop{margin-left:auto;background:#fff;border:1px solid var(--line);color:var(--green-dk);border-radius:20px;
+ padding:6px 13px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:none;white-space:nowrap;align-self:center}
+.temaTop:hover{background:var(--moss)}
+
+/* ---------- descricao rica: barra de acoes + galeria de anexos ---------- */
+.tdtools{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.tdtools button{background:#fff;border:1px solid var(--line);color:var(--green-dk);border-radius:8px;
+ padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;box-shadow:none}
+.tdtools button:hover{background:var(--moss)}
+.tdhint{font-size:11px;color:var(--muted);margin-top:5px}
+.tanexos{display:flex;flex-wrap:wrap;gap:9px;margin-top:9px}
+.tanexo{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;
+ width:118px;font-size:11px}
+.tanexo img,.tanexo video{display:block;width:118px;height:82px;object-fit:cover;background:#eceade}
+.tanexo .nm{display:block;padding:5px 7px;color:var(--ink);text-decoration:none;word-break:break-all;line-height:1.25;
+ max-height:44px;overflow:hidden}
+.tanexo .nm:hover{color:var(--green-dk);text-decoration:underline}
+.tanexo .x{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;border:0;cursor:pointer;
+ background:rgba(20,30,22,.72);color:#fff;font-size:12px;line-height:20px;padding:0;box-shadow:none}
+.tanexo.lk{width:auto;max-width:100%;display:flex;align-items:center;gap:6px;padding:6px 30px 6px 10px;border-radius:20px}
+.tanexo.lk .nm{padding:0;color:var(--green-dk);font-weight:700;max-width:270px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.tanexo.lk .x{top:50%;transform:translateY(-50%)}
+.tup{font-size:11.5px;color:var(--green-dk);font-weight:700;margin-top:7px}
+
+/* ---------- comentarios ---------- */
+.tcoms{margin-top:4px;max-height:230px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fbfaf5;padding:9px}
+.tcom{display:flex;gap:9px;padding:7px 2px;border-bottom:1px solid #f0efe6}
+.tcom:last-child{border-bottom:0}
+.tcom .av{width:26px;height:26px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;flex:0 0 auto;
+ display:inline-flex;align-items:center;justify-content:center}
+.tcom .bd{flex:1;min-width:0}
+.tcom .who{font-size:12px;font-weight:800;color:var(--green-dk)}
+.tcom .ts{font-size:10.5px;color:var(--muted);margin-left:6px;font-weight:600}
+.tcom .txt{font-size:12.5px;color:var(--ink);line-height:1.4;white-space:pre-wrap;word-break:break-word;margin-top:2px}
+.tcom .txt a{color:var(--green-dk);font-weight:700}
+.tcom .del{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:12px;padding:0 4px;box-shadow:none;flex:0 0 auto}
+.tcom .del:hover{color:#c0271f}
+.tcomnovo{display:flex;gap:8px;margin-top:9px;align-items:flex-start}
+.tcomnovo textarea{flex:1;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;
+ font-size:13px;font-family:inherit;resize:vertical;background:#fff}
+.tcomvazio{font-size:11.5px;color:var(--muted);padding:6px 2px}
+
 /* ===================== TEMA ESCURO =====================
    O arquivo tem ~100 cores fixas no CSS (27 sao #fff), entao nao bastou
    trocar as variaveis do :root - foi preciso pegar os seletores que
@@ -287,6 +342,19 @@ tbody tr:hover{background:#f0f5ec}
 [data-tema="escuro"] .tdue.late{background:#3d1e1b;color:#f08a80}
 [data-tema="escuro"] .tviews{background:#141c17;border-color:var(--line)}
 [data-tema="escuro"] .tempty{border-color:var(--line);color:var(--muted)}
+[data-tema="escuro"] .tbadge{background:#243029;color:var(--muted)}
+[data-tema="escuro"] .temaTop{background:#1b241e;color:var(--ink);border-color:var(--line)}
+[data-tema="escuro"] .temaTop:hover{background:#243029}
+[data-tema="escuro"] .tdtools button{background:#1b241e;color:var(--ink);border-color:var(--line)}
+[data-tema="escuro"] .tdtools button:hover{background:#243029}
+[data-tema="escuro"] .tanexo{background:#1b241e;border-color:var(--line)}
+[data-tema="escuro"] .tanexo img,[data-tema="escuro"] .tanexo video{background:#243029}
+[data-tema="escuro"] .tanexo .nm{color:var(--ink)}
+[data-tema="escuro"] .tanexo.lk .nm{color:var(--green-dk)}
+[data-tema="escuro"] .tcoms{background:#141c17;border-color:var(--line)}
+[data-tema="escuro"] .tcom{border-bottom-color:var(--line)}
+[data-tema="escuro"] .tcomnovo textarea{background:#141c17;color:var(--ink);border-color:var(--line)}
+[data-tema="escuro"] .tcomnovo textarea::placeholder{color:#6f7d72}
 </style>
 <script>
 /* aplica o tema ANTES da pagina pintar - senao pisca branco e depois escurece */
@@ -342,7 +410,7 @@ tbody tr:hover{background:#f0f5ec}
 </aside>
 
 <div class="main">
- <div class="topbar"><div class="tbrow"><button class="hamb" onclick="toggleMenu()" aria-label="Menu">☰</button><h2 id="ttl">Painel</h2><span id="presenca" style="margin-left:14px;font-size:12px;color:var(--muted);font-weight:700;align-self:center;white-space:nowrap"></span><span id="saveStat" style="margin-left:10px;font-size:12px;font-weight:800;align-self:center;white-space:nowrap"></span></div><p id="sub">Atualiza sozinho conforme você preenche os atendimentos.</p></div>
+ <div class="topbar"><div class="tbrow"><button class="hamb" onclick="toggleMenu()" aria-label="Menu">☰</button><h2 id="ttl">Painel</h2><span id="presenca" style="margin-left:14px;font-size:12px;color:var(--muted);font-weight:700;align-self:center;white-space:nowrap"></span><span id="saveStat" style="margin-left:10px;font-size:12px;font-weight:800;align-self:center;white-space:nowrap"></span><button class="temaTop" id="btnTemaTop" onclick="alternarTema()" title="Alternar entre tema claro e escuro">🌙 Escuro</button></div><p id="sub">Atualiza sozinho conforme você preenche os atendimentos.</p></div>
  <div class="content">
 
   <section class="view active" id="painel">
@@ -428,7 +496,7 @@ tbody tr:hover{background:#f0f5ec}
 
   <section class="view" id="tarefas">
    <div class="panel" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-    <div><h3>✅ Tarefas da equipe</h3><div class="mini" style="color:var(--muted)">Arraste o cartão entre as colunas. Tudo que você mexe aqui fica salvo pra todo mundo.</div></div>
+    <div><h3>✅ Tarefas da equipe</h3><div class="mini" style="color:var(--muted)">Arraste o cartão entre as colunas. Abra a tarefa para anexar foto, vídeo, link e comentar. Tudo fica salvo pra todo mundo.</div></div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
      <div class="tviews">
       <button id="tv_etapa" class="on" onclick="tSetView('etapa')" title="Ver o trabalho dos três juntos, por etapa">Por etapa</button>
@@ -489,11 +557,28 @@ tbody tr:hover{background:#f0f5ec}
   <div class="mhead" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2 id="tTitle">Nova tarefa</h2><button type="button" onclick="tFechar()" aria-label="Fechar" title="Fechar" style="background:transparent;border:0;color:#fff;font-size:24px;line-height:1;cursor:pointer;padding:0 6px">✕</button></div>
   <div class="mbody"><div class="fgrid">
     <div class="field full"><label>Tarefa</label><input type="text" id="t_titulo" placeholder="Ex.: Gravar os 3 vídeos da Rosemary"></div>
-    <div class="field full"><label>Descrição</label><textarea id="t_descr" rows="3" placeholder="Detalhes, links, o que precisa ficar pronto..."></textarea></div>
+    <div class="field full"><label>Descrição</label>
+     <div class="tdtools">
+      <button type="button" onclick="tAnexoArquivo()" title="Foto, vídeo ou qualquer arquivo">📎 Anexar arquivo</button>
+      <button type="button" onclick="tAnexoLink()" title="Colar um link (Drive, Instagram, planilha...)">🔗 Colar link</button>
+     </div>
+     <textarea id="t_descr" rows="4" placeholder="Detalhes, links, o que precisa ficar pronto..." onpaste="tColar(event)"></textarea>
+     <div class="tdhint">Dica: dá pra colar um print direto aqui com Ctrl+V que ele vira anexo.</div>
+     <input type="file" id="t_file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.zip" style="display:none" onchange="tEnviarArquivos(this.files);this.value='';">
+     <div id="tAnexosBox" class="tanexos"></div>
+     <div id="tUpStat" class="tup" style="display:none"></div>
+    </div>
     <div class="field"><label>Responsável</label><select id="t_resp"></select></div>
     <div class="field"><label>Prazo</label><input type="date" id="t_prazo"></div>
     <div class="field"><label>Urgência</label><select id="t_urg"></select></div>
     <div class="field"><label>Etapa</label><select id="t_etapa"></select></div>
+    <div class="field full" style="margin-top:4px"><label>Comentários</label>
+     <div id="tComsBox" class="tcoms"></div>
+     <div class="tcomnovo" id="tComNovo">
+      <textarea id="t_com" rows="1" placeholder="Escreva um comentário para a equipe..." onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey))tComentar()"></textarea>
+      <button type="button" class="btn" onclick="tComentar()" style="align-self:stretch">Enviar</button>
+     </div>
+    </div>
   </div></div>
   <div class="mfoot">
    <button class="btn ghost" id="tDelBtn" onclick="tExcluir()" style="color:#c0271f">Excluir</button>
@@ -907,8 +992,30 @@ var T_EQUIPE=["Luan","Felipe","Enzo"];
 /* uma cor fixa por socio. Cor e mais rapida de ler que texto - bate o olho no
    quadro e ja sabe de quem e, sem precisar ler nome nenhum. */
 var T_PESSOA_COR={"Luan":"#2e7d46","Felipe":"#c2693f","Enzo":"#3b82c4"};
-function tCorPessoa(n){return T_PESSOA_COR[n]||"#7a8676";}
+/* sem diferenciar maiuscula: quem digitou "luan" no login continua verde */
+function tCorPessoa(n){
+ if(T_PESSOA_COR[n])return T_PESSOA_COR[n];
+ var k=String(n||"").trim().toLowerCase();
+ for(var p in T_PESSOA_COR)if(p.toLowerCase()===k)return T_PESSOA_COR[p];
+ return "#7a8676";
+}
+/* uma cor por ETAPA tambem. Sem isso, na visao "por pessoa" as quatro etapas
+   saiam todas no mesmo verde e nao dava pra ver num relance o que estava
+   parado. Duas paletas porque verde escuro some no fundo do tema escuro. */
+var T_ETAPA_COR={"A fazer":"#8a94a6","Fazendo":"#3b82c4","Aguardando":"#d99a2b","Feito":"#2e7d46"};
+var T_ETAPA_COR_ESC={"A fazer":"#a6b2c0","Fazendo":"#69a9e0","Aguardando":"#e8b45c","Feito":"#6cc98a"};
+function tCorEtapa(e){
+ var m=(typeof temaAtual==='function'&&temaAtual()==="escuro")?T_ETAPA_COR_ESC:T_ETAPA_COR;
+ return m[e]||m["A fazer"];
+}
+/* pilula colorida da etapa, no formato do ClickUp: bolinha + nome */
+function tPilulaEtapa(e){
+ var c=tCorEtapa(e);
+ return '<span class="tetapa" style="background:'+c+'22;color:'+c+';border-color:'+c+'55">'
+  +'<i class="tdot" style="background:'+c+'"></i>'+esc(e)+'</span>';
+}
 var tarefas=[],tAtual=null,_tDragId=null;
+var tAnexos=[],tPastaAtual="",tComentarios=[],tComCount={};
 
 function tCor(u){return T_CORES[u]||T_CORES.media;}
 function tNovoId(){return Date.now()*1000+Math.floor(Math.random()*999);}
@@ -935,14 +1042,28 @@ async function tarefasCarregar(){
   if(el)el.innerHTML='<div class="mini" style="padding:16px;color:#c0271f">Nao consegui carregar as tarefas. '+esc(String(e.message||e))+'<br>Se a tabela ainda nao existe, rode o SQL da tabela <b>tarefas</b> no Supabase.</div>';
   return;
  }
+ await tChecarAnexos();
+ await tContarComentarios();
  renderTarefas();
+}
+
+/* so os ids: o cartao precisa do NUMERO de comentarios, nao do texto.
+   Uma consulta magra pro quadro inteiro sai mais barato que uma por cartao. */
+async function tContarComentarios(){
+ tComCount={};
+ if(!SHEET_URL)return;
+ try{
+  var r=await fetch(sbUrl("tarefa_comentarios?select=tarefa_id"),{headers:sbHeaders()});
+  if(!r.ok)return;                       /* tabela ainda nao criada: segue sem os selos */
+  (await r.json()).forEach(function(c){tComCount[c.tarefa_id]=(tComCount[c.tarefa_id]||0)+1;});
+ }catch(e){}
 }
 
 /* grava uma tarefa (upsert). Otimista: a tela ja mudou antes disso. */
 async function tSync(row){
  if(!SHEET_URL){tLocalSave();return true;}
  try{
-  var r=await fetch(sbUrl("tarefas?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([row])});
+  var r=await fetch(sbUrl("tarefas?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([tLimpaRow(row)])});
   if(!r.ok)throw new Error('HTTP '+r.status+' '+(await r.text()).slice(0,140));
   setSave("ok");return true;
  }catch(e){setSave("err");alert("Nao consegui salvar a tarefa.\n\n"+String(e.message||e));return false;}
@@ -982,8 +1103,10 @@ function tColsEtapa(vis){
                .sort(function(a,b){return (a.pos||0)-(b.pos||0);});
   var cards=lista.map(function(t){return tCard(t,et==="Feito",false);}).join('')
     ||'<div class="tempty">Solte uma tarefa aqui</div>';
-  return '<div class="tcol" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
-   +'<h4>'+esc(et)+'<span class="cnt">'+lista.length+'</span></h4>'+cards+'</div>';
+  var c=tCorEtapa(et);
+  return '<div class="tcol et" style="border-top-color:'+c+'" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
+   +'<h4><span class="hd"><i class="tdot" style="background:'+c+'"></i><span style="color:'+c+'">'+esc(et)+'</span></span>'
+   +'<span class="cnt">'+lista.length+'</span></h4>'+cards+'</div>';
  }).join('');
 }
 
@@ -1040,6 +1163,7 @@ function tCard(t,feito,mostrarEtapa){
  var arrasta=(tView==='pessoa')
    ? ' ondragover="tOver(event,this.parentNode)"'
    : ' ondragover="tOver(event,this.parentNode)" ondrop="tDrop(event,\''+esc(etapa)+'\','+t.id+')"';
+ var nAnex=(t.anexos&&t.anexos.length)||0,nCom=tComCount[t.id]||0;
  return '<div class="tcard'+(feito?' done':'')+'" draggable="true" data-id="'+t.id+'"'
   +' ondragstart="tDragStart(event,'+t.id+')" ondragend="tDragEnd(this)"'
   +arrasta
@@ -1048,9 +1172,11 @@ function tCard(t,feito,mostrarEtapa){
   +'<div class="tmeta">'
   +'<span class="tpill" style="background:'+tCor(urg)+'">'+urgLbl+'</span>'
   +(mostrarEtapa
-     ? '<span class="tetapa">'+esc(etapa)+'</span>'
+     ? tPilulaEtapa(etapa)
      : (t.responsavel?'<span class="twho" style="background:'+tCorPessoa(t.responsavel)+'22;color:'+tCorPessoa(t.responsavel)+'"><i class="tdot" style="background:'+tCorPessoa(t.responsavel)+'"></i>'+esc(t.responsavel)+'</span>':''))
   +(lbl?'<span class="tdue'+cls+'">📅 '+lbl+'</span>':'')
+  +(nAnex?'<span class="tbadge" title="'+nAnex+' anexo(s)">📎 '+nAnex+'</span>':'')
+  +(nCom?'<span class="tbadge" title="'+nCom+' comentário(s)">💬 '+nCom+'</span>':'')
   +'</div></div>';
 }
 
@@ -1091,7 +1217,214 @@ async function tDrop(ev,etapa,alvoId){
 
 function tPick(t){return{id:t.id,titulo:t.titulo||"",descricao:t.descricao||"",responsavel:t.responsavel||"",
  prazo:t.prazo||null,urgencia:t.urgencia||"media",etapa:t.etapa||T_ETAPAS[0],pos:t.pos||1000,
- criado_por:t.criado_por||"",concluido_em:t.concluido_em||null,pedido_id:t.pedido_id||null};}
+ criado_por:t.criado_por||"",concluido_em:t.concluido_em||null,pedido_id:t.pedido_id||null,
+ anexos:Array.isArray(t.anexos)?t.anexos:[]};}
+
+/* Se o schema_tarefas_v2.sql ainda nao rodou, a coluna "anexos" nao existe e o
+   PostgREST recusa o upsert inteiro com 400. Melhor perder o anexo do que
+   travar o quadro: detecta uma vez e passa a gravar sem esse campo. */
+var tTemAnexos=true;
+function tLimpaRow(row){if(tTemAnexos)return row;var r={};for(var k in row)if(k!=="anexos")r[k]=row[k];return r;}
+async function tChecarAnexos(){
+ if(!SHEET_URL)return;
+ try{
+  var r=await fetch(sbUrl("tarefas?select=anexos&limit=1"),{headers:sbHeaders()});
+  tTemAnexos=r.ok;
+ }catch(e){tTemAnexos=false;}
+}
+
+/* ===================== ANEXOS =====================
+   Foto/video vao para o Storage do Supabase (bucket "tarefas", leitura
+   publica) e na tarefa fica so a URL. Guardar o arquivo em base64 dentro da
+   linha inflaria o banco em 33% e estouraria o localStorage no modo local.
+   Link colado nao sobe nada - e so um item do tipo "link".
+=================================================== */
+function tPasta(){if(!tPastaAtual)tPastaAtual=String(tAtual||tNovoId());return tPastaAtual;}
+function tTipoDe(mime,nome){
+ mime=(mime||"").toLowerCase();nome=(nome||"").toLowerCase();
+ if(mime.indexOf("image/")===0||/\.(png|jpe?g|gif|webp|bmp|avif)$/.test(nome))return "imagem";
+ if(mime.indexOf("video/")===0||/\.(mp4|mov|webm|m4v|avi)$/.test(nome))return "video";
+ return "arquivo";
+}
+function tNomeSeguro(n){
+ return (n||"arquivo").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+        .replace(/[^a-zA-Z0-9._-]/g,"_").slice(-70);
+}
+function tTamanho(b){
+ if(!b&&b!==0)return "";
+ if(b<1024)return b+" B";
+ if(b<1048576)return (b/1024).toFixed(0)+" KB";
+ return (b/1048576).toFixed(1)+" MB";
+}
+function tUpStat(msg,erro){
+ var el=document.getElementById('tUpStat');if(!el)return;
+ el.style.display=msg?'':'none';
+ el.style.color=erro?'#c0271f':'';
+ el.textContent=msg||"";
+}
+function tAnexoArquivo(){var i=document.getElementById('t_file');if(i)i.click();}
+
+/* Ctrl+V de um print cai aqui: o navegador entrega o PNG em clipboardData */
+function tColar(ev){
+ try{
+  var it=(ev.clipboardData&&ev.clipboardData.items)||[],arqs=[];
+  for(var i=0;i<it.length;i++){
+   if(it[i].kind==='file'){var f=it[i].getAsFile();if(f)arqs.push(f);}
+  }
+  if(arqs.length){ev.preventDefault();tEnviarArquivos(arqs);}
+ }catch(e){}
+}
+
+async function tEnviarArquivos(files){
+ files=Array.prototype.slice.call(files||[]);
+ if(!files.length)return;
+ if(!SHEET_URL){
+  tUpStat("Você está em modo local (sem nuvem). Aqui só dá pra anexar link.",true);
+  return;
+ }
+ if(!tTemAnexos){
+  tUpStat("O banco ainda não tem a coluna de anexos — rode o schema_tarefas_v2.sql no Supabase.",true);
+  return;
+ }
+ var pasta=tPasta();
+ for(var i=0;i<files.length;i++){
+  var f=files[i];
+  if(f.size>50*1024*1024){tUpStat('"'+f.name+'" tem '+tTamanho(f.size)+' — o limite é 50 MB.',true);continue;}
+  tUpStat("Enviando "+(i+1)+" de "+files.length+"... ("+tTamanho(f.size)+")");
+  var nome=tNomeSeguro(f.name||("colado-"+(tTipoDe(f.type,"")==="video"?"video.mp4":"print.png")));
+  var caminho=pasta+"/"+Date.now()+"-"+i+"-"+nome;
+  try{
+   var r=await fetch(SUPA_URL+"/storage/v1/object/tarefas/"+encodeURI(caminho),{
+    method:"POST",
+    headers:{"apikey":SUPA_ANON,"Authorization":"Bearer "+(ACCESS||SUPA_ANON),
+             "Content-Type":f.type||"application/octet-stream","x-upsert":"true"},
+    body:f});
+   if(!r.ok){
+    var txt=(await r.text()).slice(0,200);
+    if(r.status===404||/Bucket not found/i.test(txt))
+     throw new Error("O depósito de arquivos ainda não existe. Rode o schema_tarefas_v2.sql no Supabase.");
+    throw new Error("HTTP "+r.status+" "+txt);
+   }
+   tAnexos.push({id:tNovoId(),tipo:tTipoDe(f.type,f.name),nome:f.name||nome,
+                 url:SUPA_URL+"/storage/v1/object/public/tarefas/"+encodeURI(caminho),
+                 caminho:caminho,tamanho:f.size});
+   tRenderAnexos();
+  }catch(e){tUpStat(String(e.message||e),true);return;}
+ }
+ tUpStat(files.length>1?files.length+" arquivos anexados ✓":"Arquivo anexado ✓");
+ setTimeout(function(){tUpStat("");},2600);
+}
+
+function tAnexoLink(){
+ if(SHEET_URL&&!tTemAnexos){alert("O banco ainda não tem a coluna de anexos.\n\nRode o schema_tarefas_v2.sql no SQL Editor do Supabase e recarregue.");return;}
+ var u=prompt("Cole o link (Drive, Instagram, planilha, o que for):","");
+ if(u===null)return;
+ u=(u||"").trim();if(!u)return;
+ if(!/^https?:\/\//i.test(u))u="https://"+u;
+ var nome=prompt("Como esse link deve aparecer? (deixe em branco pra usar o próprio endereço)","")||"";
+ tAnexos.push({id:tNovoId(),tipo:"link",nome:nome.trim()||u,url:u});
+ tRenderAnexos();
+}
+
+function tRemoverAnexo(id){
+ var a=tAnexos.find(function(x){return String(x.id)===String(id);});
+ if(!a)return;
+ if(!confirm('Remover "'+(a.nome||a.url)+'" desta tarefa?'))return;
+ tAnexos=tAnexos.filter(function(x){return String(x.id)!==String(id);});
+ tRenderAnexos();
+ /* apaga do Storage tambem - anexo removido nao deve continuar ocupando espaco */
+ if(a.caminho&&SHEET_URL){
+  fetch(SUPA_URL+"/storage/v1/object/tarefas/"+encodeURI(a.caminho),
+   {method:"DELETE",headers:{"apikey":SUPA_ANON,"Authorization":"Bearer "+(ACCESS||SUPA_ANON)}}).catch(function(){});
+ }
+}
+
+function tRenderAnexos(){
+ var el=document.getElementById('tAnexosBox');if(!el)return;
+ el.innerHTML=tAnexos.map(function(a){
+  var x='<button type="button" class="x" title="Remover" onclick="tRemoverAnexo(\''+esc(String(a.id))+'\')">✕</button>';
+  if(a.tipo==="link")
+   return '<div class="tanexo lk">🔗 <a class="nm" href="'+esc(a.url)+'" target="_blank" rel="noopener" title="'+esc(a.url)+'">'+esc(a.nome||a.url)+'</a>'+x+'</div>';
+  if(a.tipo==="imagem")
+   return '<div class="tanexo"><a href="'+esc(a.url)+'" target="_blank" rel="noopener"><img src="'+esc(a.url)+'" alt="'+esc(a.nome||'')+'"></a>'
+    +'<a class="nm" href="'+esc(a.url)+'" target="_blank" rel="noopener">'+esc(a.nome||'imagem')+'</a>'+x+'</div>';
+  if(a.tipo==="video")
+   return '<div class="tanexo"><video src="'+esc(a.url)+'" controls preload="metadata"></video>'
+    +'<a class="nm" href="'+esc(a.url)+'" target="_blank" rel="noopener">'+esc(a.nome||'vídeo')+'</a>'+x+'</div>';
+  return '<div class="tanexo lk">📄 <a class="nm" href="'+esc(a.url)+'" target="_blank" rel="noopener">'+esc(a.nome||'arquivo')
+   +(a.tamanho?' · '+tTamanho(a.tamanho):'')+'</a>'+x+'</div>';
+ }).join('');
+}
+
+/* ===================== COMENTARIOS ===================== */
+/* transforma URL solta em link clicavel DEPOIS do esc() - a ordem importa,
+   se linkar antes o esc() come as aspas do href e nao vira link nenhum */
+function tLinkar(txt){
+ return esc(txt).replace(/(https?:\/\/[^\s<]+)/g,function(u){
+  return '<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>';
+ });
+}
+
+async function tCarregarComentarios(id){
+ var el=document.getElementById('tComsBox');if(!el)return;
+ tComentarios=[];
+ if(!id){el.innerHTML='<div class="tcomvazio">Salve a tarefa primeiro — aí o comentário tem onde ficar.</div>';return;}
+ if(!SHEET_URL){el.innerHTML='<div class="tcomvazio">Comentário precisa da nuvem (entre com e-mail e senha).</div>';return;}
+ el.innerHTML='<div class="tcomvazio">Carregando...</div>';
+ try{
+  var r=await fetch(sbUrl("tarefa_comentarios?select=*&tarefa_id=eq."+id+"&order=id.asc"),{headers:sbHeaders()});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  tComentarios=await r.json();
+ }catch(e){
+  el.innerHTML='<div class="tcomvazio" style="color:#c0271f">Não consegui carregar os comentários. Se a tabela ainda não existe, rode o <b>schema_tarefas_v2.sql</b> no Supabase.</div>';
+  return;
+ }
+ tRenderComentarios();
+}
+
+function tRenderComentarios(){
+ var el=document.getElementById('tComsBox');if(!el)return;
+ if(!tComentarios.length){el.innerHTML='<div class="tcomvazio">Nenhum comentário ainda. Puxe o assunto.</div>';return;}
+ var eu=userName();
+ el.innerHTML=tComentarios.map(function(c){
+  var cor=tCorPessoa(c.autor);
+  return '<div class="tcom"><span class="av" style="background:'+cor+'">'+esc(tIniciais(c.autor||'?'))+'</span>'
+   +'<div class="bd"><span class="who">'+esc(c.autor||'Equipe')+'</span>'
+   +'<span class="ts">'+esc(typeof fmtTs==='function'?fmtTs(c.criado_em):(c.criado_em||''))+'</span>'
+   +'<div class="txt">'+tLinkar(c.texto||'')+'</div></div>'
+   +((c.autor===eu)?'<button type="button" class="del" title="Apagar" onclick="tApagarComentario('+c.id+')">🗑</button>':'')
+   +'</div>';
+ }).join('');
+ el.scrollTop=el.scrollHeight;
+}
+
+async function tComentar(){
+ var ta=document.getElementById('t_com');if(!ta)return;
+ var txt=(ta.value||"").trim();
+ if(!txt)return;
+ if(!tAtual){alert("Salve a tarefa primeiro. Depois é só reabrir e comentar.");return;}
+ if(!SHEET_URL){alert("Comentário precisa da nuvem. Entre com e-mail e senha.");return;}
+ var row={id:tNovoId(),tarefa_id:tAtual,autor:userName(),texto:txt.slice(0,4000),criado_em:new Date().toISOString()};
+ tComentarios.push(row);tRenderComentarios();ta.value="";   /* otimista, igual ao resto do quadro */
+ try{
+  var r=await fetch(sbUrl("tarefa_comentarios"),{method:"POST",headers:sbHeaders(),body:JSON.stringify([row])});
+  if(!r.ok)throw new Error("HTTP "+r.status+" "+(await r.text()).slice(0,160));
+  tComCount[tAtual]=(tComCount[tAtual]||0)+1;renderTarefas();
+  var t=tarefas.find(function(x){return x.id===tAtual;});
+  if(typeof logAct==='function')logAct('comentou na tarefa "'+((t&&t.titulo)||'').slice(0,60)+'"');
+ }catch(e){
+  tComentarios=tComentarios.filter(function(c){return c.id!==row.id;});tRenderComentarios();
+  alert("Não consegui enviar o comentário.\n\n"+String(e.message||e)+"\n\nSe a tabela ainda não existe, rode o schema_tarefas_v2.sql no Supabase.");
+ }
+}
+
+async function tApagarComentario(id){
+ if(!confirm("Apagar este comentário?"))return;
+ tComentarios=tComentarios.filter(function(c){return c.id!==id;});tRenderComentarios();
+ if(tAtual)tComCount[tAtual]=Math.max(0,(tComCount[tAtual]||1)-1);
+ renderTarefas();
+ try{await fetch(sbUrl("tarefa_comentarios?id=eq."+id),{method:"DELETE",headers:sbHeaders()});}catch(e){}
+}
 
 /* ---------- modal ---------- */
 function tFill(sel,arr,pares){var s=document.getElementById(sel);if(!s)return;s.innerHTML="";
@@ -1110,10 +1443,18 @@ function tAbrir(id){
  document.getElementById('t_prazo').value=t?(t.prazo||""):"";
  document.getElementById('t_urg').value=t?(t.urgencia||"media"):"media";
  document.getElementById('t_etapa').value=t?(t.etapa||T_ETAPAS[0]):T_ETAPAS[0];
+ /* anexos: tarefa nova ganha uma pasta propria ja na abertura, senao nao teria
+    onde subir o print antes de existir id. Se cancelar, o arquivo fica orfao
+    no Storage - preco baixo perto de obrigar a salvar antes de anexar. */
+ tAnexos=(t&&Array.isArray(t.anexos))?t.anexos.slice():[];
+ tPastaAtual=String(id||tNovoId());
+ tRenderAnexos();tUpStat("");
+ var cx=document.getElementById('t_com');if(cx)cx.value="";
+ tCarregarComentarios(id||null);
  document.getElementById('tOverlay').classList.add('open');
  setTimeout(function(){var i=document.getElementById('t_titulo');if(i&&!tAtual)i.focus();},60);
 }
-function tFechar(){document.getElementById('tOverlay').classList.remove('open');tAtual=null;}
+function tFechar(){document.getElementById('tOverlay').classList.remove('open');tAtual=null;tPastaAtual="";}
 
 async function tSalvar(){
  var titulo=(document.getElementById('t_titulo').value||"").trim();
@@ -1128,6 +1469,7 @@ async function tSalvar(){
  }
  t.titulo=titulo;
  t.descricao=(document.getElementById('t_descr').value||"").trim();
+ t.anexos=tAnexos.slice();
  t.responsavel=document.getElementById('t_resp').value;
  t.prazo=document.getElementById('t_prazo').value||null;
  t.urgencia=document.getElementById('t_urg').value;
@@ -1143,10 +1485,19 @@ async function tExcluir(){
  if(!tAtual)return;
  var t=tarefas.find(function(x){return x.id===tAtual;});if(!t)return;
  if(!confirm('Apagar a tarefa "'+(t.titulo||"")+'"? Nao da pra desfazer.'))return;
- var id=tAtual,titulo=t.titulo||"";
+ var id=tAtual,titulo=t.titulo||"",arqs=(t.anexos||[]).filter(function(a){return a.caminho;});
  tarefas=tarefas.filter(function(x){return x.id!==id;});
  tFechar();renderTarefas();
- if(SHEET_URL){try{await fetch(sbUrl("tarefas?id=eq."+id),{method:"DELETE",headers:sbHeaders()});}catch(e){}}
+ if(SHEET_URL){
+  /* os comentarios somem sozinhos (on delete cascade); os arquivos nao -
+     Storage nao conhece a chave estrangeira, tem que apagar na mao */
+  try{await fetch(sbUrl("tarefas?id=eq."+id),{method:"DELETE",headers:sbHeaders()});}catch(e){}
+  arqs.forEach(function(a){
+   fetch(SUPA_URL+"/storage/v1/object/tarefas/"+encodeURI(a.caminho),
+    {method:"DELETE",headers:{"apikey":SUPA_ANON,"Authorization":"Bearer "+(ACCESS||SUPA_ANON)}}).catch(function(){});
+  });
+  delete tComCount[id];
+ }
  else tLocalSave();
  if(typeof logAct==='function')logAct('apagou a tarefa "'+titulo.slice(0,60)+'"');
 }
@@ -1160,7 +1511,7 @@ async function tSalvarTudo(){
  if(!tarefas.length){alert("Não há tarefa para salvar ainda.");return;}
  setSave("saving");
  try{
-  var rows=tarefas.map(tPick);
+  var rows=tarefas.map(tPick).map(tLimpaRow);
   for(var i=0;i<rows.length;i+=200){
    var r=await fetch(sbUrl("tarefas?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify(rows.slice(i,i+200))});
    if(!r.ok)throw new Error("HTTP "+r.status+" "+(await r.text()).slice(0,160));
@@ -1182,6 +1533,12 @@ function aplicarTema(t){
  try{localStorage.setItem("crm_tema",escuro?"escuro":"claro");}catch(e){}
  var b=document.getElementById("btnTema");
  if(b)b.textContent=escuro?"☀️ Tema claro":"🌙 Tema escuro";
+ /* o mesmo interruptor na barra do topo, que fica a vista em qualquer aba */
+ var b2=document.getElementById("btnTemaTop");
+ if(b2){b2.textContent=escuro?"☀️ Claro":"🌙 Escuro";
+        b2.title=escuro?"Voltar para o tema claro":"Mudar para o tema escuro";}
+ /* as cores das etapas trocam junto com o tema, entao o quadro repinta */
+ if(typeof renderTarefas==='function'&&document.getElementById('tBoard'))renderTarefas();
 }
 function alternarTema(){aplicarTema(temaAtual()==="escuro"?"claro":"escuro");}
 aplicarTema(temaAtual());
