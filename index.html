@@ -195,96 +195,198 @@ tbody tr:hover{background:#f0f5ec}
 .mval{font-size:10px;font-weight:800;color:var(--green-dk);white-space:nowrap;height:14px}
 .mlbl{font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap}
 @media(max-width:760px){.mchart{height:165px;gap:9px;overflow-x:auto;overflow-y:hidden;justify-content:flex-start;padding-bottom:8px;-webkit-overflow-scrolling:touch}.mcol{flex:0 0 auto;min-width:44px}.mval{font-size:9px}.mlbl{font-size:9px}.mtrack{max-width:34px}}
-/* ===== Quadro de tarefas ===== */
+/* ===================== TAREFAS — no formato do ClickUp =====================
+   As medidas saíram do ClickUp real do Luan (workspace SPRINTS MARKETING):
+   lista agrupada por status, cabeçalho de coluna fininho, linha de 38px,
+   pílula de status em CAIXA ALTA e bandeira colorida na prioridade.
+   As cores de status e de prioridade são as mesmas que o ClickUp usa.
+=========================================================================== */
+
+/* ---------- barra de visões (Lista · Quadro · Equipe) ---------- */
+.cu-views{display:flex;gap:2px;border-bottom:1px solid var(--line);margin:0 0 14px}
+.cu-views button{background:transparent;border:0;box-shadow:none;cursor:pointer;
+ padding:9px 14px;font-size:13px;font-weight:600;color:var(--muted);
+ border-bottom:2px solid transparent;margin-bottom:-1px;display:inline-flex;align-items:center;gap:6px}
+.cu-views button:hover{color:var(--ink)}
+.cu-views button.on{color:var(--green-dk);border-bottom-color:var(--green-dk);font-weight:800}
+
+/* ---------- cartões de resumo do topo ---------- */
+.cu-resumo{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.cu-card{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
+ border-radius:11px;padding:10px 15px;min-width:186px}
+.cu-card .ic{width:26px;height:26px;border-radius:7px;display:inline-flex;align-items:center;
+ justify-content:center;font-size:14px;flex:0 0 auto}
+.cu-card b{display:block;font-size:12.5px;color:var(--ink);line-height:1.2}
+.cu-card span{display:block;font-size:11.5px;color:var(--muted);margin-top:2px}
+
+/* ---------- LISTA agrupada por status ---------- */
+.cu-lista{display:block}
+.cu-grupo{margin-bottom:20px}
+.cu-ghead{display:flex;align-items:center;gap:8px;padding:4px 2px 7px;cursor:pointer;user-select:none}
+.cu-caret{font-size:10px;color:var(--muted);width:12px;transition:transform .13s;display:inline-block}
+.cu-grupo.fechado .cu-caret{transform:rotate(-90deg)}
+.cu-grupo.fechado .cu-cols,.cu-grupo.fechado .cu-row,.cu-grupo.fechado .cu-addrow{display:none}
+.cu-status{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+ padding:3px 10px;border-radius:6px;color:#fff;white-space:nowrap}
+.cu-gcount{font-size:12px;font-weight:700;color:var(--muted)}
+.cu-gadd{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted);background:transparent;
+ border:0;box-shadow:none;cursor:pointer;padding:3px 8px;border-radius:7px}
+.cu-gadd:hover{background:var(--moss);color:var(--green-dk)}
+
+.cu-cols,.cu-row{display:grid;grid-template-columns:minmax(0,1fr) 108px 132px 108px;
+ gap:10px;align-items:center;padding:0 10px}
+.cu-cols{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:none;
+ padding-bottom:5px;border-bottom:1px solid var(--line)}
+.cu-row{min-height:38px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .1s}
+.cu-row:hover{background:var(--cream)}
+.cu-row.drag{opacity:.4}
+.cu-row.alvo{box-shadow:inset 0 2px 0 var(--green2)}
+.cu-nome{display:flex;align-items:center;gap:8px;min-width:0}
+.cu-dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto;border:2px solid currentColor;background:transparent}
+.cu-dot.cheio{background:currentColor}
+.cu-tt{font-size:13px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.cu-row.feito .cu-tt{text-decoration:line-through;opacity:.5}
+.cu-marcas{display:inline-flex;gap:6px;font-size:10.5px;color:var(--muted);flex:0 0 auto;font-weight:700}
+.cu-tags{display:inline-flex;gap:4px;flex:0 0 auto}
+.cu-tag{font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.cu-avs{display:flex}
+.cu-av{width:22px;height:22px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:800;
+ display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+.cu-av.vazio{background:transparent;border:1px dashed var(--line);color:var(--muted)}
+.cu-due{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
+.cu-due.late{color:#e5484d;font-weight:700}
+.cu-due.hoje{color:#f76808;font-weight:700}
+.cu-due.vazio{color:var(--line)}
+.cu-prio{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;white-space:nowrap}
+.cu-flag{font-size:11px;line-height:1}
+.cu-addrow{display:flex;align-items:center;gap:7px;padding:8px 10px;font-size:12.5px;font-weight:600;
+ color:var(--muted);cursor:pointer;background:transparent;border:0;box-shadow:none;width:100%;text-align:left}
+.cu-addrow:hover{color:var(--green-dk)}
+.cu-novo{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;
+ padding:5px 10px;border-bottom:1px solid var(--line)}
+.cu-novo input{padding:7px 10px;border:1px solid var(--green2);border-radius:8px;font-size:13px;
+ font-family:inherit;background:var(--card);color:var(--ink);width:100%}
+.cu-vazio{font-size:12px;color:var(--muted);padding:11px 10px}
+
+/* ---------- QUADRO (kanban) ---------- */
 .tboard{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start}
 .tcol{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:10px;min-height:140px;transition:background .12s,border-color .12s}
 .tcol.over{background:var(--moss);border-color:var(--green2)}
-.tcol h4{margin:0 0 10px;font-size:13px;font-weight:800;color:var(--green-dk);display:flex;justify-content:space-between;align-items:center;gap:6px}
-.tcol h4 .cnt{background:#fff;border:1px solid var(--line);border-radius:20px;font-size:11px;padding:1px 8px;color:var(--muted);font-weight:700}
-.tcard{background:#fff;border:1px solid var(--line);border-left:4px solid var(--sage);border-radius:11px;padding:10px 11px;margin-bottom:9px;cursor:grab;box-shadow:0 2px 6px rgba(28,67,39,.05);transition:box-shadow .12s,transform .12s}
+.tcol h4{margin:0 0 10px;font-size:13px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.tcol h4 .cnt{background:var(--card);border:1px solid var(--line);border-radius:20px;font-size:11px;padding:1px 8px;color:var(--muted);font-weight:700}
+.tcol h4 .hd{display:inline-flex;align-items:center;gap:7px;min-width:0}
+.tcard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sage);border-radius:11px;padding:10px 11px;margin-bottom:9px;cursor:grab;box-shadow:0 2px 6px rgba(28,67,39,.05);transition:box-shadow .12s,transform .12s}
 .tcard:hover{box-shadow:0 5px 14px rgba(28,67,39,.13);transform:translateY(-1px)}
 .tcard:active{cursor:grabbing}
 .tcard.drag{opacity:.4}
 .tcard .tt{font-size:13px;font-weight:700;color:var(--ink);line-height:1.35;margin-bottom:7px;word-break:break-word}
 .tcard .tmeta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-.tpill{font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;color:#fff;letter-spacing:.02em}
-.twho{font-size:10px;font-weight:700;background:var(--moss);color:var(--green-dk);padding:2px 8px;border-radius:20px}
+.tpill{font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.02em;display:inline-flex;align-items:center;gap:4px}
+.twho{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center}
 .tdue{font-size:10px;font-weight:700;background:#f0f0ea;color:var(--muted);padding:2px 8px;border-radius:20px}
 .tdue.hoje{background:#fdf1dc;color:#9a6a17}
 .tdue.late{background:#fbe4e2;color:#c0271f}
 .tcard.done .tt{text-decoration:line-through;opacity:.55}
 .tempty{font-size:11px;color:var(--muted);text-align:center;padding:14px 4px;border:1px dashed var(--line);border-radius:10px}
-/* visao por pessoa */
-.tboard-3{grid-template-columns:repeat(3,1fr)}
-.tcol-p{background:#fff;border:1px solid var(--line)}
-.tcol-p h4{padding-bottom:9px;border-bottom:1px solid var(--line)}
-.tav{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;margin-right:7px;flex:0 0 auto}
-.tcol h4{gap:0}
-.tetapa{font-size:10px;font-weight:700;background:#eef1ea;color:var(--green-dk);padding:2px 8px;border-radius:20px}
-.tdot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle}
-.twho{display:inline-flex;align-items:center}
-/* alternador de visao */
-.tviews{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
-.tviews button{background:transparent;color:var(--muted);border:0;padding:8px 13px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:none}
-.tviews button.on{background:var(--green);color:#fff}
-@media(max-width:900px){.tboard{grid-template-columns:repeat(2,1fr)}.tboard-3{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.tboard,.tboard-3{grid-template-columns:1fr}}
-
-/* ---------- cor por ETAPA (estilo ClickUp: bolinha + pilula na cor) ----------
-   Antes as 4 etapas saiam todas no mesmo verde, entao na visao "por pessoa"
-   nao dava pra saber num relance o que estava parado e o que ja tinha ido.
-   A cor vem inline do JS (tCorEtapa) porque muda com o tema. */
-.tetapa{display:inline-flex;align-items:center;border:1px solid transparent;white-space:nowrap}
-.tcol h4 .hd{display:inline-flex;align-items:center;gap:7px;min-width:0}
-.tcol h4 .hd .tdot{width:9px;height:9px;margin:0;flex:0 0 auto}
-.tcol.et{border-top:3px solid var(--line)}
-
-/* ---------- selo de anexo / comentario no cartao ---------- */
+.tetapa{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;border:1px solid transparent;white-space:nowrap}
+.tdot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle;flex:0 0 auto}
+.tcol h4 .hd .tdot{width:9px;height:9px;margin:0}
 .tbadge{font-size:10px;font-weight:700;background:#f0f0ea;color:var(--muted);padding:2px 7px;border-radius:20px}
 
-/* ---------- botao de tema na barra do topo (fica sempre a vista) ---------- */
-.temaTop{margin-left:auto;background:#fff;border:1px solid var(--line);color:var(--green-dk);border-radius:20px;
+/* ---------- EQUIPE (uma coluna por sócio) ---------- */
+.tboard-3{grid-template-columns:repeat(3,1fr)}
+.tcol-p{background:var(--card);border:1px solid var(--line)}
+.tcol-p h4{padding-bottom:9px;border-bottom:1px solid var(--line)}
+.tav{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;margin-right:7px;flex:0 0 auto}
+
+/* ---------- botão de tema na barra do topo ---------- */
+.temaTop{margin-left:auto;background:var(--card);border:1px solid var(--line);color:var(--green-dk);border-radius:20px;
  padding:6px 13px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:none;white-space:nowrap;align-self:center}
 .temaTop:hover{background:var(--moss)}
 
-/* ---------- descricao rica: barra de acoes + galeria de anexos ---------- */
+/* ===================== MODAL DE TAREFA — igual ao ClickUp =====================
+   No ClickUp a tarefa não é um formulário: é um título grande e uma fileira de
+   "chips" (responsável, data, prioridade, etiquetas) que você clica. Copiei
+   essa anatomia, junto com a barra de atividade no rodapé.
+============================================================================= */
+.cu-modal{background:var(--card);border-radius:14px;width:760px;max-width:100%;
+ box-shadow:0 30px 70px rgba(0,0,0,.4);overflow:hidden;display:flex;flex-direction:column;max-height:92vh}
+.cu-top{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex:0 0 auto}
+.cu-statussel{appearance:none;-webkit-appearance:none;border:0;border-radius:6px;color:#fff;
+ font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:5px 26px 5px 11px;
+ cursor:pointer;font-family:inherit;
+ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+ background-repeat:no-repeat;background-position:right 9px center}
+.cu-statussel.escuro{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='%231f2a22' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>")}
+.cu-statussel option{color:var(--ink);background:var(--card)}
+.cu-top .fechar{margin-left:auto;background:transparent;border:0;box-shadow:none;color:var(--muted);
+ font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
+.cu-top .fechar:hover{color:var(--ink)}
+.cu-body{padding:16px 20px 20px;overflow:auto;flex:1 1 auto}
+.cu-titulo{width:100%;border:0;outline:0;background:transparent;color:var(--ink);
+ font-size:23px;font-weight:800;font-family:inherit;padding:2px 0 10px;line-height:1.25}
+.cu-titulo::placeholder{color:var(--muted);font-weight:600}
+.cu-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.cu-chip{display:inline-flex;align-items:center;gap:6px;border:1px dashed var(--line);border-radius:8px;
+ padding:5px 10px;font-size:12px;font-weight:600;color:var(--muted);background:transparent;cursor:pointer}
+.cu-chip:hover{border-color:var(--green2);color:var(--green-dk)}
+.cu-chip.preenchido{border-style:solid;color:var(--ink)}
+.cu-chip select,.cu-chip input{border:0;outline:0;background:transparent;font-family:inherit;
+ font-size:12px;font-weight:600;color:inherit;cursor:pointer;padding:0;max-width:150px}
+.cu-chip input[type=date]{cursor:pointer;color-scheme:light}
+[data-tema="escuro"] .cu-chip input[type=date]{color-scheme:dark}
+.cu-sec{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;
+ letter-spacing:.5px;margin:0 0 7px}
+.cu-descr{width:100%;min-height:96px;border:1px solid transparent;border-radius:9px;padding:9px 11px;
+ font-size:13.5px;font-family:inherit;line-height:1.5;background:transparent;color:var(--ink);resize:vertical}
+.cu-descr:hover{border-color:var(--line)}
+.cu-descr:focus{border-color:var(--green2);outline:0;background:var(--cream)}
+.cu-descr::placeholder{color:var(--muted)}
+.cu-foot{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--line);flex:0 0 auto}
+
+/* barra de ferramentas da descrição + anexos */
 .tdtools{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
-.tdtools button{background:#fff;border:1px solid var(--line);color:var(--green-dk);border-radius:8px;
- padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer;box-shadow:none}
-.tdtools button:hover{background:var(--moss)}
+.tdtools button{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:7px;
+ padding:4px 10px;font-size:11.5px;font-weight:700;cursor:pointer;box-shadow:none}
+.tdtools button:hover{background:var(--moss);color:var(--green-dk);border-color:var(--green2)}
 .tdhint{font-size:11px;color:var(--muted);margin-top:5px}
 .tanexos{display:flex;flex-wrap:wrap;gap:9px;margin-top:9px}
-.tanexo{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;
- width:118px;font-size:11px}
-.tanexo img,.tanexo video{display:block;width:118px;height:82px;object-fit:cover;background:#eceade}
-.tanexo .nm{display:block;padding:5px 7px;color:var(--ink);text-decoration:none;word-break:break-all;line-height:1.25;
- max-height:44px;overflow:hidden}
+.tanexo{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card);width:118px;font-size:11px}
+.tanexo img,.tanexo video{display:block;width:118px;height:82px;object-fit:cover;background:var(--cream)}
+.tanexo .nm{display:block;padding:5px 7px;color:var(--ink);text-decoration:none;word-break:break-all;line-height:1.25;max-height:44px;overflow:hidden}
 .tanexo .nm:hover{color:var(--green-dk);text-decoration:underline}
 .tanexo .x{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;border:0;cursor:pointer;
  background:rgba(20,30,22,.72);color:#fff;font-size:12px;line-height:20px;padding:0;box-shadow:none}
-.tanexo.lk{width:auto;max-width:100%;display:flex;align-items:center;gap:6px;padding:6px 30px 6px 10px;border-radius:20px}
+.tanexo.lk{width:auto;max-width:100%;display:flex;align-items:center;gap:6px;padding:6px 32px 6px 10px;border-radius:20px}
 .tanexo.lk .nm{padding:0;color:var(--green-dk);font-weight:700;max-width:270px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
 .tanexo.lk .x{top:50%;transform:translateY(-50%)}
 .tup{font-size:11.5px;color:var(--green-dk);font-weight:700;margin-top:7px}
 
-/* ---------- comentarios ---------- */
-.tcoms{margin-top:4px;max-height:230px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fbfaf5;padding:9px}
-.tcom{display:flex;gap:9px;padding:7px 2px;border-bottom:1px solid #f0efe6}
+/* atividade / comentários */
+.tcoms{margin-top:4px;max-height:220px;overflow:auto}
+.tcom{display:flex;gap:9px;padding:8px 2px;border-bottom:1px solid var(--line)}
 .tcom:last-child{border-bottom:0}
 .tcom .av{width:26px;height:26px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;flex:0 0 auto;
  display:inline-flex;align-items:center;justify-content:center}
 .tcom .bd{flex:1;min-width:0}
-.tcom .who{font-size:12px;font-weight:800;color:var(--green-dk)}
+.tcom .who{font-size:12px;font-weight:800;color:var(--ink)}
 .tcom .ts{font-size:10.5px;color:var(--muted);margin-left:6px;font-weight:600}
-.tcom .txt{font-size:12.5px;color:var(--ink);line-height:1.4;white-space:pre-wrap;word-break:break-word;margin-top:2px}
+.tcom .txt{font-size:12.5px;color:var(--ink);line-height:1.45;white-space:pre-wrap;word-break:break-word;margin-top:2px}
 .tcom .txt a{color:var(--green-dk);font-weight:700}
 .tcom .del{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:12px;padding:0 4px;box-shadow:none;flex:0 0 auto}
 .tcom .del:hover{color:#c0271f}
-.tcomnovo{display:flex;gap:8px;margin-top:9px;align-items:flex-start}
-.tcomnovo textarea{flex:1;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;
- font-size:13px;font-family:inherit;resize:vertical;background:#fff}
-.tcomvazio{font-size:11.5px;color:var(--muted);padding:6px 2px}
+.tcomnovo{display:flex;gap:8px;margin-top:10px;align-items:flex-start;border:1px solid var(--line);
+ border-radius:10px;padding:7px 8px 7px 11px;background:var(--card)}
+.tcomnovo:focus-within{border-color:var(--green2)}
+.tcomnovo textarea{flex:1;min-height:34px;border:0;outline:0;font-size:13px;font-family:inherit;
+ resize:vertical;background:transparent;color:var(--ink);padding:4px 0}
+.tcomvazio{font-size:11.5px;color:var(--muted);padding:8px 2px}
 
+@media(max-width:900px){.tboard{grid-template-columns:repeat(2,1fr)}.tboard-3{grid-template-columns:repeat(2,1fr)}
+ .cu-cols{display:none}.cu-row{grid-template-columns:minmax(0,1fr) auto;row-gap:4px}
+ .cu-row .cu-due,.cu-row .cu-prio{justify-self:end}}
+@media(max-width:560px){.tboard,.tboard-3{grid-template-columns:1fr}
+ .cu-views{overflow-x:auto}.cu-titulo{font-size:19px}}
 /* ===================== TEMA ESCURO =====================
    O arquivo tem ~100 cores fixas no CSS (27 sao #fff), entao nao bastou
    trocar as variaveis do :root - foi preciso pegar os seletores que
@@ -329,32 +431,27 @@ tbody tr:hover{background:#f0f5ec}
 [data-tema="escuro"] .login input{background:#141c17;color:var(--ink);border-color:var(--line)}
 [data-tema="escuro"] .login input::placeholder{color:#6f7d72}
 [data-tema="escuro"] .login .skip:hover{color:var(--green2)}
-/* quadro de tarefas */
+/* tarefas — quase tudo ja usa var(--card)/var(--cream)/var(--line), entao aqui
+   so sobra o que tem cor fixa por motivo de contraste */
 [data-tema="escuro"] .tcol{background:#151d18;border-color:var(--line)}
 [data-tema="escuro"] .tcol.over{background:#22352a;border-color:var(--green2)}
-[data-tema="escuro"] .tcol h4 .cnt{background:#141c17;color:var(--muted);border-color:var(--line)}
-[data-tema="escuro"] .tcard{background:var(--card);border-color:var(--line);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+[data-tema="escuro"] .tcard{box-shadow:0 2px 6px rgba(0,0,0,.3)}
 [data-tema="escuro"] .tcard:hover{box-shadow:0 5px 14px rgba(0,0,0,.45)}
-[data-tema="escuro"] .tcol-p{background:var(--card)}
-[data-tema="escuro"] .tetapa{background:#243029;color:var(--green-dk)}
 [data-tema="escuro"] .tdue{background:#243029;color:var(--muted)}
 [data-tema="escuro"] .tdue.hoje{background:#3a2f14;color:#e0b56a}
 [data-tema="escuro"] .tdue.late{background:#3d1e1b;color:#f08a80}
-[data-tema="escuro"] .tviews{background:#141c17;border-color:var(--line)}
-[data-tema="escuro"] .tempty{border-color:var(--line);color:var(--muted)}
 [data-tema="escuro"] .tbadge{background:#243029;color:var(--muted)}
-[data-tema="escuro"] .temaTop{background:#1b241e;color:var(--ink);border-color:var(--line)}
 [data-tema="escuro"] .temaTop:hover{background:#243029}
-[data-tema="escuro"] .tdtools button{background:#1b241e;color:var(--ink);border-color:var(--line)}
-[data-tema="escuro"] .tdtools button:hover{background:#243029}
-[data-tema="escuro"] .tanexo{background:#1b241e;border-color:var(--line)}
-[data-tema="escuro"] .tanexo img,[data-tema="escuro"] .tanexo video{background:#243029}
+[data-tema="escuro"] .cu-row:hover{background:#20291f}
+[data-tema="escuro"] .cu-gadd:hover{background:#243029}
+[data-tema="escuro"] .cu-descr:focus{background:#151d18}
+[data-tema="escuro"] .cu-novo input,[data-tema="escuro"] .cu-titulo{background:transparent;color:var(--ink)}
+[data-tema="escuro"] .cu-due.late{color:#ff7b7b}
+[data-tema="escuro"] .cu-due.hoje{color:#ffa057}
 [data-tema="escuro"] .tanexo .nm{color:var(--ink)}
 [data-tema="escuro"] .tanexo.lk .nm{color:var(--green-dk)}
-[data-tema="escuro"] .tcoms{background:#141c17;border-color:var(--line)}
-[data-tema="escuro"] .tcom{border-bottom-color:var(--line)}
-[data-tema="escuro"] .tcomnovo textarea{background:#141c17;color:var(--ink);border-color:var(--line)}
-[data-tema="escuro"] .tcomnovo textarea::placeholder{color:#6f7d72}
+[data-tema="escuro"] .tcomnovo textarea::placeholder,[data-tema="escuro"] .cu-descr::placeholder,
+[data-tema="escuro"] .cu-titulo::placeholder,[data-tema="escuro"] .cu-novo input::placeholder{color:#6f7d72}
 </style>
 <script>
 /* aplica o tema ANTES da pagina pintar - senao pisca branco e depois escurece */
@@ -495,20 +592,20 @@ tbody tr:hover{background:#f0f5ec}
   </section>
 
   <section class="view" id="tarefas">
-   <div class="panel" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-    <div><h3>✅ Tarefas da equipe</h3><div class="mini" style="color:var(--muted)">Arraste o cartão entre as colunas. Abra a tarefa para anexar foto, vídeo, link e comentar. Tudo fica salvo pra todo mundo.</div></div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-     <div class="tviews">
-      <button id="tv_etapa" class="on" onclick="tSetView('etapa')" title="Ver o trabalho dos três juntos, por etapa">Por etapa</button>
-      <button id="tv_pessoa" onclick="tSetView('pessoa')" title="Uma coluna para cada um">Por pessoa</button>
-     </div>
-     <select id="tFiltro" onchange="renderTarefas()" style="padding:8px 10px;border:1px solid var(--line);border-radius:9px;font-size:13px"><option value="">Todos</option></select>
-     <button class="btn ghost" onclick="tarefasCarregar()">🔄 Atualizar</button>
-     <button class="btn ghost" onclick="tSalvarTudo()" title="Empurra todas as tarefas pra nuvem agora">💾 Salvar tarefas</button>
-     <button class="btn" onclick="tAbrir(null)">➕ Nova tarefa</button>
+   <!-- barra de visoes no formato do ClickUp: abas embaixo, nao botoes soltos -->
+   <div class="cu-views">
+    <button id="tv_lista"  class="on" onclick="tSetView('lista')"  title="Tudo agrupado por etapa, numa lista só">☰ Lista</button>
+    <button id="tv_quadro" onclick="tSetView('quadro')" title="Colunas para arrastar">▦ Quadro</button>
+    <button id="tv_equipe" onclick="tSetView('equipe')" title="Uma coluna para cada sócio">👥 Equipe</button>
+    <div style="margin-left:auto;display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding-bottom:6px">
+     <select id="tFiltro" onchange="renderTarefas()" style="padding:6px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;background:var(--card);color:var(--ink)"><option value="">Todos</option></select>
+     <button class="btn ghost" style="padding:6px 11px;font-size:12.5px" onclick="tarefasCarregar()">🔄 Atualizar</button>
+     <button class="btn ghost" style="padding:6px 11px;font-size:12.5px" onclick="tSalvarTudo()" title="Empurra todas as tarefas pra nuvem agora">💾 Salvar</button>
+     <button class="btn" style="padding:6px 13px;font-size:12.5px" onclick="tAbrir(null)">＋ Nova tarefa</button>
     </div>
    </div>
-   <div id="tBoard" class="tboard"></div>
+   <div id="tResumo" class="cu-resumo"></div>
+   <div id="tBoard" class="cu-lista"></div>
   </section>
 
  </div>
@@ -552,39 +649,47 @@ tbody tr:hover{background:#f0f5ec}
  </div>
 </div>
 
+<!-- Modal no formato da tarefa do ClickUp: pilula de status no topo, titulo
+     grande e uma fileira de chips no lugar do formulario de campos. -->
 <div class="overlay" id="tOverlay">
- <div class="modal">
-  <div class="mhead" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2 id="tTitle">Nova tarefa</h2><button type="button" onclick="tFechar()" aria-label="Fechar" title="Fechar" style="background:transparent;border:0;color:#fff;font-size:24px;line-height:1;cursor:pointer;padding:0 6px">✕</button></div>
-  <div class="mbody"><div class="fgrid">
-    <div class="field full"><label>Tarefa</label><input type="text" id="t_titulo" placeholder="Ex.: Gravar os 3 vídeos da Rosemary"></div>
-    <div class="field full"><label>Descrição</label>
-     <div class="tdtools">
-      <button type="button" onclick="tAnexoArquivo()" title="Foto, vídeo ou qualquer arquivo">📎 Anexar arquivo</button>
-      <button type="button" onclick="tAnexoLink()" title="Colar um link (Drive, Instagram, planilha...)">🔗 Colar link</button>
-     </div>
-     <textarea id="t_descr" rows="4" placeholder="Detalhes, links, o que precisa ficar pronto..." onpaste="tColar(event)"></textarea>
-     <div class="tdhint">Dica: dá pra colar um print direto aqui com Ctrl+V que ele vira anexo.</div>
-     <input type="file" id="t_file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.zip" style="display:none" onchange="tEnviarArquivos(this.files);this.value='';">
-     <div id="tAnexosBox" class="tanexos"></div>
-     <div id="tUpStat" class="tup" style="display:none"></div>
-    </div>
-    <div class="field"><label>Responsável</label><select id="t_resp"></select></div>
-    <div class="field"><label>Prazo</label><input type="date" id="t_prazo"></div>
-    <div class="field"><label>Urgência</label><select id="t_urg"></select></div>
-    <div class="field"><label>Etapa</label><select id="t_etapa"></select></div>
-    <div class="field full" style="margin-top:4px"><label>Comentários</label>
-     <div id="tComsBox" class="tcoms"></div>
-     <div class="tcomnovo" id="tComNovo">
-      <textarea id="t_com" rows="1" placeholder="Escreva um comentário para a equipe..." onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey))tComentar()"></textarea>
-      <button type="button" class="btn" onclick="tComentar()" style="align-self:stretch">Enviar</button>
-     </div>
-    </div>
-  </div></div>
-  <div class="mfoot">
-   <button class="btn ghost" id="tDelBtn" onclick="tExcluir()" style="color:#c0271f">Excluir</button>
+ <div class="cu-modal">
+  <div class="cu-top">
+   <select id="t_etapa" class="cu-statussel" onchange="tPintarStatus()"></select>
+   <span id="tTitle" style="font-size:12px;color:var(--muted);font-weight:600">Nova tarefa</span>
+   <button type="button" class="fechar" onclick="tFechar()" aria-label="Fechar" title="Fechar">✕</button>
+  </div>
+  <div class="cu-body">
+   <input type="text" id="t_titulo" class="cu-titulo" placeholder="Nome da tarefa" autocomplete="off">
+
+   <div class="cu-chips">
+    <label class="cu-chip" id="chip_resp" title="Responsável">👤 <select id="t_resp" onchange="tPintarChips()"></select></label>
+    <label class="cu-chip" id="chip_prazo" title="Data de vencimento">📅 <input type="date" id="t_prazo" onchange="tPintarChips()"></label>
+    <label class="cu-chip" id="chip_urg" title="Prioridade"><span id="urgFlag">🏳️</span> <select id="t_urg" onchange="tPintarChips()"></select></label>
+    <label class="cu-chip" id="chip_tags" title="Etiquetas — separe por vírgula">🏷️ <input type="text" id="t_tags" placeholder="Etiquetas" oninput="tPintarChips()" style="max-width:190px"></label>
+   </div>
+
+   <div class="cu-sec">Descrição</div>
+   <div class="tdtools">
+    <button type="button" onclick="tAnexoArquivo()" title="Foto, vídeo ou qualquer arquivo">📎 Anexar arquivo</button>
+    <button type="button" onclick="tAnexoLink()" title="Colar um link (Drive, Instagram, planilha...)">🔗 Colar link</button>
+   </div>
+   <textarea id="t_descr" class="cu-descr" placeholder="Adicione uma descrição, cole um link, jogue um print aqui com Ctrl+V..." onpaste="tColar(event)"></textarea>
+   <input type="file" id="t_file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.zip" style="display:none" onchange="tEnviarArquivos(this.files);this.value='';">
+   <div id="tAnexosBox" class="tanexos"></div>
+   <div id="tUpStat" class="tup" style="display:none"></div>
+
+   <div class="cu-sec" style="margin-top:20px">Atividade</div>
+   <div id="tComsBox" class="tcoms"></div>
+   <div class="tcomnovo" id="tComNovo">
+    <textarea id="t_com" rows="1" placeholder="Escreva um comentário..." onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey))tComentar()"></textarea>
+    <button type="button" class="btn" style="padding:7px 14px;font-size:12.5px" onclick="tComentar()">Enviar</button>
+   </div>
+  </div>
+  <div class="cu-foot">
+   <button class="btn ghost" id="tDelBtn" onclick="tExcluir()" style="color:#c0271f;padding:7px 13px;font-size:12.5px">Excluir</button>
    <div style="flex:1"></div>
-   <button class="btn ghost" onclick="tFechar()">Cancelar</button>
-   <button class="btn" onclick="tSalvar()">Salvar</button>
+   <button class="btn ghost" style="padding:7px 13px;font-size:12.5px" onclick="tFechar()">Cancelar</button>
+   <button class="btn" style="padding:7px 18px;font-size:12.5px" onclick="tSalvar()">Salvar</button>
   </div>
  </div>
 </div>
@@ -978,19 +1083,45 @@ async function beat(){if(!SHEET_URL)return;var me=userName()||"Equipe";try{await
 var _beatIv=null;function startPresence(){beat();if(!_beatIv)_beatIv=setInterval(beat,25000);}
 async function refreshToken(){if(!_sess||!_sess.refresh_token)return false;try{var r=await fetch(SUPA_URL+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"apikey":SUPA_ANON,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:_sess.refresh_token})});var j=await r.json();if(r.ok&&j.access_token){ACCESS=j.access_token;_sess.access_token=j.access_token;if(j.refresh_token)_sess.refresh_token=j.refresh_token;saveSess(_sess);return true;}}catch(e){}return false;}
 async function gate(){_sess=loadSess();if(_sess&&_sess.refresh_token&&await refreshToken()){SHEET_URL=SUPA_URL;var _n=userName();if(!_n||_n==="Equipe")_n=(_sess.email&&_sess.email.split("@")[0])||"";afterAuth(_n);return;}showLogin();}
-/* ===================== TAREFAS (quadro estilo Trello) =====================
+/* ===================== TAREFAS — no formato do ClickUp =====================
+   Estudei o ClickUp real do Luan (workspace SPRINTS MARKETING, lista
+   "Sprint 20") pela API antes de escrever isto. O que copiei de la:
+
+   - a visao principal e a LISTA agrupada por status, nao o kanban;
+   - cada grupo tem pilula colorida em CAIXA ALTA, contagem e "+ Adicionar";
+   - as colunas sao Nome / Responsavel / Data de vencimento / Prioridade;
+   - a data aparece relativa ("Ontem", "3 dias atras") e vermelha se passou;
+   - prioridade e uma BANDEIRA colorida, nao uma pilula de fundo cheio;
+   - a tarefa nao e formulario: e titulo grande + chips que voce clica.
+
+   As cores de status e de prioridade sao as mesmas do ClickUp dele.
    Uma tabela so (tarefas). As etapas ficam aqui no JS de proposito: sao 3
-   socios e 4 colunas fixas, criar tabela de quadros/colunas seria burocracia.
-   Arrastar usa HTML5 nativo, igual ao resto do arquivo - nada de biblioteca,
-   o CRM continua um HTML unico que abre com dois cliques.
+   socios e 4 etapas fixas, criar tabela de quadros seria burocracia.
    A posicao e FRACIONARIA: mover um cartao grava 1 linha, nao a coluna toda.
 ========================================================================== */
 var T_ETAPAS=["A fazer","Fazendo","Aguardando","Feito"];
-var T_URG=[["baixa","Baixa"],["media","Media"],["alta","Alta"],["urgente","Urgente"]];
-var T_CORES={baixa:"#8fb996",media:"#3b82c4",alta:"#dca24e",urgente:"#c0271f"};
+/* cores tiradas do proprio ClickUp do Luan: backlog #87909e, em producao
+   #f8ae00, entrega cliente #b660e0, publicado #008844 */
+var T_ETAPA_COR={"A fazer":"#87909e","Fazendo":"#f8ae00","Aguardando":"#b660e0","Feito":"#008844"};
+function tCorEtapa(e){return T_ETAPA_COR[e]||T_ETAPA_COR["A fazer"];}
+/* texto branco ou preto por cima da pilula, decidido pelo brilho da cor.
+   Sem isso o amarelo (#f8ae00) fica com texto branco e ninguem le. */
+function tClaro(hex){
+ var h=String(hex).replace("#","");
+ var r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
+ return (0.299*r+0.587*g+0.114*b)>150;
+}
+function tTextoSobre(hex){return tClaro(hex)?"#1f2a22":"#ffffff";}
+
+/* prioridade do ClickUp: urgente vermelho, alta amarelo, normal azul claro,
+   baixa cinza - sempre como bandeira, nunca como fundo cheio */
+var T_URG=[["baixa","Baixa"],["media","Normal"],["alta","Alta"],["urgente","Urgente"]];
+var T_CORES={baixa:"#b8c0b8",media:"#6fddff",alta:"#ffcc00",urgente:"#f50000"};
+function tCor(u){return T_CORES[u]||T_CORES.media;}
+function tUrgLbl(u){var a=T_URG.find(function(x){return x[0]===u;});return (a||T_URG[1])[1];}
+function tBandeira(u){return '<span class="cu-flag" style="color:'+tCor(u)+'">⚑</span>';}
+
 var T_EQUIPE=["Luan","Felipe","Enzo"];
-/* uma cor fixa por socio. Cor e mais rapida de ler que texto - bate o olho no
-   quadro e ja sabe de quem e, sem precisar ler nome nenhum. */
 var T_PESSOA_COR={"Luan":"#2e7d46","Felipe":"#c2693f","Enzo":"#3b82c4"};
 /* sem diferenciar maiuscula: quem digitou "luan" no login continua verde */
 function tCorPessoa(n){
@@ -999,28 +1130,28 @@ function tCorPessoa(n){
  for(var p in T_PESSOA_COR)if(p.toLowerCase()===k)return T_PESSOA_COR[p];
  return "#7a8676";
 }
-/* uma cor por ETAPA tambem. Sem isso, na visao "por pessoa" as quatro etapas
-   saiam todas no mesmo verde e nao dava pra ver num relance o que estava
-   parado. Duas paletas porque verde escuro some no fundo do tema escuro. */
-var T_ETAPA_COR={"A fazer":"#8a94a6","Fazendo":"#3b82c4","Aguardando":"#d99a2b","Feito":"#2e7d46"};
-var T_ETAPA_COR_ESC={"A fazer":"#a6b2c0","Fazendo":"#69a9e0","Aguardando":"#e8b45c","Feito":"#6cc98a"};
-function tCorEtapa(e){
- var m=(typeof temaAtual==='function'&&temaAtual()==="escuro")?T_ETAPA_COR_ESC:T_ETAPA_COR;
- return m[e]||m["A fazer"];
+/* etiqueta ganha cor a partir do proprio nome - a mesma palavra sempre sai da
+   mesma cor, sem precisar guardar paleta nenhuma no banco */
+var T_TAG_CORES=["#3e63dd","#f76808","#b660e0","#008844","#ee5e99","#f8ae00","#0091ff","#8d8d8d"];
+function tCorTag(nome){
+ var h=0,s=String(nome||"");
+ for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;
+ return T_TAG_CORES[h%T_TAG_CORES.length];
 }
-/* pilula colorida da etapa, no formato do ClickUp: bolinha + nome */
-function tPilulaEtapa(e){
- var c=tCorEtapa(e);
- return '<span class="tetapa" style="background:'+c+'22;color:'+c+';border-color:'+c+'55">'
-  +'<i class="tdot" style="background:'+c+'"></i>'+esc(e)+'</span>';
+function tTagsDe(t){
+ var v=t.etiquetas;
+ if(Array.isArray(v))return v.filter(Boolean);
+ if(typeof v==="string"&&v.trim())return v.split(",").map(function(x){return x.trim();}).filter(Boolean);
+ return [];
 }
+
 var tarefas=[],tAtual=null,_tDragId=null;
 var tAnexos=[],tPastaAtual="",tComentarios=[],tComCount={};
 
-function tCor(u){return T_CORES[u]||T_CORES.media;}
 function tNovoId(){return Date.now()*1000+Math.floor(Math.random()*999);}
 function tLocalSave(){try{localStorage.setItem("crm_tarefas",JSON.stringify(tarefas));}catch(e){}}
 function tLocalLoad(){try{return JSON.parse(localStorage.getItem("crm_tarefas")||"[]");}catch(e){return[];}}
+function tIniciais(nome){return (nome||'?').trim().charAt(0).toUpperCase();}
 
 /* posicao no meio de duas outras; se nao houver vizinho, afasta 1000 */
 function tEntre(a,b){
@@ -1030,19 +1161,33 @@ function tEntre(a,b){
  return (a+b)/2;
 }
 
+/* data como o ClickUp escreve: relativa perto de hoje, curta quando longe */
+function tDataRel(iso){
+ if(!iso)return {txt:"",cls:"vazio"};
+ var hoje=todayISO();
+ var d=new Date(iso+"T12:00:00"), h=new Date(hoje+"T12:00:00");
+ var dias=Math.round((d-h)/86400000);
+ if(dias===0)  return {txt:"Hoje",   cls:"hoje"};
+ if(dias===-1) return {txt:"Ontem",  cls:"late"};
+ if(dias===1)  return {txt:"Amanhã", cls:""};
+ if(dias<-1)   return {txt:(-dias)+" dias atrás", cls:"late"};
+ if(dias<7)    return {txt:"em "+dias+" dias", cls:""};
+ return {txt:iso.split('-').reverse().slice(0,2).join('/'), cls:""};
+}
+
 async function tarefasCarregar(){
  if(!SHEET_URL){tarefas=tLocalLoad();renderTarefas();return;}
  var el=document.getElementById('tBoard');
- if(el&&!tarefas.length)el.innerHTML='<div class="mini" style="padding:16px;color:#888">Carregando...</div>';
+ if(el&&!tarefas.length)el.innerHTML='<div class="cu-vazio">Carregando...</div>';
  try{
   var r=await fetch(sbUrl("tarefas?select=*&order=pos.asc"),{headers:sbHeaders()});
   if(!r.ok)throw new Error('HTTP '+r.status);
   tarefas=await r.json();
  }catch(e){
-  if(el)el.innerHTML='<div class="mini" style="padding:16px;color:#c0271f">Nao consegui carregar as tarefas. '+esc(String(e.message||e))+'<br>Se a tabela ainda nao existe, rode o SQL da tabela <b>tarefas</b> no Supabase.</div>';
+  if(el)el.innerHTML='<div class="cu-vazio" style="color:#c0271f">Nao consegui carregar as tarefas. '+esc(String(e.message||e))+'<br>Se a tabela ainda nao existe, rode o SQL da tabela <b>tarefas</b> no Supabase.</div>';
   return;
  }
- await tChecarAnexos();
+ await tChecarColunas();
  await tContarComentarios();
  renderTarefas();
 }
@@ -1071,32 +1216,142 @@ async function tSync(row){
 
 function tFiltroAtual(){var f=document.getElementById('tFiltro');return f?f.value:"";}
 
-/* Duas visoes do mesmo dado. "Por etapa" e o quadro geral - onde da pra ver o
-   trabalho dos tres de uma vez. "Por pessoa" agrupa por responsavel, que e o
-   equivalente ao "group by" do Monday: cada um enxerga a propria coluna sem
-   precisar filtrar. Arrastar entre colunas de pessoa TROCA o responsavel. */
-var tView='etapa';
+/* ---------- as tres visoes, como as abas do ClickUp ---------- */
+var tView=(function(){try{var v=localStorage.getItem("crm_tview");return (v==='quadro'||v==='equipe')?v:'lista';}catch(e){return 'lista';}})();
+var tFechados={};
 function tSetView(v){
  tView=v;
- ['etapa','pessoa'].forEach(function(k){
+ try{localStorage.setItem("crm_tview",v);}catch(e){}
+ ['lista','quadro','equipe'].forEach(function(k){
   var b=document.getElementById('tv_'+k);if(b)b.classList.toggle('on',k===v);
  });
  renderTarefas();
 }
-
-function tIniciais(nome){return (nome||'?').trim().charAt(0).toUpperCase();}
+function tToggleGrupo(et){tFechados[et]=!tFechados[et];renderTarefas();}
 
 function renderTarefas(){
  var el=document.getElementById('tBoard');if(!el)return;
  /* popula o filtro de responsavel uma vez */
  var f=document.getElementById('tFiltro');
  if(f&&f.options.length<=1){T_EQUIPE.forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;f.appendChild(o);});}
+ ['lista','quadro','equipe'].forEach(function(k){
+  var b=document.getElementById('tv_'+k);if(b)b.classList.toggle('on',k===tView);
+ });
  var filtro=tFiltroAtual();
  var vis=tarefas.filter(function(t){return !filtro||t.responsavel===filtro;});
- el.className='tboard'+(tView==='pessoa'?' tboard-3':'');
- el.innerHTML=(tView==='pessoa')?tColsPessoa(vis):tColsEtapa(vis);
+ tRenderResumo(vis);
+ if(tView==='lista'){el.className='cu-lista';el.innerHTML=tListaGrupos(vis);}
+ else if(tView==='equipe'){el.className='tboard tboard-3';el.innerHTML=tColsPessoa(vis);}
+ else {el.className='tboard';el.innerHTML=tColsEtapa(vis);}
 }
 
+/* os tres cartoes do topo, como a faixa de resumo do ClickUp */
+function tRenderResumo(vis){
+ var el=document.getElementById('tResumo');if(!el)return;
+ var abertas=vis.filter(function(t){return (t.etapa||T_ETAPAS[0])!=="Feito";});
+ var comDono=vis.filter(function(t){return !!t.responsavel;}).length;
+ var pct=vis.length?Math.round(comDono*100/vis.length):0;
+ var atras=abertas.filter(function(t){return t.prazo&&t.prazo<todayISO();}).length;
+ function card(cor,ic,titulo,sub){
+  return '<div class="cu-card"><span class="ic" style="background:'+cor+'22;color:'+cor+'">'+ic+'</span>'
+   +'<div><b>'+titulo+'</b><span>'+sub+'</span></div></div>';
+ }
+ el.innerHTML =
+   card("#008844","✓","Lista de pendências",vis.length+(vis.length===1?" tarefa":" tarefas")+" · "+abertas.length+" em aberto")
+  +card("#3e63dd","👤","Atribuído",pct+"% com responsável")
+  +card(atras?"#f50000":"#8d8d8d",atras?"⚠":"✓","Prazo",atras?(atras+(atras===1?" atrasada":" atrasadas")):"nada atrasado");
+}
+
+/* ---------- LISTA agrupada por etapa (a visao principal) ---------- */
+function tListaGrupos(vis){
+ return T_ETAPAS.map(function(et){
+  var lista=vis.filter(function(t){return (t.etapa||T_ETAPAS[0])===et;})
+               .sort(function(a,b){return (a.pos||0)-(b.pos||0);});
+  var c=tCorEtapa(et), fechado=!!tFechados[et];
+  var linhas=lista.map(function(t){return tLinha(t,et);}).join('')
+   ||'<div class="cu-vazio">Nenhuma tarefa aqui. Solte uma, ou use o “＋ Adicionar Tarefa”.</div>';
+  return '<div class="cu-grupo'+(fechado?' fechado':'')+'" data-etapa="'+esc(et)+'"'
+   +' ondragover="tOverLista(event,this)" ondragleave="tLeaveLista(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
+   +'<div class="cu-ghead" onclick="tToggleGrupo(\''+esc(et)+'\')">'
+     +'<span class="cu-caret">▼</span>'
+     +'<span class="cu-status" style="background:'+c+';color:'+tTextoSobre(c)+'">'+esc(et)+'</span>'
+     +'<span class="cu-gcount">'+lista.length+'</span>'
+     +'<button type="button" class="cu-gadd" onclick="event.stopPropagation();tNovaInline(\''+esc(et)+'\')">＋ Adicionar</button>'
+   +'</div>'
+   +'<div class="cu-cols"><span>Nome</span><span>Responsável</span><span>Data de vencimento</span><span>Prioridade</span></div>'
+   +linhas
+   +'<div id="novo_'+tSlug(et)+'"></div>'
+   +'<button type="button" class="cu-addrow" onclick="tNovaInline(\''+esc(et)+'\')">＋ Adicionar Tarefa</button>'
+   +'</div>';
+ }).join('');
+}
+
+function tSlug(s){return String(s).replace(/[^a-zA-Z0-9]/g,"_");}
+
+function tLinha(t,et){
+ var feito=(et==="Feito"), c=tCorEtapa(et), urg=t.urgencia||'media';
+ var d=tDataRel(t.prazo);
+ var nAnex=(t.anexos&&t.anexos.length)||0, nCom=tComCount[t.id]||0;
+ var tags=tTagsDe(t);
+ var marcas='';
+ if((t.descricao||'').trim())marcas+='<span title="tem descrição">📄</span>';
+ if(nAnex)marcas+='<span title="'+nAnex+' anexo(s)">📎'+nAnex+'</span>';
+ if(nCom)marcas+='<span title="'+nCom+' comentário(s)">💬'+nCom+'</span>';
+ return '<div class="cu-row'+(feito?' feito':'')+'" draggable="true" data-id="'+t.id+'"'
+  +' ondragstart="tDragStart(event,'+t.id+')" ondragend="tDragEnd(this)"'
+  +' ondragover="tOverLista(event,this.parentNode)"'
+  +' ondrop="event.stopPropagation();tDrop(event,\''+esc(et)+'\','+t.id+')"'
+  +' onclick="tAbrir('+t.id+')">'
+  +'<span class="cu-nome">'
+    +'<i class="cu-dot'+(feito?' cheio':'')+'" style="color:'+c+'"></i>'
+    +'<span class="cu-tt">'+esc(t.titulo||'(sem título)')+'</span>'
+    +(marcas?'<span class="cu-marcas">'+marcas+'</span>':'')
+    +(tags.length?'<span class="cu-tags">'+tags.slice(0,3).map(function(g){
+        var tc=tCorTag(g);
+        return '<span class="cu-tag" style="background:'+tc+'22;color:'+tc+'">'+esc(g)+'</span>';}).join('')+'</span>':'')
+  +'</span>'
+  +'<span class="cu-avs">'+(t.responsavel
+     ?'<i class="cu-av" style="background:'+tCorPessoa(t.responsavel)+'" title="'+esc(t.responsavel)+'">'+esc(tIniciais(t.responsavel))+'</i>'
+     :'<i class="cu-av vazio" title="sem responsável">+</i>')+'</span>'
+  +'<span class="cu-due '+(feito?'':d.cls)+'">'+(d.txt?esc(d.txt):'—')+'</span>'
+  +'<span class="cu-prio">'+tBandeira(urg)+esc(tUrgLbl(urg))+'</span>'
+  +'</div>';
+}
+
+/* criar tarefa na propria linha, sem abrir modal - e o jeito do ClickUp e
+   e o que faz diferenca quando voce esta despejando 10 tarefas seguidas */
+function tNovaInline(et){
+ var box=document.getElementById('novo_'+tSlug(et));if(!box)return;
+ if(box.querySelector('input')){box.querySelector('input').focus();return;}
+ box.innerHTML='<div class="cu-novo"><input type="text" placeholder="Nome da tarefa e Enter" '
+  +'onkeydown="tNovaInlineTecla(event,\''+esc(et)+'\')" onblur="tNovaInlineFecha(this,\''+esc(et)+'\')">'
+  +'<span style="font-size:11px;color:var(--muted)">Enter salva · Esc cancela</span></div>';
+ box.querySelector('input').focus();
+}
+function tNovaInlineFecha(inp,et){
+ /* deixa o Enter processar antes de apagar o campo */
+ setTimeout(function(){var b=document.getElementById('novo_'+tSlug(et));if(b&&!inp.value.trim())b.innerHTML='';},160);
+}
+async function tNovaInlineTecla(ev,et){
+ if(ev.key==='Escape'){var b=document.getElementById('novo_'+tSlug(et));if(b)b.innerHTML='';return;}
+ if(ev.key!=='Enter')return;
+ var titulo=(ev.target.value||"").trim();
+ if(!titulo)return;
+ ev.target.value="";
+ var naEtapa=tarefas.filter(function(x){return (x.etapa||T_ETAPAS[0])===et;}).sort(function(a,b){return (a.pos||0)-(b.pos||0);});
+ var eu=userName(), dono=(T_EQUIPE.indexOf(eu)>=0)?eu:"";
+ var t={id:tNovoId(),titulo:titulo,descricao:"",responsavel:dono,prazo:null,urgencia:"media",
+        etapa:et,pos:tEntre(naEtapa.length?naEtapa[naEtapa.length-1].pos:null,null),
+        criado_por:eu,anexos:[],etiquetas:[]};
+ tarefas.push(t);
+ renderTarefas();
+ tNovaInline(et);                       /* deixa o campo aberto pra emendar a proxima */
+ setSave("saving");
+ var ok=await tSync(tPick(t));
+ if(ok&&typeof logAct==='function')logAct('criou a tarefa "'+titulo.slice(0,60)+'"');
+}
+
+/* ---------- QUADRO (kanban) ---------- */
 function tColsEtapa(vis){
  return T_ETAPAS.map(function(et){
   var lista=vis.filter(function(t){return (t.etapa||T_ETAPAS[0])===et;})
@@ -1104,12 +1359,13 @@ function tColsEtapa(vis){
   var cards=lista.map(function(t){return tCard(t,et==="Feito",false);}).join('')
     ||'<div class="tempty">Solte uma tarefa aqui</div>';
   var c=tCorEtapa(et);
-  return '<div class="tcol et" style="border-top-color:'+c+'" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
+  return '<div class="tcol" style="border-top:3px solid '+c+'" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
    +'<h4><span class="hd"><i class="tdot" style="background:'+c+'"></i><span style="color:'+c+'">'+esc(et)+'</span></span>'
    +'<span class="cnt">'+lista.length+'</span></h4>'+cards+'</div>';
  }).join('');
 }
 
+/* ---------- EQUIPE (uma coluna por socio) ---------- */
 function tColsPessoa(vis){
  /* quem nao tem responsavel vira uma coluna propria, senao a tarefa some da tela */
  var donos=T_EQUIPE.slice();
@@ -1129,8 +1385,8 @@ function tColsPessoa(vis){
     ||'<div class="tempty">Solte aqui para passar para '+(p?esc(p):'ninguém')+'</div>';
   var cor=tCorPessoa(p);
   return '<div class="tcol tcol-p" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDropPessoa(event,\''+esc(p)+'\')">'
-   +'<h4><span class="tav" style="background:'+cor+'">'+esc(tIniciais(p||'?'))+'</span>'
-   +esc(p||'Sem responsável')
+   +'<h4><span class="hd"><span class="tav" style="background:'+cor+'">'+esc(tIniciais(p||'?'))+'</span>'
+   +'<span style="color:var(--ink)">'+esc(p||'Sem responsável')+'</span></span>'
    +'<span class="cnt">'+abertas+(atrasadas?' · <b style="color:#c0271f">'+atrasadas+' atrasada'+(atrasadas>1?'s':'')+'</b>':'')+'</span></h4>'
    +cards+'</div>';
  }).join('');
@@ -1152,38 +1408,35 @@ async function tDropPessoa(ev,pessoa){
 }
 
 function tCard(t,feito,mostrarEtapa){
- var hoje=todayISO(),cls="",lbl="";
- if(t.prazo){lbl=t.prazo.split('-').reverse().slice(0,2).join('/');
-  if(!feito&&t.prazo<hoje)cls=" late";else if(!feito&&t.prazo===hoje)cls=" hoje";}
+ var d=tDataRel(t.prazo);
  var urg=t.urgencia||'media';
- var urgLbl=(T_URG.find(function(u){return u[0]===urg;})||T_URG[1])[1];
- var etapa=t.etapa||T_ETAPAS[0];
+ var etapa=t.etapa||T_ETAPAS[0], ce=tCorEtapa(etapa);
+ var nAnex=(t.anexos&&t.anexos.length)||0,nCom=tComCount[t.id]||0;
  /* na visao por pessoa o cartao mostra a ETAPA (o responsavel ja e a coluna);
     na visao por etapa mostra o RESPONSAVEL. Nunca os dois - vira poluicao. */
- var arrasta=(tView==='pessoa')
+ var arrasta=(tView==='equipe')
    ? ' ondragover="tOver(event,this.parentNode)"'
    : ' ondragover="tOver(event,this.parentNode)" ondrop="tDrop(event,\''+esc(etapa)+'\','+t.id+')"';
- var nAnex=(t.anexos&&t.anexos.length)||0,nCom=tComCount[t.id]||0;
  return '<div class="tcard'+(feito?' done':'')+'" draggable="true" data-id="'+t.id+'"'
   +' ondragstart="tDragStart(event,'+t.id+')" ondragend="tDragEnd(this)"'
   +arrasta
   +' onclick="tAbrir('+t.id+')" style="border-left-color:'+tCor(urg)+'">'
-  +'<div class="tt">'+esc(t.titulo||'(sem titulo)')+'</div>'
+  +'<div class="tt">'+esc(t.titulo||'(sem título)')+'</div>'
   +'<div class="tmeta">'
-  +'<span class="tpill" style="background:'+tCor(urg)+'">'+urgLbl+'</span>'
+  +'<span class="tpill" style="background:'+tCor(urg)+'22;color:'+(urg==='baixa'?'var(--muted)':tCor(urg))+'">'+tBandeira(urg)+tUrgLbl(urg)+'</span>'
   +(mostrarEtapa
-     ? tPilulaEtapa(etapa)
+     ? '<span class="tetapa" style="background:'+ce+'22;color:'+ce+';border-color:'+ce+'55"><i class="tdot" style="background:'+ce+'"></i>'+esc(etapa)+'</span>'
      : (t.responsavel?'<span class="twho" style="background:'+tCorPessoa(t.responsavel)+'22;color:'+tCorPessoa(t.responsavel)+'"><i class="tdot" style="background:'+tCorPessoa(t.responsavel)+'"></i>'+esc(t.responsavel)+'</span>':''))
-  +(lbl?'<span class="tdue'+cls+'">📅 '+lbl+'</span>':'')
-  +(nAnex?'<span class="tbadge" title="'+nAnex+' anexo(s)">📎 '+nAnex+'</span>':'')
-  +(nCom?'<span class="tbadge" title="'+nCom+' comentário(s)">💬 '+nCom+'</span>':'')
+  +(d.txt?'<span class="tdue'+(feito?'':(d.cls==='vazio'?'':' '+d.cls))+'">📅 '+esc(d.txt)+'</span>':'')
+  +(nAnex?'<span class="tbadge">📎 '+nAnex+'</span>':'')
+  +(nCom?'<span class="tbadge">💬 '+nCom+'</span>':'')
   +'</div></div>';
 }
 
 /* ---------- arrastar ---------- */
 function tDragStart(ev,id){_tDragId=id;ev.dataTransfer.effectAllowed="move";
  try{ev.dataTransfer.setData("text/plain",String(id));}catch(e){}
- var c=ev.target.closest?ev.target.closest('.tcard'):null;if(c)setTimeout(function(){c.classList.add('drag');},0);}
+ var c=ev.target.closest?ev.target.closest('.tcard,.cu-row'):null;if(c)setTimeout(function(){c.classList.add('drag');},0);}
 function tDragEnd(elm){if(elm&&elm.classList)elm.classList.remove('drag');
  document.querySelectorAll('.tcol.over').forEach(function(c){c.classList.remove('over');});}
 function tOver(ev,col){ev.preventDefault();ev.dataTransfer.dropEffect="move";
@@ -1191,11 +1444,17 @@ function tOver(ev,col){ev.preventDefault();ev.dataTransfer.dropEffect="move";
   document.querySelectorAll('.tcol.over').forEach(function(c){if(c!==col)c.classList.remove('over');});
   col.classList.add('over');}}
 function tLeave(col){if(col&&col.classList)col.classList.remove('over');}
+/* na lista o alvo e o GRUPO inteiro, nao a coluna */
+function tOverLista(ev,g){ev.preventDefault();ev.dataTransfer.dropEffect="move";
+ if(g&&g.classList&&g.classList.contains('cu-grupo')){
+  document.querySelectorAll('.cu-grupo.over').forEach(function(c){if(c!==g)c.classList.remove('over');});
+  g.classList.add('over');}}
+function tLeaveLista(g){if(g&&g.classList)g.classList.remove('over');}
 
-/* solta na coluna (alvoId=null -> fim) ou em cima de um cartao (entra antes dele) */
+/* solta na coluna/grupo (alvoId=null -> fim) ou em cima de uma tarefa (entra antes dela) */
 async function tDrop(ev,etapa,alvoId){
  ev.preventDefault();ev.stopPropagation();
- document.querySelectorAll('.tcol.over').forEach(function(c){c.classList.remove('over');});
+ document.querySelectorAll('.tcol.over,.cu-grupo.over').forEach(function(c){c.classList.remove('over');});
  var id=_tDragId;_tDragId=null;if(!id)return;
  var t=tarefas.find(function(x){return x.id===id;});if(!t)return;
  if(id===alvoId)return;
@@ -1218,19 +1477,30 @@ async function tDrop(ev,etapa,alvoId){
 function tPick(t){return{id:t.id,titulo:t.titulo||"",descricao:t.descricao||"",responsavel:t.responsavel||"",
  prazo:t.prazo||null,urgencia:t.urgencia||"media",etapa:t.etapa||T_ETAPAS[0],pos:t.pos||1000,
  criado_por:t.criado_por||"",concluido_em:t.concluido_em||null,pedido_id:t.pedido_id||null,
- anexos:Array.isArray(t.anexos)?t.anexos:[]};}
+ anexos:Array.isArray(t.anexos)?t.anexos:[],etiquetas:tTagsDe(t)};}
 
-/* Se o schema_tarefas_v2.sql ainda nao rodou, a coluna "anexos" nao existe e o
-   PostgREST recusa o upsert inteiro com 400. Melhor perder o anexo do que
-   travar o quadro: detecta uma vez e passa a gravar sem esse campo. */
-var tTemAnexos=true;
-function tLimpaRow(row){if(tTemAnexos)return row;var r={};for(var k in row)if(k!=="anexos")r[k]=row[k];return r;}
-async function tChecarAnexos(){
+/* Se o schema_tarefas_v2.sql ainda nao rodou, as colunas "anexos"/"etiquetas"
+   nao existem e o PostgREST recusa o upsert INTEIRO com 400. Melhor perder o
+   anexo do que travar o quadro: detecta uma vez e passa a gravar sem elas. */
+var tTemAnexos=true,tTemTags=true;
+function tLimpaRow(row){
+ if(tTemAnexos&&tTemTags)return row;
+ var r={};
+ for(var k in row){
+  if(k==="anexos"&&!tTemAnexos)continue;
+  if(k==="etiquetas"&&!tTemTags)continue;
+  r[k]=row[k];
+ }
+ return r;
+}
+async function tChecarColunas(){
  if(!SHEET_URL)return;
- try{
-  var r=await fetch(sbUrl("tarefas?select=anexos&limit=1"),{headers:sbHeaders()});
-  tTemAnexos=r.ok;
- }catch(e){tTemAnexos=false;}
+ async function tem(col){
+  try{var r=await fetch(sbUrl("tarefas?select="+col+"&limit=1"),{headers:sbHeaders()});return r.ok;}
+  catch(e){return false;}
+ }
+ tTemAnexos=await tem("anexos");
+ tTemTags  =await tem("etiquetas");
 }
 
 /* ===================== ANEXOS =====================
@@ -1426,16 +1696,44 @@ async function tApagarComentario(id){
  try{await fetch(sbUrl("tarefa_comentarios?id=eq."+id),{method:"DELETE",headers:sbHeaders()});}catch(e){}
 }
 
-/* ---------- modal ---------- */
+/* ---------- modal da tarefa (anatomia do ClickUp) ---------- */
 function tFill(sel,arr,pares){var s=document.getElementById(sel);if(!s)return;s.innerHTML="";
  arr.forEach(function(v){var o=document.createElement('option');
   if(pares){o.value=v[0];o.textContent=v[1];}else{o.value=v;o.textContent=v;}s.appendChild(o);});}
+
+/* a pilula de status no topo pinta na cor da etapa escolhida, igual ao ClickUp */
+function tPintarStatus(){
+ var s=document.getElementById('t_etapa');if(!s)return;
+ var c=tCorEtapa(s.value);
+ s.style.background=c;
+ s.style.color=tTextoSobre(c);
+ s.classList.toggle('escuro',tClaro(c));   /* seta preta quando o fundo e claro */
+}
+/* chip vazio fica tracejado e apagado; preenchido fica solido - assim bate o
+   olho e voce ve o que ainda falta preencher na tarefa */
+function tPintarChips(){
+ var resp=document.getElementById('t_resp'),prazo=document.getElementById('t_prazo'),
+     urg=document.getElementById('t_urg'),tags=document.getElementById('t_tags');
+ function marca(idChip,cheio){var c=document.getElementById(idChip);if(c)c.classList.toggle('preenchido',!!cheio);}
+ marca('chip_resp',resp&&resp.value);
+ marca('chip_prazo',prazo&&prazo.value);
+ marca('chip_urg',urg&&urg.value&&urg.value!=="media");
+ marca('chip_tags',tags&&tags.value.trim());
+ if(resp&&resp.value){
+  var c=document.getElementById('chip_resp');
+  if(c){c.style.borderColor=tCorPessoa(resp.value);c.style.color=tCorPessoa(resp.value);}
+ }else{var c0=document.getElementById('chip_resp');if(c0){c0.style.borderColor="";c0.style.color="";}}
+ var f=document.getElementById('urgFlag');
+ if(f&&urg){f.textContent="⚑";f.style.color=tCor(urg.value);}
+ var cu=document.getElementById('chip_urg');
+ if(cu&&urg){cu.style.borderColor=(urg.value==="media")?"":tCor(urg.value);}
+}
 
 function tAbrir(id){
  tAtual=id||null;
  tFill('t_resp',T_EQUIPE);tFill('t_urg',T_URG,true);tFill('t_etapa',T_ETAPAS);
  var t=id?tarefas.find(function(x){return x.id===id;}):null;
- document.getElementById('tTitle').textContent=t?'Editar tarefa':'Nova tarefa';
+ document.getElementById('tTitle').textContent=t?'Editando':'Nova tarefa';
  document.getElementById('tDelBtn').style.display=t?'':'none';
  document.getElementById('t_titulo').value=t?(t.titulo||""):"";
  document.getElementById('t_descr').value=t?(t.descricao||""):"";
@@ -1443,6 +1741,8 @@ function tAbrir(id){
  document.getElementById('t_prazo').value=t?(t.prazo||""):"";
  document.getElementById('t_urg').value=t?(t.urgencia||"media"):"media";
  document.getElementById('t_etapa').value=t?(t.etapa||T_ETAPAS[0]):T_ETAPAS[0];
+ document.getElementById('t_tags').value=t?tTagsDe(t).join(", "):"";
+ tPintarStatus();tPintarChips();
  /* anexos: tarefa nova ganha uma pasta propria ja na abertura, senao nao teria
     onde subir o print antes de existir id. Se cancelar, o arquivo fica orfao
     no Storage - preco baixo perto de obrigar a salvar antes de anexar. */
@@ -1470,10 +1770,11 @@ async function tSalvar(){
  t.titulo=titulo;
  t.descricao=(document.getElementById('t_descr').value||"").trim();
  t.anexos=tAnexos.slice();
+ t.etiquetas=(document.getElementById('t_tags').value||"").split(",")
+   .map(function(x){return x.trim();}).filter(Boolean).slice(0,8);
  t.responsavel=document.getElementById('t_resp').value;
  t.prazo=document.getElementById('t_prazo').value||null;
  t.urgencia=document.getElementById('t_urg').value;
- if((t.etapa||T_ETAPAS[0])!==etapa)t.etapa=etapa;
  t.etapa=etapa;
  t.concluido_em=(etapa==="Feito")?(t.concluido_em||new Date().toISOString()):null;
  tFechar();renderTarefas();setSave("saving");

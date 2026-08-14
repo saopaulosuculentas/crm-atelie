@@ -5,6 +5,10 @@
 --    junto com ela, entao tabela separada so criaria um JOIN sem ganho.
 alter table public.tarefas add column if not exists anexos jsonb default '[]'::jsonb;
 
+-- 1b) Etiquetas, como as tags do ClickUp. jsonb e nao text[] porque o resto do
+--     arquivo ja fala jsonb e o PostgREST devolve array de string igual.
+alter table public.tarefas add column if not exists etiquetas jsonb default '[]'::jsonb;
+
 -- 2) Comentarios sao muitos e crescem sozinhos -> tabela propria.
 create table if not exists public.tarefa_comentarios (
   id         bigint primary key,
