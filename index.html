@@ -518,6 +518,7 @@ tbody tr:hover{background:#f0f5ec}
   <button data-v="atendimentos"><span class="ic">💬</span> Atendimentos</button>
   <button data-v="cadastros"><span class="ic">📥</span> Cadastros</button>
   <button data-v="tarefas"><span class="ic">✅</span> Tarefas</button>
+  <button data-v="entregas"><span class="ic">🚚</span> Entregas</button>
   <button data-v="clientes"><span class="ic">👥</span> Clientes</button>
   <button data-v="produtos"><span class="ic">🪴</span> Produtos &amp; Custos</button>
   <button data-v="caixa"><span class="ic">💰</span> Caixa</button>
@@ -607,6 +608,12 @@ tbody tr:hover{background:#f0f5ec}
    <div class="panel wide"><h3>📅 Mês a mês — evolução do caixa</h3><div class="tablewrap" style="box-shadow:none;border:0;max-height:380px" id="cxMeses"></div></div>
   </section>
 
+  <section class="view" id="entregas">
+   <div class="panel wide"><h3>🚚 Fila de entrega — por data prometida</h3>
+     <div id="cxEntregasResumo" class="mini" style="margin:-2px 0 12px;font-weight:700;font-size:13px"></div>
+     <div id="cxEntregas"></div>
+   </div>
+  </section>
   <section class="view" id="sazonal">
    <div class="panel wide"><h3>🔥 Radar sazonal — nunca mais esqueça uma data</h3><div id="cxSazonal"></div></div>
   </section>
@@ -831,7 +838,7 @@ document.getElementById('nav').addEventListener('click',e=>{const b=e.target.clo
  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.v).classList.add('active');
  const v=b.dataset.v;document.getElementById('ttl').textContent=b.textContent.trim();document.getElementById('sub').textContent=SUBS[v];
- if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();document.body.classList.remove('menu-open');});
+ if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='entregas')renderEntregas();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();document.body.classList.remove('menu-open');});
 function toggleMenu(){document.body.classList.toggle('menu-open');}
 function setView(m){viewMode=m;[['vbTable','table'],['vbSheet','sheet'],['vbKanban','kanban']].forEach(function(x){var b=document.getElementById(x[0]);if(b)b.classList.toggle('active',m===x[1]);});
  document.getElementById('tableView').style.display=m==='table'?'':'none';document.getElementById('sheetView').style.display=m==='sheet'?'':'none';document.getElementById('kanbanView').style.display=m==='kanban'?'':'none';renderAtend();}
@@ -1011,6 +1018,69 @@ function renderCaixa(){
   mh+='<tr'+(m===curM?' style="background:var(--hover);font-weight:700"':'')+'><td>'+mesLabel(m)+'</td><td class="num">'+BRL(byM[m].e)+'</td><td class="num">'+BRL(byM[m].s)+'</td><td class="num" style="color:'+(r>=0?"#2e7d46":"#b00020")+'">'+BRL(r)+'</td><td class="num">'+cmp+'</td><td class="num">'+BRL(acc)+'</td></tr>';
   prevR=r;});
  mh+='</tbody></table>';document.getElementById("cxMeses").innerHTML=mh;}
+/* Fila de entrega.
+   Existe porque o checkout passou a VENDER data ("Entrega agendada - chega ate 22/08")
+   e o quadro de pedidos e ordenado por quem chegou primeiro, nao por quem precisa
+   receber primeiro. Sem esta tela, um pedido feito hoje para o dia 20 fica atras de
+   um feito ontem para o dia 30 - e a promessa quebra sozinha.
+   Pedido do site chega com dataEv preenchido pelo webhook da Yampi; pedido manual so
+   entra aqui se alguem digitar a data do evento. Por isso os sem data aparecem no fim,
+   em vez de sumirem: some da tela = some da cabeca. */
+function _entDias(iso){ if(!iso) return null;
+  var d=new Date(iso+"T12:00:00"); if(isNaN(d)) return null;
+  return Math.round((d-new Date(todayISO()+"T12:00:00"))/864e5); }
+function _entQuando(n){
+  if(n===null) return "sem data";
+  if(n<0)  return "atrasado "+Math.abs(n)+(Math.abs(n)===1?" dia":" dias");
+  if(n===0) return "hoje";
+  if(n===1) return "amanha";
+  return "em "+n+" dias"; }
+function renderEntregas(){
+  var el=document.getElementById("cxEntregas"); if(!el) return;
+  var res=document.getElementById("cxEntregasResumo");
+  var FORA={"Entregue":1,"Pos-venda":1,"Pós-venda":1,"Perdido":1};
+  var fila=(state.orders||[]).filter(function(o){ return !FORA[o.estagio]; })
+    .map(function(o){ var n=_entDias(o.dataEv); return {o:o,n:n}; })
+    .sort(function(a,b){
+      if(a.n===null&&b.n===null) return (b.o.id||0)-(a.o.id||0);
+      if(a.n===null) return 1;            /* sem data desce, mas nao some */
+      if(b.n===null) return -1;
+      return a.n-b.n; });
+
+  var atras=0,hoje=0,semana=0,semData=0;
+  fila.forEach(function(x){ if(x.n===null)semData++; else if(x.n<0)atras++; else if(x.n===0)hoje++; else if(x.n<=7)semana++; });
+  if(res) res.innerHTML = fila.length
+    ? '<span style="color:#c0392b">'+atras+' atrasado(s)</span> · <b>'+hoje+' para hoje</b> · '+semana+' nos proximos 7 dias · '+semData+' sem data'
+    : 'Nenhum pedido em aberto.';
+
+  if(!fila.length){ el.innerHTML='<div class="mini" style="padding:14px 2px;opacity:.7">Quando entrar pedido com data marcada, ele aparece aqui primeiro.</div>'; return; }
+
+  el.innerHTML = fila.map(function(x){
+    var o=x.o, n=x.n;
+    var fundo='background:var(--card)', borda='';
+    if(n!==null && n<0){ fundo='background:#fdecea'; borda='border:1px solid #f5b7b1'; }
+    else if(n!==null && n<=2){ fundo='background:var(--warn)'; borda='border:1px solid var(--warnln)'; }
+    var dataBr = o.dataEv ? o.dataEv.split("-").reverse().join("/") : "--";
+    var site = String(o.id||"").length>=9 && Number(o.id)>=700000000;
+    return '<div style="display:flex;gap:11px;align-items:flex-start;padding:9px 11px;border-radius:11px;margin-bottom:5px;'+fundo+';'+borda+'">'
+      +'<div style="min-width:78px;text-align:center">'
+        +'<div style="font-weight:800;font-size:14px">'+dataBr+'</div>'
+        +'<div class="mini" style="font-size:11px;opacity:.75">'+_entQuando(n)+'</div>'
+      +'</div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-weight:700">'+esc(o.cliente||"(sem nome)")
+          +(site?' <span class="mini" style="font-size:10px;background:#e6f5ef;color:#0f6e56;padding:1px 6px;border-radius:20px">site</span>':'')
+        +'</div>'
+        +'<div class="mini" style="font-size:12px;opacity:.8">'+esc(o.produto||"")+(o.qtd?' · '+esc(o.qtd)+' un':'')+(o.cidade?' · '+esc(o.cidade):'')+'</div>'
+        +(o.obs?'<div class="mini" style="font-size:11px;opacity:.6">'+esc(o.obs)+'</div>':'')
+      +'</div>'
+      +'<div style="text-align:right;min-width:96px">'
+        +'<div class="mini" style="font-size:11px;font-weight:700">'+esc(o.estagio||"")+'</div>'
+        +'<div class="mini" style="font-size:11px;opacity:.7">'+esc(o.entrega||"")+'</div>'
+      +'</div>'
+    +'</div>';
+  }).join("");
+}
 function renderSazonal(){const el=document.getElementById("cxSazonal");if(!el)return;const today=new Date();const tISO=todayISO();
  const items=SAZONAL.map(x=>{const y=today.getFullYear();let d=y+"-"+x[0];if(d<tISO)d=(y+1)+"-"+x[0];
   const dias=Math.round((new Date(d+"T12:00:00")-new Date(tISO+"T12:00:00"))/864e5);return {d,dias,nome:x[1],dica:x[2],pico:x[3]};}).sort((a,b)=>a.dias-b.dias);
