@@ -484,6 +484,43 @@ tbody tr:hover{background:#f0f5ec}
 [data-tema="escuro"] .tanexo.lk .nm{color:var(--green-dk)}
 [data-tema="escuro"] .tcomnovo textarea::placeholder,[data-tema="escuro"] .cu-descr::placeholder,
 [data-tema="escuro"] .cu-titulo::placeholder,[data-tema="escuro"] .cu-novo input::placeholder{color:#6f7d72}
+/* ===================== CALENDÁRIO (aba nova) =====================
+   Só variáveis: nasce funcionando nos dois temas (ver comentário da linha 419).
+   Cores de estágio continuam vindo do JS (STAGE_COLORS), igual ao kanban. */
+.calbar .mes{font-family:Georgia,'Times New Roman',serif;font-size:20px;font-weight:700;color:var(--titulo);min-width:186px;text-align:center}
+.calnav{background:var(--card);border:1px solid var(--line);color:var(--green-dk);border-radius:10px;padding:7px 13px;font-size:15px;font-weight:800;line-height:1}
+.calnav:hover{background:var(--hover)}
+.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+.caldow{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);text-align:center;padding:2px 0 4px}
+.caldia{background:var(--card);border:1px solid var(--line);border-radius:12px;min-height:106px;padding:7px 7px 6px;display:flex;flex-direction:column;gap:4px;overflow:hidden;cursor:pointer;transition:box-shadow .14s,transform .08s}
+.caldia:hover{box-shadow:0 6px 16px rgba(28,67,39,.10);transform:translateY(-1px)}
+.caldia.fora{background:var(--cream);border-style:dashed;opacity:.45;cursor:default;min-height:106px}
+.caldia.fora:hover{transform:none;box-shadow:none}
+.caldia.hoje{border-color:var(--green2);box-shadow:inset 0 0 0 1px var(--green2);background:var(--moss)}
+.caldia.urg{background:var(--warn);border-color:var(--warnln)}
+.caldia.sel{outline:2px solid var(--green2);outline-offset:-3px}
+.caldia.drag{outline:2px dashed var(--green2);outline-offset:-4px;background:var(--kdrag)}
+.caldia .dnum{display:flex;justify-content:space-between;align-items:center;gap:5px;font-size:12px;font-weight:800;color:var(--ink)}
+.caldia.hoje .dnum{color:var(--green-dk)}
+.caldia .dtot{font-size:9.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+.caldia .pontos{display:none;gap:3px;flex-wrap:wrap}
+.caldia .pontos i{width:6px;height:6px;border-radius:50%;display:block}
+.calchip{background:var(--cream);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:7px;padding:3px 6px;font-size:10.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:grab}
+.calchip:active{cursor:grabbing}
+.calchip .q{color:var(--muted);font-weight:600}
+.calmais{font-size:10px;font-weight:700;color:var(--muted);padding-left:2px}
+.callista .item{display:flex;gap:9px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--green);border-radius:11px;padding:9px 11px;margin-bottom:7px;cursor:pointer}
+.callista .item:hover{background:var(--hover)}
+.callista .item .val{margin-left:auto;font-weight:800;color:var(--green-dk);font-size:13px;white-space:nowrap}
+@media(max-width:820px){
+ .calgrid{gap:4px}
+ .caldia{min-height:64px;padding:5px 4px;border-radius:9px}
+ .caldia.fora{min-height:64px}
+ .calchip,.calmais,.caldia .dtot{display:none}
+ .caldia .pontos{display:flex}
+ .calbar .mes{font-size:17px;min-width:0;flex:1}
+}
+
 </style>
 <script>
 /* Escuro e o PADRAO (pedido do Luan em 14/08/2026). Aplicado ANTES da pagina
@@ -516,6 +553,7 @@ tbody tr:hover{background:#f0f5ec}
  <nav id="nav">
   <button data-v="painel" class="active"><span class="ic">📊</span> Painel</button>
   <button data-v="atendimentos"><span class="ic">💬</span> Atendimentos</button>
+  <button data-v="calendario"><span class="ic">📅</span> Calendário</button>
   <button data-v="cadastros"><span class="ic">📥</span> Cadastros</button>
   <button data-v="tarefas"><span class="ic">✅</span> Tarefas</button>
   <button data-v="clientes"><span class="ic">👥</span> Clientes</button>
@@ -646,6 +684,34 @@ tbody tr:hover{background:#f0f5ec}
    <div id="tBoard" class="cu-lista"></div>
   </section>
 
+  <section class="view" id="calendario">
+   <div class="toolbar calbar">
+    <button class="calnav" onclick="calNav(-1)" title="Mês anterior">&lsaquo;</button>
+    <span class="mes" id="calMesLbl">—</span>
+    <button class="calnav" onclick="calNav(1)" title="Próximo mês">&rsaquo;</button>
+    <button class="btn ghost" onclick="calHoje()">Hoje</button>
+    <input type="text" id="calBusca" placeholder="Buscar cliente, cidade, produto..." oninput="renderCalendario()">
+    <select id="calEstagio" onchange="renderCalendario()"><option value="">Todos os estágios</option></select>
+    <label class="chk"><input type="checkbox" id="calConcluidos" onchange="renderCalendario()"> Mostrar entregues/perdidos</label>
+    <div style="flex:1"></div>
+    <button class="btn" onclick="openForm()">+ Novo atendimento</button>
+   </div>
+
+   <div class="kpis" id="calKpis"></div>
+
+   <div class="panel wide" style="margin-bottom:18px">
+    <h3>📅 Eventos do mês — arraste um cartão para outro dia</h3>
+    <div class="calgrid" id="calDows"></div>
+    <div class="calgrid" id="calGrid" style="margin-top:2px"></div>
+   </div>
+
+   <div class="panels">
+    <div class="panel"><h3 id="calDiaTtl">Clique num dia</h3><div class="callista" id="calDiaLista"></div></div>
+    <div class="panel"><h3>⚠️ Em aberto SEM data de evento</h3><div class="callista" id="calSemData"></div></div>
+   </div>
+  </section>
+
+
  </div>
 </div>
 
@@ -749,7 +815,7 @@ const PRODUTOS=["Suculenta + Rótulo Personalizado","Suculenta + Rótulo Pronto"
 const STAGE_COLORS={"Lead novo":"#8a94a6","Em conversa":"#3b82c4","Orçamento enviado":"#d99a2b","Negociação":"#c2693f","Fechado (ganho)":"#2e7d46","Em produção":"#1f8a8a","Entregue":"#1c4327","Pós-venda":"#6aa17a","Perdido":"#b00020"};
 const PAY_COLORS={"Pago":"#2e7d46","Sinal pago":"#d99a2b","Pendente":"#b00020","Estornado":"#8a94a6"};
 const SINAL_PCT=0.30; // sinal = 30% do valor
-const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O dinheiro de verdade: defina o saldo inicial, lance entradas e saídas e acompanhe mês a mês.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo."};
+const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O dinheiro de verdade: defina o saldo inicial, lance entradas e saídas e acompanhe mês a mês.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo."};
 
 const KEY="crm_atelie_v1";let state,currentId=null,viewMode="table",memFallback=null;
 /* ===== CONEXAO COM A NUVEM (Supabase) ===== */
@@ -831,7 +897,7 @@ document.getElementById('nav').addEventListener('click',e=>{const b=e.target.clo
  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.v).classList.add('active');
  const v=b.dataset.v;document.getElementById('ttl').textContent=b.textContent.trim();document.getElementById('sub').textContent=SUBS[v];
- if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();document.body.classList.remove('menu-open');});
+ if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();document.body.classList.remove('menu-open');});
 function toggleMenu(){document.body.classList.toggle('menu-open');}
 function setView(m){viewMode=m;[['vbTable','table'],['vbSheet','sheet'],['vbKanban','kanban']].forEach(function(x){var b=document.getElementById(x[0]);if(b)b.classList.toggle('active',m===x[1]);});
  document.getElementById('tableView').style.display=m==='table'?'':'none';document.getElementById('sheetView').style.display=m==='sheet'?'':'none';document.getElementById('kanbanView').style.display=m==='kanban'?'':'none';renderAtend();}
@@ -1027,6 +1093,163 @@ function moveStage(id,st){const o=state.orders.find(x=>x.id===id);if(o){o.estagi
 function dragStart(ev,id){ev.dataTransfer.setData("text/plain",String(id));ev.dataTransfer.effectAllowed="move";}
 function dropCard(ev,col){ev.preventDefault();col.classList.remove("drag");var id=+ev.dataTransfer.getData("text/plain");var st=col.getAttribute("data-stage");if(id&&st)moveStage(id,st);}
 
+/* ===================== CALENDÁRIO =====================
+   Aba "calendario". Agrupa os pedidos por dataEv (data do evento/entrega).
+   Reaproveita: calc, BRL, dBR, esc, STAGE_COLORS, PAY_COLORS, STAGES, DONE,
+   mesLabel, openForm, save, syncOrder, logAct e o dragStart do kanban.
+   NAO usa filtered(): ela le os filtros da aba Atendimentos (#fDe/#fAte),
+   que continuam no DOM mesmo escondidos e deixariam o mes vazio sem aviso.
+======================================================== */
+var calMes="";      // mes exibido, "YYYY-MM"
+var calDiaSel="";   // dia clicado, "YYYY-MM-DD"
+
+/* todayISO() usa toISOString(), que e UTC: depois das 21h em Brasilia ele ja
+   devolve o dia seguinte. Aqui a data e sempre LOCAL. Nao trocar a global. */
+function cal2(n){return (n<10?"0":"")+n;}
+function calHojeISO(){var d=new Date();return d.getFullYear()+"-"+cal2(d.getMonth()+1)+"-"+cal2(d.getDate());}
+
+function calFiltered(){
+ if(typeof state==="undefined"||!state||!state.orders)return [];
+ var qe=document.getElementById('calBusca'),q=(qe?qe.value:'').toLowerCase();
+ var fe=(document.getElementById('calEstagio')||{}).value||'';
+ var sd=document.getElementById('calConcluidos'),showDone=sd?sd.checked:false;
+ return state.orders.filter(function(o){
+  if(!showDone&&DONE.indexOf(o.estagio)>=0)return false;
+  if(fe&&o.estagio!==fe)return false;
+  if(q){var b=((o.cliente||'')+' '+(o.cidade||'')+' '+(o.produto||'')+' '+(o.descr||'')+' '+(o.tipoEv||'')).toLowerCase();if(b.indexOf(q)<0)return false;}
+  return true;});}
+
+/* dias que faltam ate a data (negativo = ja passou). O "T12:00:00" evita que
+   new Date("2026-12-25") seja lido como UTC e vire 24/12 no Brasil. */
+function calDias(iso){if(!iso)return null;
+ var a=new Date(calHojeISO()+"T12:00:00"),b=new Date(iso+"T12:00:00");
+ return Math.round((b-a)/864e5);}
+
+/* urgencia: '' | 'prox' (<=15d) | 'urg' (<=7d) | 'late' (evento passou e o
+   pedido nao esta em DONE = ainda tem trabalho pendente) */
+function calUrg(o){
+ if(!o.dataEv)return '';
+ if(DONE.indexOf(o.estagio)>=0)return '';
+ var d=calDias(o.dataEv);
+ if(d<0)return 'late';
+ if(d<=7)return 'urg';
+ if(d<=15)return 'prox';
+ return '';}
+
+function calNav(n){
+ var p=(calMes||calHojeISO().slice(0,7)).split('-');
+ var d=new Date(Date.UTC(+p[0],+p[1]-1+n,1));
+ calMes=d.getUTCFullYear()+"-"+cal2(d.getUTCMonth()+1);
+ calDiaSel='';renderCalendario();}
+
+function calHoje(){calMes=calHojeISO().slice(0,7);calDiaSel=calHojeISO();renderCalendario();}
+function calAbrirDia(dia){calDiaSel=(calDiaSel===dia?'':dia);renderCalendario();}
+
+/* cartao de pedido usado nas duas listas de baixo */
+function calItem(o,arrastavel){
+ var c=calc(o),col=STAGE_COLORS[o.estagio]||'#8a94a6',u=calUrg(o),d=calDias(o.dataEv);
+ var alerta='';
+ if(u==='late')alerta='<span class="badge" style="--c:#b00020">⚠ atrasado '+Math.abs(d)+'d</span>';
+ else if(u==='urg')alerta='<span class="badge" style="--c:#c2693f">🔥 faltam '+d+'d</span>';
+ else if(u==='prox')alerta='<span class="badge" style="--c:#d99a2b">'+d+'d</span>';
+ return '<div class="item" style="border-left-color:'+col+'"'
+  +(arrastavel?' draggable="true" ondragstart="dragStart(event,'+o.id+')"':'')
+  +' onclick="openForm('+o.id+')" title="Abrir o atendimento #'+o.id+'">'
+  +'<b style="font-size:13px">'+esc(o.cliente||'(sem nome)')+'</b>'
+  +'<span class="badge" style="--c:'+col+'">'+esc(o.estagio)+'</span>'
+  +(o.statusPag?'<span class="badge" style="--c:'+(PAY_COLORS[o.statusPag]||'#8a94a6')+'">'+esc(o.statusPag)+'</span>':'')
+  +alerta
+  +'<span class="mini">'+(o.qtd||0)+' un · '+esc(o.produto||'')+(o.tipoEv?' · '+esc(o.tipoEv):'')+(o.entrega?' · 🚚 '+esc(o.entrega):'')+(o.dataEv?' · 📅 '+dBR(o.dataEv):'')+'</span>'
+  +'<span class="val">'+BRL(c.vt)+'</span>'
+  +(o.whats?'<a class="wa" target="_blank" onclick="event.stopPropagation()" href="https://wa.me/55'+String(o.whats).replace(/\D/g,'')+'">🟢</a>':'')
+  +'</div>';}
+
+function calListaDia(){
+ var t=document.getElementById('calDiaTtl'),l=document.getElementById('calDiaLista');if(!t||!l)return;
+ if(!calDiaSel){t.textContent='Clique num dia';l.innerHTML='<div class="mini">Nenhum dia selecionado.</div>';return;}
+ var list=calFiltered().filter(function(o){return o.dataEv===calDiaSel;});
+ var tot=list.reduce(function(s,o){return s+calc(o).vt;},0);
+ t.textContent='📌 '+dBR(calDiaSel)+' — '+list.length+' pedido(s) · '+BRL(tot);
+ l.innerHTML=list.length?list.map(function(o){return calItem(o,false);}).join(''):'<div class="mini">Nenhum evento neste dia.</div>';}
+
+function renderCalendario(){
+ var grid=document.getElementById('calGrid');if(!grid)return;
+ if(typeof state==="undefined"||!state||!state.orders)return;
+ if(!calMes)calMes=calHojeISO().slice(0,7);
+
+ var sel=document.getElementById('calEstagio');
+ if(sel&&sel.options.length<2)sel.innerHTML='<option value="">Todos os estágios</option>'+STAGES.map(function(s){return '<option>'+s+'</option>';}).join('');
+
+ var p=calMes.split('-'),y=+p[0],m=+p[1]-1,hoje=calHojeISO();
+ document.getElementById('calMesLbl').textContent=mesLabel(calMes);
+ document.getElementById('calDows').innerHTML=['dom','seg','ter','qua','qui','sex','sáb'].map(function(d){return '<div class="caldow">'+d+'</div>';}).join('');
+
+ var rows=calFiltered(),byDay={},semData=[],mesFat=0,mesQtd=0,mesN=0,urgN=0;
+ rows.forEach(function(o){
+  var d=o.dataEv||'';
+  if(!d){if(DONE.indexOf(o.estagio)<0)semData.push(o);return;}
+  if(String(d).slice(0,7)!==calMes)return;
+  (byDay[d]=byDay[d]||[]).push(o);
+  mesN++;mesQtd+=Number(o.qtd)||0;mesFat+=calc(o).vt;
+  var u=calUrg(o);if(u==='urg'||u==='late')urgN++;});
+
+ var prim=new Date(Date.UTC(y,m,1)).getUTCDay();
+ var ndias=new Date(Date.UTC(y,m+1,0)).getUTCDate();
+ var cels=[],i;
+ for(i=0;i<prim;i++)cels.push(null);
+ for(i=1;i<=ndias;i++)cels.push(y+'-'+cal2(m+1)+'-'+cal2(i));
+ while(cels.length%7)cels.push(null);
+
+ grid.innerHTML=cels.map(function(dia){
+  if(!dia)return '<div class="caldia fora"></div>';
+  var list=byDay[dia]||[];
+  var tot=list.reduce(function(s,o){return s+calc(o).vt;},0);
+  var pior='';list.forEach(function(o){var u=calUrg(o);if(u==='late')pior='late';else if(u==='urg'&&pior!=='late')pior='urg';});
+  var cls='caldia'+(dia===hoje?' hoje':'')+(pior?' urg':'')+(dia===calDiaSel?' sel':'');
+  var chips=list.slice(0,3).map(function(o){
+   var col=STAGE_COLORS[o.estagio]||'#8a94a6';
+   return '<div class="calchip" draggable="true" ondragstart="event.stopPropagation();dragStart(event,'+o.id+')"'
+    +' onclick="event.stopPropagation();openForm('+o.id+')" style="border-left-color:'+col+'"'
+    +' title="'+esc(o.cliente)+' · '+esc(o.estagio)+' · '+esc(o.produto)+'">'
+    +(calUrg(o)==='late'?'⚠ ':(calUrg(o)==='urg'?'🔥 ':''))+esc(o.cliente||'(sem nome)')
+    +' <span class="q">'+(o.qtd||0)+'un</span></div>';}).join('');
+  var pontos=list.slice(0,7).map(function(o){return '<i style="background:'+(STAGE_COLORS[o.estagio]||'#8a94a6')+'"></i>';}).join('');
+  return '<div class="'+cls+'" data-dia="'+dia+'" onclick="calAbrirDia(&#39;'+dia+'&#39;)"'
+   +' ondragover="event.preventDefault();this.classList.add(&#39;drag&#39;)" ondragleave="this.classList.remove(&#39;drag&#39;)" ondrop="calDrop(event,this)">'
+   +'<div class="dnum"><span>'+(+dia.slice(8))+'</span>'+(list.length?'<span class="dtot">'+list.length+' · '+BRL(tot)+'</span>':'')+'</div>'
+   +'<div class="pontos">'+pontos+'</div>'
+   +chips+(list.length>3?'<div class="calmais">+'+(list.length-3)+' mais</div>':'')
+   +'</div>';}).join('');
+
+ var k=[["Eventos no mês",mesN,"b","📅"],["Peças a entregar",mesQtd,"","🪴"],
+        ["Faturamento do mês",BRL(mesFat),"","💰"],["Urgentes (≤7d ou atrasado)",urgN,"t","🔥"],
+        ["Em aberto sem data",semData.length,"g","❓"]];
+ document.getElementById('calKpis').innerHTML=k.map(function(x){
+  return '<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div></div>';}).join('');
+
+ calListaDia();
+ var sdEl=document.getElementById('calSemData');
+ semData.sort(function(a,b){return (b.data||'').localeCompare(a.data||'');});
+ sdEl.innerHTML=semData.length
+  ?'<div class="mini" style="margin-bottom:8px">Arraste qualquer um destes para um dia do calendário para marcar a data do evento.</div>'
+   +semData.slice(0,40).map(function(o){return calItem(o,true);}).join('')
+   +(semData.length>40?'<div class="mini">…e mais '+(semData.length-40)+'.</div>':'')
+  :'<div class="mini">Nenhum pedido em aberto sem data de evento. 👏</div>';
+}
+
+/* mover a data do evento — espelho do moveStage: muta, logAct, save, syncOrder, re-render */
+function moveData(id,dia){
+ var o=state.orders.find(function(x){return x.id===id;});if(!o)return;
+ if(o.dataEv===dia)return;
+ if(!confirm('Mover o evento de '+(o.cliente||'#'+id)+'\nde '+(o.dataEv?dBR(o.dataEv):'(sem data)')+' para '+dBR(dia)+'?'))return;
+ o.dataEv=dia;
+ logAct('mudou a data do evento do atendimento #'+id+' ('+o.cliente+') para '+dBR(dia));
+ save();syncOrder(o);calDiaSel=dia;renderCalendario();}
+
+function calDrop(ev,cell){ev.preventDefault();cell.classList.remove("drag");
+ var id=+ev.dataTransfer.getData("text/plain");var dia=cell.getAttribute("data-dia");
+ if(id&&dia)moveData(id,dia);}
+
 function openForm(id){currentId=id||null;
  fillSelect(f_canal,CANAIS);fillSelect(f_tipo,TIPOS);fillSelect(f_evento,EVENTOS);fillSelect(f_produto,PRODUTOS);fillSelect(f_estagio,STAGES);fillSelect(f_statuspag,PAGSTATUS);fillSelect(f_formapag,PAGFORMA);fillSelect(f_entrega,ENTREGA);
  const o=id?state.orders.find(x=>x.id===id):null,g=(k,d='')=>o?o[k]:d;
@@ -1039,7 +1262,7 @@ function onProdChange(){f_valor.value=state.precos[f_produto.value]??0;calcModal
 function calcModal(){const c=calc({qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,produto:f_produto.value,custoEntrega:+f_custoent.value||0});c_vt.textContent=BRL(c.vt);c_sinal.textContent=BRL(c.sinal);c_cu.textContent=BRL(c.cu);c_ct.textContent=BRL(c.ct);c_de.textContent=BRL(c.de);c_mg.textContent=BRL(c.mg);c_mp.textContent=PCT(c.mp);}
 function saveForm(){if(!f_cliente.value.trim()){alert('Informe o nome do cliente.');return;}
  const d={data:f_data.value,cliente:f_cliente.value.trim(),whats:f_whats.value.trim(),cidade:f_cidade.value.trim(),canal:f_canal.value,tipoCli:f_tipo.value,tipoEv:f_evento.value,dataEv:f_dataEv.value,produto:f_produto.value,descr:f_descr.value.trim(),qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,estagio:f_estagio.value,statusPag:f_statuspag.value,formaPag:f_formapag.value,entrega:f_entrega.value,custoEntrega:+f_custoent.value||0,followup:f_followup.value,obs:f_obs.value.trim()};
- let _sv;if(currentId){_sv=Object.assign(state.orders.find(x=>x.id===currentId),d);logAct('atualizou o atendimento #'+_sv.id+' ('+_sv.cliente+')');}else{d.id=state.seq++;_sv=d;state.orders.unshift(d);logAct('criou o atendimento #'+d.id+' ('+d.cliente+')');}save();syncOrder(_sv);closeForm();renderAtend();renderPainel();}
+ let _sv;if(currentId){_sv=Object.assign(state.orders.find(x=>x.id===currentId),d);logAct('atualizou o atendimento #'+_sv.id+' ('+_sv.cliente+')');}else{d.id=state.seq++;_sv=d;state.orders.unshift(d);logAct('criou o atendimento #'+d.id+' ('+d.cliente+')');}save();syncOrder(_sv);closeForm();renderAtend();renderPainel();if(document.getElementById('calendario')&&document.getElementById('calendario').classList.contains('active'))renderCalendario();}
 function deleteCurrent(){if(currentId&&confirm('Excluir este atendimento?')){const _id=currentId;logAct('excluiu o atendimento #'+_id);state.orders=state.orders.filter(x=>x.id!==_id);save();syncDelete(_id);closeForm();renderAtend();renderPainel();}}
 document.getElementById('overlay').addEventListener('click',function(e){/* clicar fora nao fecha: evita perder o que foi digitado */});
 
