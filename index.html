@@ -560,11 +560,7 @@ tbody tr:hover{background:#f0f5ec}
   <button data-v="produtos"><span class="ic">🪴</span> Produtos &amp; Custos</button>
   <button data-v="caixa"><span class="ic">💰</span> Caixa</button>
   <button data-v="sazonal"><span class="ic">🔥</span> Radar Sazonal</button>
- </nav>
- <div class="hint" style="margin:10px 4px 0;opacity:.75">📎 Planilhas</div>
- <nav>
-  <button onclick="window.open('https://docs.google.com/spreadsheets/d/1kGCIPN_YS6zxq33eTvA82-iTwYEd3CJkCPcWmTS0cmc/edit?gid=0#gid=0','_blank','noopener')"><span class="ic">📦</span> Pedidos da semana</button>
-  <button onclick="window.open('https://docs.google.com/spreadsheets/d/1x54s8MuwKOS2Cu_I6mq1MUWuas049ze15eK9fpZ3IAY/edit?gid=1045442459#gid=1045442459','_blank','noopener')"><span class="ic">📞</span> Controle de atendimento</button>
+  <button data-v="producao"><span class="ic">📦</span> Produção &amp; Vendas</button>
  </nav>
  <div class="grow"></div>
  <div class="data">
@@ -652,6 +648,17 @@ tbody tr:hover{background:#f0f5ec}
 
   <section class="view" id="sazonal">
    <div class="panel wide"><h3>🔥 Radar sazonal — nunca mais esqueça uma data</h3><div id="cxSazonal"></div></div>
+  </section>
+
+  <section class="view" id="producao">
+   <div class="toolbar">
+    <button class="btn ghost" onclick="renderProducao()">🔄 Atualizar</button>
+    <span class="mini">Vem das duas planilhas do Google, cruzado com os atendimentos do CRM.</span>
+    <div style="flex:1"></div>
+    <a class="mini" href="https://docs.google.com/spreadsheets/d/1kGCIPN_YS6zxq33eTvA82-iTwYEd3CJkCPcWmTS0cmc/edit?gid=0#gid=0" target="_blank" rel="noopener">abrir Pedidos Sucs ↗</a>
+    <a class="mini" href="https://docs.google.com/spreadsheets/d/1x54s8MuwKOS2Cu_I6mq1MUWuas049ze15eK9fpZ3IAY/edit?gid=1045442459#gid=1045442459" target="_blank" rel="noopener">abrir Lista de Vendas ↗</a>
+   </div>
+   <div id="producaoView"></div>
   </section>
 
   <section class="view" id="clientes">
@@ -820,7 +827,7 @@ const PRODUTOS=["Suculenta + Rótulo Personalizado","Suculenta + Rótulo Pronto"
 const STAGE_COLORS={"Lead novo":"#8a94a6","Em conversa":"#3b82c4","Orçamento enviado":"#d99a2b","Negociação":"#c2693f","Fechado (ganho)":"#2e7d46","Em produção":"#1f8a8a","Entregue":"#1c4327","Pós-venda":"#6aa17a","Perdido":"#b00020"};
 const PAY_COLORS={"Pago":"#2e7d46","Sinal pago":"#d99a2b","Pendente":"#b00020","Estornado":"#8a94a6"};
 const SINAL_PCT=0.30; // sinal = 30% do valor
-const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O dinheiro de verdade: defina o saldo inicial, lance entradas e saídas e acompanhe mês a mês.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo."};
+const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O dinheiro de verdade: defina o saldo inicial, lance entradas e saídas e acompanhe mês a mês.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo.",producao:"As duas planilhas do Google lidas aqui dentro e cruzadas com os atendimentos: o que está produzido, o que foi vendido e o que não bate."};
 
 const KEY="crm_atelie_v1";let state,currentId=null,viewMode="table",memFallback=null;
 /* ===== CONEXAO COM A NUVEM (Supabase) ===== */
@@ -902,7 +909,7 @@ document.getElementById('nav').addEventListener('click',e=>{const b=e.target.clo
  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.v).classList.add('active');
  const v=b.dataset.v;document.getElementById('ttl').textContent=b.textContent.trim();document.getElementById('sub').textContent=SUBS[v];
- if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();document.body.classList.remove('menu-open');});
+ if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();if(v==='producao')renderProducao();document.body.classList.remove('menu-open');});
 function toggleMenu(){document.body.classList.toggle('menu-open');}
 function setView(m){viewMode=m;[['vbTable','table'],['vbSheet','sheet'],['vbKanban','kanban']].forEach(function(x){var b=document.getElementById(x[0]);if(b)b.classList.toggle('active',m===x[1]);});
  document.getElementById('tableView').style.display=m==='table'?'':'none';document.getElementById('sheetView').style.display=m==='sheet'?'':'none';document.getElementById('kanbanView').style.display=m==='kanban'?'':'none';renderAtend();}
@@ -1082,6 +1089,41 @@ function renderCaixa(){
   mh+='<tr'+(m===curM?' style="background:var(--hover);font-weight:700"':'')+'><td>'+mesLabel(m)+'</td><td class="num">'+BRL(byM[m].e)+'</td><td class="num">'+BRL(byM[m].s)+'</td><td class="num" style="color:'+(r>=0?"#2e7d46":"#b00020")+'">'+BRL(r)+'</td><td class="num">'+cmp+'</td><td class="num">'+BRL(acc)+'</td></tr>';
   prevR=r;});
  mh+='</tbody></table>';document.getElementById("cxMeses").innerHTML=mh;}
+// Producao & Vendas: le as duas planilhas (sincronizadas pelo Apps Script para o Supabase)
+// e cruza com os atendimentos do CRM pelo nome do cliente normalizado.
+function normNome(s){return String(s||"").split(" - ")[0].normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z\s]/g,"").replace(/\s+/g," ").trim();}
+async function renderProducao(){const el=document.getElementById("producaoView");if(!el)return;
+ if(!SHEET_URL){el.innerHTML='<div class="mini" style="padding:16px">Entre na nuvem (faça login) para ver produção e vendas.</div>';return;}
+ el.innerHTML='<div class="mini" style="padding:16px;color:#888">Carregando...</div>';
+ var prod=[],vend=[];
+ try{
+  var rp=await fetch(sbUrl("planilha_producao?select=*&order=id.asc"),{headers:sbHeaders()});
+  var rv=await fetch(sbUrl("planilha_vendas?select=*&order=data.asc"),{headers:sbHeaders()});
+  if(!rp.ok||!rv.ok){el.innerHTML='<div class="mini" style="padding:16px;color:var(--danger)">As tabelas das planilhas ainda não existem no Supabase (ou o Apps Script ainda não rodou). Assim que a sincronização subir, os dados aparecem aqui.</div>';return;}
+  prod=await rp.json();vend=await rv.json();
+ }catch(e){el.innerHTML='<div class="mini" style="padding:16px;color:var(--danger)">Não consegui carregar. '+esc(String(e.message||e))+'</div>';return;}
+ var vendPorNome={};vend.forEach(function(v){var k=normNome(v.nome);(vendPorNome[k]=vendPorNome[k]||[]).push(v);});
+ var crmPorNome={};(state.orders||[]).forEach(function(o){var k=normNome(o.cliente);(crmPorNome[k]=crmPorNome[k]||[]).push(o);});
+ var linhas="",semana=null;
+ prod.forEach(function(p){
+  if(p.semana_label&&p.semana_label!==semana){semana=p.semana_label;
+   linhas+='<tr style="background:var(--moss)"><td colspan="7"><b>'+esc(semana)+'</b></td></tr>';}
+  var k=normNome(p.nome),venda=(vendPorNome[k]||[])[0],crm=(crmPorNome[k]||[])[0];
+  var flags=[p.arte_feita?'🎨 arte':'',p.tag_produzida?'🏷️ tag':'',p.enviou_video?'🎥 vídeo':'',p.pagou?'💰 pago':''].filter(Boolean).join(' · ');
+  linhas+='<tr><td><b>'+esc(p.nome)+'</b>'+(p.nota_logistica?'<div class="mini" style="color:var(--muted)">'+esc(p.nota_logistica)+'</div>':'')+'</td>'
+   +'<td>'+esc(p.pedido||'')+'</td><td>'+esc(p.status||'')+'</td>'
+   +'<td>'+(flags||'<span class="mini" style="color:var(--muted)">—</span>')+'</td>'
+   +'<td>'+(crm?esc(crm.estagio||'')+' · '+BRL(calc(crm).vt):'<span class="mini" style="color:var(--danger)">não está no CRM</span>')+'</td>'
+   +'<td>'+(venda?BRL(venda.valor_total)+(venda.data_entrega?' · até '+dBR(venda.data_entrega):''):'<span class="mini" style="color:var(--muted)">sem registro de venda</span>')+'</td>'
+   +'<td class="mini">'+esc(p.obs||'')+'</td></tr>';});
+ var nomesProd={};prod.forEach(function(p){nomesProd[normNome(p.nome)]=1;});
+ var orfaos=vend.filter(function(v){return !nomesProd[normNome(v.nome)];});
+ var orfHtml=orfaos.length?('<div class="panel wide" style="margin-top:16px"><h3>⚠ Vendido, mas sem linha na planilha de produção ('+orfaos.length+')</h3>'
+  +'<div class="mini" style="color:var(--muted);margin-bottom:8px">Está na Lista de Vendas e não apareceu em Pedidos Sucs — vale conferir se não ficou esquecido.</div>'
+  +orfaos.map(function(v){return '<div class="mini" style="padding:3px 0">'+esc(v.nome||'')+' — '+esc(v.pedido||'')+' · '+BRL(v.valor_total)+(v.data_entrega?' · até '+dBR(v.data_entrega):'')+'</div>';}).join('')+'</div>'):'';
+ el.innerHTML='<div class="tablewrap"><table><thead><tr><th>Cliente</th><th>Pedido</th><th>Status</th><th>Produção</th><th>No CRM</th><th>Venda</th><th>Obs</th></tr></thead><tbody>'
+  +(linhas||'<tr><td colspan="7" class="mini" style="padding:18px;text-align:center;color:var(--muted)">Nenhuma linha sincronizada ainda.</td></tr>')
+  +'</tbody></table></div>'+orfHtml;}
 function renderSazonal(){const el=document.getElementById("cxSazonal");if(!el)return;const today=new Date();const tISO=todayISO();
  const items=SAZONAL.map(x=>{const y=today.getFullYear();let d=y+"-"+x[0];if(d<tISO)d=(y+1)+"-"+x[0];
   const dias=Math.round((new Date(d+"T12:00:00")-new Date(tISO+"T12:00:00"))/864e5);return {d,dias,nome:x[1],dica:x[2],pico:x[3]};}).sort((a,b)=>a.dias-b.dias);
