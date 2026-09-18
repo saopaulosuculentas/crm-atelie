@@ -268,6 +268,10 @@ tbody tr:hover{background:#f0f5ec}
 .cu-av{width:22px;height:22px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:800;
  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
 .cu-av.vazio{background:transparent;border:1px dashed var(--line);color:var(--muted)}
+.cu-pessoa{border:1px solid var(--line);background:transparent;color:var(--muted);
+ border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;cursor:pointer;
+ margin-right:4px;line-height:1.6}
+.cu-pessoa.on{font-weight:800}
 .cu-due{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
 .cu-due.late{color:#e5484d;font-weight:700}
 .cu-due.hoje{color:#f76808;font-weight:700}
@@ -778,7 +782,7 @@ tbody tr:hover{background:#f0f5ec}
    <input type="text" id="t_titulo" class="cu-titulo" placeholder="Nome da tarefa" autocomplete="off">
 
    <div class="cu-chips">
-    <label class="cu-chip" id="chip_resp" title="Responsável">👤 <select id="t_resp" onchange="tPintarChips()"></select></label>
+    <span class="cu-chip" id="chip_resp" title="Responsáveis — clique para marcar mais de um">👤 <span id="t_resp"></span></span>
     <label class="cu-chip" id="chip_prazo" title="Data de vencimento">📅 <input type="date" id="t_prazo" onchange="tPintarChips()"></label>
     <label class="cu-chip" id="chip_urg" title="Prioridade"><span id="urgFlag">🏳️</span> <select id="t_urg" onchange="tPintarChips()"></select></label>
     <label class="cu-chip" id="chip_tags" title="Etiquetas — separe por vírgula">🏷️ <input type="text" id="t_tags" placeholder="Etiquetas" oninput="tPintarChips()" style="max-width:190px"></label>
@@ -1485,6 +1489,29 @@ function tTagsDe(t){
  return [];
 }
 
+/* responsavel guarda UMA OU MAIS pessoas, separadas por virgula. Fica na mesma
+   coluna de texto de sempre: tarefa antiga com um nome so continua lendo igual,
+   entao nao precisou mexer no banco nem migrar nada. */
+function tResps(t){return String((t&&t.responsavel)||"").split(",")
+  .map(function(x){return x.trim();}).filter(Boolean);}
+function tTemResp(t,p){return tResps(t).indexOf(p)>=0;}
+
+var tRespSel=[];
+function tRespRender(){
+ var el=document.getElementById('t_resp');if(!el)return;
+ el.innerHTML=T_EQUIPE.map(function(p){
+  var on=tRespSel.indexOf(p)>=0,c=tCorPessoa(p);
+  var st=on?('background:'+c+';border-color:'+c+';color:'+tTextoSobre(c)):'';
+  return '<button type="button" class="cu-pessoa'+(on?' on':'')+'" style="'+st+'"'
+   +' onclick="tRespToggle(\''+p+'\')">'+p+'</button>';
+ }).join('');
+}
+function tRespToggle(p){
+ var i=tRespSel.indexOf(p);
+ if(i>=0)tRespSel.splice(i,1);else tRespSel.push(p);
+ tRespRender();
+}
+
 var tarefas=[],tAtual=null,_tDragId=null;
 var tAnexos=[],tPastaAtual="",tComentarios=[],tComCount={};
 
@@ -1578,7 +1605,7 @@ function renderTarefas(){
   var b=document.getElementById('tv_'+k);if(b)b.classList.toggle('on',k===tView);
  });
  var filtro=tFiltroAtual();
- var vis=tarefas.filter(function(t){return !filtro||t.responsavel===filtro;});
+ var vis=tarefas.filter(function(t){return !filtro||tTemResp(t,filtro);});
  tRenderResumo(vis);
  if(tView==='lista'){el.className='cu-lista';el.innerHTML=tListaGrupos(vis);}
  else if(tView==='equipe'){el.className='tboard tboard-3';el.innerHTML=tColsPessoa(vis);}
@@ -1650,8 +1677,8 @@ function tLinha(t,et){
         var tc=tCorTag(g);
         return '<span class="cu-tag" style="background:'+tc+'22;color:'+tc+'">'+esc(g)+'</span>';}).join('')+'</span>':'')
   +'</span>'
-  +'<span class="cu-avs">'+(t.responsavel
-     ?'<i class="cu-av" style="background:'+tCorPessoa(t.responsavel)+'" title="'+esc(t.responsavel)+'">'+esc(tIniciais(t.responsavel))+'</i>'
+  +'<span class="cu-avs">'+(tResps(t).length
+     ?tResps(t).map(function(p){return '<i class="cu-av" style="background:'+tCorPessoa(p)+'" title="'+esc(p)+'">'+esc(tIniciais(p))+'</i>';}).join('')
      :'<i class="cu-av vazio" title="sem responsável">+</i>')+'</span>'
   +'<span class="cu-due '+(feito?'':d.cls)+'">'+(d.txt?esc(d.txt):'—')+'</span>'
   +'<span class="cu-prio">'+tBandeira(urg)+esc(tUrgLbl(urg))+'</span>'
@@ -1709,12 +1736,13 @@ function tColsEtapa(vis){
 function tColsPessoa(vis){
  /* quem nao tem responsavel vira uma coluna propria, senao a tarefa some da tela */
  var donos=T_EQUIPE.slice();
- var orfas=vis.filter(function(t){return !t.responsavel||donos.indexOf(t.responsavel)<0;});
+ var orfas=vis.filter(function(t){var r=tResps(t);return !r.length||!r.some(function(x){return donos.indexOf(x)>=0;});});
  if(orfas.length)donos.push('');
  var ordem={};T_ETAPAS.forEach(function(e,i){ordem[e]=i;});
  return donos.map(function(p){
   var lista=vis.filter(function(t){
-    return p?(t.responsavel===p):(!t.responsavel||T_EQUIPE.indexOf(t.responsavel)<0);
+    var r=tResps(t);
+    return p?(r.indexOf(p)>=0):(!r.length||!r.some(function(x){return T_EQUIPE.indexOf(x)>=0;}));
    }).sort(function(a,b){
     var d=(ordem[a.etapa||T_ETAPAS[0]]||0)-(ordem[b.etapa||T_ETAPAS[0]]||0);
     return d!==0?d:((a.pos||0)-(b.pos||0));
@@ -1766,7 +1794,7 @@ function tCard(t,feito,mostrarEtapa){
   +'<span class="tpill" style="background:'+tCor(urg)+'22;color:'+(urg==='baixa'?'var(--muted)':tCor(urg))+'">'+tBandeira(urg)+tUrgLbl(urg)+'</span>'
   +(mostrarEtapa
      ? '<span class="tetapa" style="background:'+ce+'22;color:'+ce+';border-color:'+ce+'55"><i class="tdot" style="background:'+ce+'"></i>'+esc(etapa)+'</span>'
-     : (t.responsavel?'<span class="twho" style="background:'+tCorPessoa(t.responsavel)+'22;color:'+tCorPessoa(t.responsavel)+'"><i class="tdot" style="background:'+tCorPessoa(t.responsavel)+'"></i>'+esc(t.responsavel)+'</span>':''))
+     : (tResps(t).length?tResps(t).map(function(p){return '<span class="twho" style="background:'+tCorPessoa(p)+'22;color:'+tCorPessoa(p)+'"><i class="tdot" style="background:'+tCorPessoa(p)+'"></i>'+esc(p)+'</span>';}).join(''):''))
   +(d.txt?'<span class="tdue'+(feito?'':(d.cls==='vazio'?'':' '+d.cls))+'">📅 '+esc(d.txt)+'</span>':'')
   +(nAnex?'<span class="tbadge">📎 '+nAnex+'</span>':'')
   +(nCom?'<span class="tbadge">💬 '+nCom+'</span>':'')
@@ -2150,13 +2178,14 @@ function tPintarChips(){
 
 function tAbrir(id){
  tAtual=id||null;
- tFill('t_resp',T_EQUIPE);tFill('t_urg',T_URG,true);tFill('t_etapa',T_ETAPAS);
+ tFill('t_urg',T_URG,true);tFill('t_etapa',T_ETAPAS);
  var t=id?tarefas.find(function(x){return x.id===id;}):null;
  document.getElementById('tTitle').textContent=t?'Editando':'Nova tarefa';
  document.getElementById('tDelBtn').style.display=t?'':'none';
  document.getElementById('t_titulo').value=t?(t.titulo||""):"";
  document.getElementById('t_descr').value=t?(t.descricao||""):"";
- document.getElementById('t_resp').value=t?(t.responsavel||T_EQUIPE[0]):(userName()&&T_EQUIPE.indexOf(userName())>=0?userName():T_EQUIPE[0]);
+ tRespSel=t?tResps(t):((userName()&&T_EQUIPE.indexOf(userName())>=0)?[userName()]:[T_EQUIPE[0]]);
+ tRespRender();
  document.getElementById('t_prazo').value=t?(t.prazo||""):"";
  document.getElementById('t_urg').value=t?(t.urgencia||"media"):"media";
  document.getElementById('t_etapa').value=t?(t.etapa||T_ETAPAS[0]):T_ETAPAS[0];
@@ -2191,7 +2220,7 @@ async function tSalvar(){
  t.anexos=tAnexos.slice();
  t.etiquetas=(document.getElementById('t_tags').value||"").split(",")
    .map(function(x){return x.trim();}).filter(Boolean).slice(0,8);
- t.responsavel=document.getElementById('t_resp').value;
+ t.responsavel=tRespSel.join(", ");
  t.prazo=document.getElementById('t_prazo').value||null;
  t.urgencia=document.getElementById('t_urg').value;
  t.etapa=etapa;
