@@ -569,7 +569,6 @@ tbody tr:hover{background:#f0f5ec}
   <button data-v="produtos"><span class="ic">🪴</span> Produtos &amp; Custos</button>
   <button data-v="caixa"><span class="ic">💰</span> Caixa</button>
   <button data-v="sazonal"><span class="ic">🔥</span> Radar Sazonal</button>
-  <button data-v="producao"><span class="ic">📦</span> Produção &amp; Vendas</button>
  </nav>
  <div class="grow"></div>
  <div class="data">
@@ -627,6 +626,7 @@ tbody tr:hover{background:#f0f5ec}
   <section class="view" id="atendimentos">
    <div class="toolbar">
     <button class="btn" onclick="openForm()">+ Novo atendimento</button>
+    <span class="mini" id="plSync" style="align-self:center"></span>
     <input type="text" id="search" placeholder="Buscar cliente, cidade, produto..." oninput="renderAtend()">
     <select id="fEstagio" onchange="renderAtend()"><option value="">Todos os estágios</option></select>
     <select id="fTipo" onchange="renderAtend()"><option value="">Todos os tipos</option></select>
@@ -661,17 +661,6 @@ tbody tr:hover{background:#f0f5ec}
 
   <section class="view" id="sazonal">
    <div class="panel wide"><h3>🔥 Radar sazonal — nunca mais esqueça uma data</h3><div id="cxSazonal"></div></div>
-  </section>
-
-  <section class="view" id="producao">
-   <div class="toolbar">
-    <button class="btn ghost" onclick="renderProducao()">🔄 Atualizar</button>
-    <span class="mini">Vem das duas planilhas do Google, cruzado com os atendimentos do CRM.</span>
-    <div style="flex:1"></div>
-    <a class="mini" href="https://docs.google.com/spreadsheets/d/1kGCIPN_YS6zxq33eTvA82-iTwYEd3CJkCPcWmTS0cmc/edit?gid=0#gid=0" target="_blank" rel="noopener">abrir Pedidos Sucs ↗</a>
-    <a class="mini" href="https://docs.google.com/spreadsheets/d/1x54s8MuwKOS2Cu_I6mq1MUWuas049ze15eK9fpZ3IAY/edit?gid=1045442459#gid=1045442459" target="_blank" rel="noopener">abrir Lista de Vendas ↗</a>
-   </div>
-   <div id="producaoView"></div>
   </section>
 
   <section class="view" id="clientes">
@@ -743,7 +732,7 @@ tbody tr:hover{background:#f0f5ec}
 <div class="overlay" id="overlay">
  <div class="modal">
   <div class="mhead" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2 id="mTitle">Novo atendimento</h2><button type="button" onclick="closeForm()" aria-label="Fechar" title="Fechar" style="background:transparent;border:0;color:#fff;font-size:24px;line-height:1;cursor:pointer;padding:0 6px">✕</button></div>
-  <div class="mbody"><div class="fgrid">
+  <div class="mbody"><div id="f_planilha"></div><div class="fgrid">
     <div class="field"><label>Data do contato</label><input type="date" id="f_data"></div>
     <div class="field"><label>Cliente</label><input type="text" id="f_cliente" placeholder="Nome"></div>
     <div class="field"><label>WhatsApp (só números)</label><input type="text" id="f_whats" placeholder="11999998888"></div>
@@ -840,7 +829,7 @@ const PRODUTOS=["Suculenta + Rótulo Personalizado","Suculenta + Rótulo Pronto"
 const STAGE_COLORS={"Lead novo":"#8a94a6","Em conversa":"#3b82c4","Orçamento enviado":"#d99a2b","Negociação":"#c2693f","Fechado (ganho)":"#2e7d46","Em produção":"#1f8a8a","Entregue":"#1c4327","Pós-venda":"#6aa17a","Perdido":"#b00020"};
 const PAY_COLORS={"Pago":"#2e7d46","Sinal pago":"#d99a2b","Pendente":"#b00020","Estornado":"#8a94a6"};
 const SINAL_PCT=0.30; // sinal = 30% do valor
-const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O livro-caixa da empresa: custos por categoria, recebimentos ligados ao pedido e as vendas do site. O Painel calcula os indicadores daqui.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo.",producao:"As duas planilhas do Google lidas aqui dentro e cruzadas com os atendimentos: o que está produzido, o que foi vendido e o que não bate."};
+const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O livro-caixa da empresa: custos por categoria, recebimentos ligados ao pedido e as vendas do site. O Painel calcula os indicadores daqui.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo."};
 
 const KEY="crm_atelie_v1";let state,currentId=null,viewMode="table",memFallback=null;
 /* ===== CONEXAO COM A NUVEM (Supabase) ===== */
@@ -926,7 +915,7 @@ document.getElementById('nav').addEventListener('click',e=>{const b=e.target.clo
  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.v).classList.add('active');
  const v=b.dataset.v;document.getElementById('ttl').textContent=b.textContent.trim();document.getElementById('sub').textContent=SUBS[v];
- if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();if(v==='producao')renderProducao();document.body.classList.remove('menu-open');});
+ if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();document.body.classList.remove('menu-open');});
 function toggleMenu(){document.body.classList.toggle('menu-open');}
 function setView(m){viewMode=m;[['vbTable','table'],['vbSheet','sheet'],['vbKanban','kanban']].forEach(function(x){var b=document.getElementById(x[0]);if(b)b.classList.toggle('active',m===x[1]);});
  document.getElementById('tableView').style.display=m==='table'?'':'none';document.getElementById('sheetView').style.display=m==='sheet'?'':'none';document.getElementById('kanbanView').style.display=m==='kanban'?'':'none';renderAtend();}
@@ -1066,7 +1055,7 @@ const CX_SAIDAS=["Materiais","Frete","Anúncio","Suculentas","Ambiente","Funcion
 const CX_ENTRADAS=["Sinal 30%","Pagamento integral","Outra entrada"];
 const CX_CONTAS=["PIX Santander","PIX Banco do Brasil","Crédito Santander","Crédito PAN","Dinheiro","Outra"];
 const CXCATS=CX_SAIDAS.concat(CX_ENTRADAS);
-const FIN_INICIO_CRM="2026-09",FIN_ID_SITE=700000000;
+const FIN_INICIO_CRM="2026-09",FIN_ID_SITE=700000000,FIN_ID_PLANILHA=500000000;
 function finNovoId(){let id;do{id=Date.now()*1000+Math.floor(Math.random()*1000);}while((state.caixa||[]).some(x=>x.id===id));return id;}
 async function cxDetectarExt(){try{const r=await fetch(sbUrl("caixa?select=conta,pedido_id,origem&limit=1"),{headers:sbHeaders()});CX_EXT=r.ok;}catch(e){CX_EXT=null;}}
 function finVendasSite(){return (state.orders||[]).filter(o=>Number(o.id)>=FIN_ID_SITE&&o.statusPag==="Pago"&&o.estagio!=="Perdido"&&(o.data||"").slice(0,7)>=FIN_INICIO_CRM).map(o=>({id:Number(o.id),data:o.data,tipo:"Entrada",categoria:"Pagamento integral",descr:"Venda do site · "+((o.cliente||"").trim()||"cliente"),valor:calc(o).vt,quem:"site",conta:"Yampi (site)",pedido_id:Number(o.id),origem:"site",virtual:true}));}
@@ -1075,7 +1064,7 @@ function finRecebido(pid,cat){return (state.caixa||[]).filter(x=>Number(x.pedido
 function finAviso(t){try{alert(t);}catch(e){}}
 // Pedido digitado virou "Sinal pago" ou "Pago": o dinheiro entra no Caixa, ligado ao pedido. Nunca apaga sozinho.
 function finPagamento(o,antes){
- if(!o||Number(o.id)>=FIN_ID_SITE||o.statusPag===antes||!SHEET_URL)return;
+ if(!o||Number(o.id)>=FIN_ID_PLANILHA||o.statusPag===antes||!SHEET_URL)return;
  const novo=o.statusPag,c=calc(o);
  if(CX_EXT!==true){if((novo==="Sinal pago"||novo==="Pago")&&!_finAvisou){_finAvisou=true;finAviso("O recebimento não entrou no Caixa: falta rodar no Supabase o SQL do financeiro (crm_financeiro_rodar_no_supabase.sql).");}return;}
  const rot="pedido #"+o.id+((o.cliente||"").trim()?" · "+o.cliente.trim():"");
@@ -1171,41 +1160,22 @@ function renderCaixa(){
   mh+='<tr'+(m===curM?' style="background:var(--hover);font-weight:700"':'')+'><td>'+mesLabel(m)+'</td><td class="num">'+BRL(byM[m].e)+'</td><td class="num">'+BRL(byM[m].s)+'</td><td class="num" style="color:'+(r>=0?"#2e7d46":"#b00020")+'">'+BRL(r)+'</td><td class="num">'+cmp+'</td><td class="num">'+BRL(acc)+'</td></tr>';
   prevR=r;});
  mh+='</tbody></table>';document.getElementById("cxMeses").innerHTML=mh;}
-// Producao & Vendas: le as duas planilhas (sincronizadas pelo Apps Script para o Supabase)
-// e cruza com os atendimentos do CRM pelo nome do cliente normalizado.
-function normNome(s){return String(s||"").split(" - ")[0].normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z\s]/g,"").replace(/\s+/g," ").trim();}
-async function renderProducao(){const el=document.getElementById("producaoView");if(!el)return;
- if(!SHEET_URL){el.innerHTML='<div class="mini" style="padding:16px">Entre na nuvem (faça login) para ver produção e vendas.</div>';return;}
- el.innerHTML='<div class="mini" style="padding:16px;color:#888">Carregando...</div>';
- var prod=[],vend=[];
- try{
-  var rp=await fetch(sbUrl("planilha_producao?select=*&order=id.asc"),{headers:sbHeaders()});
-  var rv=await fetch(sbUrl("planilha_vendas?select=*&order=data.asc"),{headers:sbHeaders()});
-  if(!rp.ok||!rv.ok){el.innerHTML='<div class="mini" style="padding:16px;color:var(--danger)">As tabelas das planilhas ainda não existem no Supabase (ou o Apps Script ainda não rodou). Assim que a sincronização subir, os dados aparecem aqui.</div>';return;}
-  prod=await rp.json();vend=await rv.json();
- }catch(e){el.innerHTML='<div class="mini" style="padding:16px;color:var(--danger)">Não consegui carregar. '+esc(String(e.message||e))+'</div>';return;}
- var vendPorNome={};vend.forEach(function(v){var k=normNome(v.nome);(vendPorNome[k]=vendPorNome[k]||[]).push(v);});
- var crmPorNome={};(state.orders||[]).forEach(function(o){var k=normNome(o.cliente);(crmPorNome[k]=crmPorNome[k]||[]).push(o);});
- var linhas="",semana=null;
- prod.forEach(function(p){
-  if(p.semana_label&&p.semana_label!==semana){semana=p.semana_label;
-   linhas+='<tr style="background:var(--moss)"><td colspan="7"><b>'+esc(semana)+'</b></td></tr>';}
-  var k=normNome(p.nome),venda=(vendPorNome[k]||[])[0],crm=(crmPorNome[k]||[])[0];
-  var flags=[p.arte_feita?'🎨 arte':'',p.tag_produzida?'🏷️ tag':'',p.enviou_video?'🎥 vídeo':'',p.pagou?'💰 pago':''].filter(Boolean).join(' · ');
-  linhas+='<tr><td><b>'+esc(p.nome)+'</b>'+(p.nota_logistica?'<div class="mini" style="color:var(--muted)">'+esc(p.nota_logistica)+'</div>':'')+'</td>'
-   +'<td>'+esc(p.pedido||'')+'</td><td>'+esc(p.status||'')+'</td>'
-   +'<td>'+(flags||'<span class="mini" style="color:var(--muted)">—</span>')+'</td>'
-   +'<td>'+(crm?esc(crm.estagio||'')+' · '+BRL(calc(crm).vt):'<span class="mini" style="color:var(--danger)">não está no CRM</span>')+'</td>'
-   +'<td>'+(venda?BRL(venda.valor_total)+(venda.data_entrega?' · até '+dBR(venda.data_entrega):''):'<span class="mini" style="color:var(--muted)">sem registro de venda</span>')+'</td>'
-   +'<td class="mini">'+esc(p.obs||'')+'</td></tr>';});
- var nomesProd={};prod.forEach(function(p){nomesProd[normNome(p.nome)]=1;});
- var orfaos=vend.filter(function(v){return !nomesProd[normNome(v.nome)];});
- var orfHtml=orfaos.length?('<div class="panel wide" style="margin-top:16px"><h3>⚠ Vendido, mas sem linha na planilha de produção ('+orfaos.length+')</h3>'
-  +'<div class="mini" style="color:var(--muted);margin-bottom:8px">Está na Lista de Vendas e não apareceu em Pedidos Sucs — vale conferir se não ficou esquecido.</div>'
-  +orfaos.map(function(v){return '<div class="mini" style="padding:3px 0">'+esc(v.nome||'')+' — '+esc(v.pedido||'')+' · '+BRL(v.valor_total)+(v.data_entrega?' · até '+dBR(v.data_entrega):'')+'</div>';}).join('')+'</div>'):'';
- el.innerHTML='<div class="tablewrap"><table><thead><tr><th>Cliente</th><th>Pedido</th><th>Status</th><th>Produção</th><th>No CRM</th><th>Venda</th><th>Obs</th></tr></thead><tbody>'
-  +(linhas||'<tr><td colspan="7" class="mini" style="padding:18px;text-align:center;color:var(--muted)">Nenhuma linha sincronizada ainda.</td></tr>')
-  +'</tbody></table></div>'+orfHtml;}
+// Pedidos da planilha "Pedidos Sucs" (script da planilha -> Supabase, 27/09/2026): pedido de WhatsApp vira pedido do
+// CRM (ids 500000001 a 599999999, a planilha manda neles); pedido do site e digitado so recebem status e producao.
+const PL_URL="https://docs.google.com/spreadsheets/d/1kGCIPN_YS6zxq33eTvA82-iTwYEd3CJkCPcWmTS0cmc/edit";
+function plDaPlanilha(o){const n=Number(o&&o.id);return n>=FIN_ID_PLANILHA&&n<FIN_ID_SITE;}
+function plInfo(o){const p=o&&o.producao;if(!p)return'';const sn=v=>{v=String(v||'').trim();return /^sim$/i.test(v)?'✅':/^n[aã]o$/i.test(v)?'❌':'·';};
+ return '<div class="note" style="margin-bottom:12px">📋 <b>Planilha Pedidos Sucs</b> · '+esc(p.aba||'')+(p.semana?' · '+esc(p.semana):'')
+  +'<br>Status: <b>'+esc(p.status||'sem status')+'</b> · Arte '+sn(p.arte)+' · Tag '+sn(p.tag)+' · Vídeo '+sn(p.video)
+  +(p.nome_tag?'<br>Nome na tag: '+esc(p.nome_tag):'')+(p.logistica?'<br>Entrega: '+esc(p.logistica):'')+(p.obs?'<br>Obs: '+esc(p.obs):'')
+  +(plDaPlanilha(o)?'<br><span class="mini">Este pedido vem da planilha: o que mudar aqui volta ao que está nela na próxima sincronização. Edite na planilha.</span>':'')
+  +' <a class="mini" href="'+PL_URL+'" target="_blank" rel="noopener">abrir a planilha ↗</a></div>';}
+async function plSyncMostrar(){const el=document.getElementById("plSync");if(!el||!SHEET_URL)return;
+ try{const r=await fetch(sbUrl("pedidos_sync?select=em,resumo&order=id.desc&limit=1"),{headers:sbHeaders()});
+  if(!r.ok){el.innerHTML='Planilha de pedidos: <b>ainda não ligada</b> · <a href="'+PL_URL+'" target="_blank" rel="noopener">abrir ↗</a>';return;}
+  const j=(await r.json())[0];const min=j?Math.round((Date.now()-new Date(j.em).getTime())/60000):null;
+  el.innerHTML='Planilha de pedidos: '+(j?'sincronizada '+(min<1?'agora':min<60?'há '+min+' min':min<1440?'há '+Math.round(min/60)+' h':'há '+Math.round(min/1440)+' dias')+' · '+(j.resumo&&j.resumo.linhas||0)+' linhas':'ainda não enviou')+' · <a href="'+PL_URL+'" target="_blank" rel="noopener">abrir ↗</a>';
+ }catch(e){el.textContent='';}}
 function renderSazonal(){const el=document.getElementById("cxSazonal");if(!el)return;const today=new Date();const tISO=todayISO();
  const items=SAZONAL.map(x=>{const y=today.getFullYear();let d=y+"-"+x[0];if(d<tISO)d=(y+1)+"-"+x[0];
   const dias=Math.round((new Date(d+"T12:00:00")-new Date(tISO+"T12:00:00"))/864e5);return {d,dias,nome:x[1],dica:x[2],pico:x[3]};}).sort((a,b)=>a.dias-b.dias);
@@ -1385,6 +1355,7 @@ function openForm(id){currentId=id||null;
  document.getElementById('mTitle').textContent=o?('Atendimento #'+o.id+' — '+o.cliente):'Novo atendimento';document.getElementById('delBtn').style.display=o?'':'none';
  f_data.value=g('data',todayISO());f_cliente.value=g('cliente');f_whats.value=g('whats');f_cidade.value=g('cidade');f_canal.value=g('canal','Indicação');f_tipo.value=g('tipoCli','Evento');f_evento.value=g('tipoEv','');f_dataEv.value=g('dataEv');
  f_produto.value=g('produto',PRODUTOS[0]);f_qtd.value=g('qtd',0);f_descr.value=g('descr');f_valor.value=o?o.valorUnit:state.precos[PRODUTOS[0]];f_estagio.value=g('estagio','Lead novo');f_statuspag.value=g('statusPag','');f_formapag.value=g('formaPag','');f_entrega.value=g('entrega','');f_custoent.value=g('custoEntrega',0);f_followup.value=g('followup');f_obs.value=g('obs');
+ const _pl=document.getElementById('f_planilha');if(_pl)_pl.innerHTML=o?plInfo(o):'';
  calcModal();document.getElementById('overlay').classList.add('open');}
 function closeForm(){document.getElementById('overlay').classList.remove('open');currentId=null;}
 function onProdChange(){f_valor.value=state.precos[f_produto.value]??0;calcModal();}
@@ -1446,7 +1417,7 @@ function renderAll(){renderPainel();renderAtend();renderClientes();renderProduto
 async function init(){
  try{
   if(SHEET_URL){const data=await apiGet();online=true;
-   if(data&&data.orders&&data.orders.length){state={orders:data.orders,clientsMeta:(data.config&&data.config.clientsMeta)||{},insumos:(data.config&&data.config.insumos)||defaultData().insumos,precos:(data.config&&data.config.precos)||defaultData().precos,fixos:(data.config&&data.config.fixos)||defaultData().fixos,caixaBase:(data.config&&Number(data.config.caixaBase))||0,resetMarco:(data.config&&data.config.resetMarco)||"",seq:data.orders.reduce((m,o)=>Math.max(m,Number(o.id)||0),0)+1};}
+   if(data&&data.orders&&data.orders.length){state={orders:data.orders,clientsMeta:(data.config&&data.config.clientsMeta)||{},insumos:(data.config&&data.config.insumos)||defaultData().insumos,precos:(data.config&&data.config.precos)||defaultData().precos,fixos:(data.config&&data.config.fixos)||defaultData().fixos,caixaBase:(data.config&&Number(data.config.caixaBase))||0,resetMarco:(data.config&&data.config.resetMarco)||"",seq:data.orders.reduce((m,o)=>{const n=Number(o.id)||0;return n<500000000?Math.max(m,n):m;},0)+1};}
    else{state=defaultData();apiPost("seed",{orders:state.orders,config:{insumos:state.insumos,precos:state.precos,clientsMeta:state.clientsMeta}});}
   }else{state=load()||defaultData();}
  }catch(e){online=false;state=load()||defaultData();}
@@ -1455,7 +1426,7 @@ async function init(){
  state.insumos=Object.assign({},defaultData().insumos,state.insumos);delete state.insumos.madeirinha;
  if(state.caixaBase==null)state.caixaBase=0;if(state.resetMarco==null)state.resetMarco="";
  if(!state.caixa)state.caixa=[];
- if(SHEET_URL){const cx=await cxFetch();if(cx!==null)state.caixa=cx;await cxDetectarExt();}
+ if(SHEET_URL){const cx=await cxFetch();if(cx!==null)state.caixa=cx;await cxDetectarExt();plSyncMostrar();}
  state.seqC=state.caixa.reduce((m,o)=>Math.max(m,Number(o.id)||0),0)+1;
  save();initFilters();renderAll();setStatus();
 }
