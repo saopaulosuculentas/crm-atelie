@@ -92,6 +92,11 @@ button{font-family:inherit;cursor:pointer;border:0;color:inherit}
 .sheet td.ro{padding:8px 9px;color:var(--muted);font-size:12.5px;white-space:nowrap;text-align:right}
 .sheet .delx{background:none;border:0;cursor:pointer;opacity:.45;font-size:14px}.sheet .delx:hover{opacity:1}
 .kpi .delta{font-size:11.5px;font-weight:700;margin-top:3px}.kpi .delta.up{color:#2e7d46}.kpi .delta.down{color:#b00020}
+/* indicadores do Enzo no Painel: verde = faturamento e caixa, vermelho = custos */
+.fin-tit{font-size:15px;margin:2px 0 10px;color:var(--green-dk)}.fin-r .fin-tit{color:#c0392b}
+.kpi.fv:before{background:#2e7d46}.kpi.fv .val{color:#2e7d46}.kpi.fr:before{background:#c0392b}.kpi.fr .val{color:#c0392b}
+.kpi .fin-sub{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.3}
+[data-tema="escuro"] .kpi.fv .val{color:#5cc98a}[data-tema="escuro"] .kpi.fr .val{color:#ff7a6b}[data-tema="escuro"] .fin-r .fin-tit{color:#ff7a6b}
 
 /* ---- table ---- */
 .tablewrap{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:auto;box-shadow:var(--shadow);max-height:71vh}
@@ -563,7 +568,6 @@ tbody tr:hover{background:#f0f5ec}
   <button data-v="clientes"><span class="ic">👥</span> Clientes</button>
   <button data-v="produtos"><span class="ic">🪴</span> Produtos &amp; Custos</button>
   <button data-v="caixa"><span class="ic">💰</span> Caixa</button>
-  <button data-v="custos"><span class="ic">💸</span> Custos</button>
   <button data-v="sazonal"><span class="ic">🔥</span> Radar Sazonal</button>
   <button data-v="producao"><span class="ic">📦</span> Produção &amp; Vendas</button>
  </nav>
@@ -607,8 +611,10 @@ tbody tr:hover{background:#f0f5ec}
     </select>
     <div id="pInfo" class="mini" style="align-self:center;color:var(--green-dk);font-weight:700"></div>
    </div>
+   <div id="finBlocos"></div>
+   <h3 class="fin-tit">⚙️ Operação</h3>
    <div class="kpis" id="kpis"></div>
-   <div class="panel wide" style="margin-bottom:18px"><h3>📈 Faturamento por mês — últimos 12 meses</h3><div class="mchart" id="chartMes"></div></div>
+   <div class="panel wide" style="margin-bottom:18px"><h3>📈 Faturamento bruto por mês (Caixa), últimos 12 meses</h3><div class="mchart" id="chartMes"></div></div>
    <div class="panels">
     <div class="panel"><h3>Pedidos por estágio</h3><div id="chartEstagio"></div></div>
     <div class="panel"><h3>Faturamento por canal</h3><div id="chartCanal"></div></div>
@@ -641,25 +647,16 @@ tbody tr:hover{background:#f0f5ec}
 
   <section class="view" id="caixa">
    <div class="toolbar">
-    <button class="btn" onclick="cxAdd()">＋ Lançamento</button>
+    <button class="btn" onclick="cxAdd('Saída')">＋ Saída</button>
+    <button class="btn ghost" onclick="cxAdd('Entrada')">＋ Entrada</button>
     <select id="cxMes" onchange="renderCaixa()" style="padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:13px;font-weight:600"></select>
-    <span class="mini">Edite direto na tabela, como no Excel — salva sozinho.</span>
+    <span class="mini">Edite direto na tabela, como no Excel: salva sozinho. Recebimento de pedido e venda do site entram sozinhos.</span>
    </div>
+   <div id="cxAviso"></div>
    <div class="kpis" id="cxKpis" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))"></div>
    <div class="panel wide" id="cxSinaisWrap" style="margin-bottom:16px"><h3>💵 Sinais de 30% · dos pedidos em aberto</h3><div id="cxSinais"></div></div>
    <div class="tablewrap sheet" id="cxSheet" style="max-height:46vh;margin-bottom:18px"></div>
    <div class="panel wide"><h3>📅 Mês a mês — evolução do caixa</h3><div class="tablewrap" style="box-shadow:none;border:0;max-height:380px" id="cxMeses"></div></div>
-  </section>
-
-  <section class="view" id="custos">
-   <div class="toolbar">
-    <select id="csMes" onchange="renderCustos()" style="padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:13px;font-weight:600"></select>
-    <button class="btn ghost" onclick="renderCustos(true)">🔄 Atualizar</button>
-    <span class="mini" id="csSync"></span>
-    <div style="flex:1"></div>
-    <a class="mini" href="https://docs.google.com/spreadsheets/d/117q5trDgq4FIR3s9YEODaYOVFzvQ2AhiFFLcoXfnyDU/edit" target="_blank" rel="noopener">abrir a planilha ↗</a>
-   </div>
-   <div id="csView"></div>
   </section>
 
   <section class="view" id="sazonal">
@@ -843,7 +840,7 @@ const PRODUTOS=["Suculenta + Rótulo Personalizado","Suculenta + Rótulo Pronto"
 const STAGE_COLORS={"Lead novo":"#8a94a6","Em conversa":"#3b82c4","Orçamento enviado":"#d99a2b","Negociação":"#c2693f","Fechado (ganho)":"#2e7d46","Em produção":"#1f8a8a","Entregue":"#1c4327","Pós-venda":"#6aa17a","Perdido":"#b00020"};
 const PAY_COLORS={"Pago":"#2e7d46","Sinal pago":"#d99a2b","Pendente":"#b00020","Estornado":"#8a94a6"};
 const SINAL_PCT=0.30; // sinal = 30% do valor
-const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O dinheiro de verdade: defina o saldo inicial, lance entradas e saídas e acompanhe mês a mês.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo.",custos:"Vem da planilha de finanças (aba Despesas). Para lançar ou corrigir, edite a planilha: o CRM atualiza sozinho em até 15 minutos.",producao:"As duas planilhas do Google lidas aqui dentro e cruzadas com os atendimentos: o que está produzido, o que foi vendido e o que não bate."};
+const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O livro-caixa da empresa: custos por categoria, recebimentos ligados ao pedido e as vendas do site. O Painel calcula os indicadores daqui.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo.",producao:"As duas planilhas do Google lidas aqui dentro e cruzadas com os atendimentos: o que está produzido, o que foi vendido e o que não bate."};
 
 const KEY="crm_atelie_v1";let state,currentId=null,viewMode="table",memFallback=null;
 /* ===== CONEXAO COM A NUVEM (Supabase) ===== */
@@ -875,7 +872,9 @@ async function apiPost(action,payload){setSave("saving");try{
  setSave("ok");return true;
 }catch(e){setSave("err");lastSaveErr=String((e&&e.message)||e);console.warn("sync",action,e);return false;}}
 const CXCOLS=["id","data","tipo","categoria","descr","valor","quem"];
-function pickCx(o){const r={};CXCOLS.forEach(k=>{r[k]=(o&&o[k]!==undefined&&o[k]!==null)?o[k]:"";});return r;}
+// conta, pedido_id e origem so vao quando o SQL do financeiro ja rodou (CX_EXT); antes disso o Caixa segue como era
+let CX_EXT=null,_finAvisou=false;
+function pickCx(o){const r={};CXCOLS.forEach(k=>{r[k]=(o&&o[k]!==undefined&&o[k]!==null)?o[k]:"";});if(CX_EXT===true){r.conta=(o&&o.conta)||null;r.pedido_id=(o&&o.pedido_id)?Number(o.pedido_id):null;r.origem=(o&&o.origem)||"manual";}return r;}
 async function cxFetch(){try{const r=await fetch(sbUrl("caixa?select=*&order=data.asc"),{headers:sbHeaders()});if(!r.ok)return null;const j=await r.json();j.forEach(o=>{o.id=Number(o.id);o.valor=Number(o.valor)||0;CXCOLS.forEach(k=>{if(o[k]===null||o[k]===undefined)o[k]="";});});return j;}catch(e){return null;}}
 function syncCx(o){if(!SHEET_URL)return;setSave("saving");fetch(sbUrl("caixa?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([pickCx(o)])}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);setSave("ok");}).catch(function(e){setSave("err");lastSaveErr=String((e&&e.message)||e);console.warn("cx",e);});}
 function syncCxDel(id){if(!SHEET_URL)return;setSave("saving");fetch(sbUrl("caixa?id=eq."+encodeURIComponent(id)),{method:"DELETE",headers:sbHeaders()}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);setSave("ok");}).catch(function(e){setSave("err");lastSaveErr=String((e&&e.message)||e);console.warn("cx",e);});}
@@ -927,7 +926,7 @@ document.getElementById('nav').addEventListener('click',e=>{const b=e.target.clo
  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.v).classList.add('active');
  const v=b.dataset.v;document.getElementById('ttl').textContent=b.textContent.trim();document.getElementById('sub').textContent=SUBS[v];
- if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();if(v==='producao')renderProducao();if(v==='custos')renderCustos();document.body.classList.remove('menu-open');});
+ if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();if(v==='producao')renderProducao();document.body.classList.remove('menu-open');});
 function toggleMenu(){document.body.classList.toggle('menu-open');}
 function setView(m){viewMode=m;[['vbTable','table'],['vbSheet','sheet'],['vbKanban','kanban']].forEach(function(x){var b=document.getElementById(x[0]);if(b)b.classList.toggle('active',m===x[1]);});
  document.getElementById('tableView').style.display=m==='table'?'':'none';document.getElementById('sheetView').style.display=m==='sheet'?'':'none';document.getElementById('kanbanView').style.display=m==='kanban'?'':'none';renderAtend();}
@@ -965,12 +964,12 @@ function renderPainel(){fillPeriodos();
  const r=per==="tudo"?null:periodRange(per);
  const os=r?state.orders.filter(o=>inRange(o,bk,r.d1,r.d2)):state.orders;
  const prevOs=r?state.orders.filter(o=>inRange(o,bk,r.p1,r.p2)):null;
- const K=kpiSet(os),P=prevOs?kpiSet(prevOs):null;
+ const K=kpiSet(os),P=prevOs?kpiSet(prevOs):null;renderFinBlocos(r,bk);
  const info=document.getElementById('pInfo');if(info)info.textContent=r?(dBR(r.d1)+" a "+dBR(r.d2)+" · comparado com "+r.cmp):"todos os pedidos";
  const od=state.orders.filter(o=>o.followup&&o.followup<todayISO()).length;
  const f=state.fixos||{salarioSemana:0,anunciosDia:0};const adsMes=f.anunciosDia*365/12,salMes=f.salarioSemana*52/12,fixMes=salMes+adsMes;
  const D=(k)=>P?delta(K[k],P[k]):"";
- const k=[["Faturamento",BRL(K.fat),"","💰",D("fat")],["Sinais (30%) que entraram",BRL(K.sinaisIn),"g","💵",""],["A receber (saldo)",BRL(K.aReceber),"t","📥",""],["Já em caixa (recebido)",BRL(K.recebido),"","🏦",""],["Custo de produtos",BRL(K.cus),"t","🧾",D("cus")],["Custo de entregas",BRL(K.ent),"t","🚚",D("ent")],["Custo médio/entrega",BRL(K.nent?K.ent/K.nent:0),"g","🚚",""],["Anúncios/mês (≈)",BRL(adsMes),"t","📣",""],["Salário/mês (≈)",BRL(salMes),"t","👤",""],["Custos fixos/mês (≈)",BRL(fixMes),"t","🏷️",""],["Margem (líq.)",BRL(K.mg),"","🌿",D("mg")],["Margem média",PCT(K.fat?K.mg/K.fat:0),"g","📈",""],["Pedidos",K.n,"b","📦",D("n")],["Ticket médio",BRL(K.tick),"","🎯",D("tick")],["Pipeline em aberto",BRL(K.pipe),"g","🔄",""],["Pagamentos pendentes",BRL(K.pend),"t","⏳",""],["Follow-ups atrasados",od,"t","🔔",""],["Taxa de conversão",PCT(K.conv),"","✅",""]];
+ const k=[["A receber (saldo)",BRL(K.aReceber),"t","📥",""],["Custo de produtos",BRL(K.cus),"t","🧾",D("cus")],["Custo médio/entrega",BRL(K.nent?K.ent/K.nent:0),"g","🚚",""],["Margem média",PCT(K.fat?K.mg/K.fat:0),"g","📈",""],["Pipeline em aberto",BRL(K.pipe),"g","🔄",""],["Pagamentos pendentes",BRL(K.pend),"t","⏳",""],["Follow-ups atrasados",od,"t","🔔",""],["Taxa de conversão",PCT(K.conv),"","✅",""]];
  document.getElementById('kpis').innerHTML=k.map(x=>`<div class="kpi ${x[2]}"><div class="ic">${x[3]}</div><div class="lbl">${x[0]}</div><div class="val">${x[1]}</div>${x[4]||""}</div>`).join('');
  const byStage=STAGES.map(st=>[st,os.filter(o=>o.estagio===st).length]).filter(x=>x[1]>0);chart('chartEstagio',byStage,v=>v);
  const bc={};os.forEach(o=>{bc[o.canal]=(bc[o.canal]||0)+calc(o).vt;});chart('chartCanal',Object.entries(bc).sort((a,b)=>b[1]-a[1]),BRL);
@@ -979,7 +978,7 @@ function renderPainel(){fillPeriodos();
  renderMensal();renderAtividades();}
 function renderMensal(){const el=document.getElementById('chartMes');if(!el)return;const now=new Date();const ms=[];
  for(let i=11;i>=0;i--){const d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()-i,1));ms.push(d.toISOString().slice(0,7));}
- const sums={};state.orders.forEach(o=>{const k=(o.data||"").slice(0,7);if(!ms.includes(k))return;sums[k]=(sums[k]||0)+calc(o).vt;});
+ const sums={};finLedger().forEach(x=>{if(x.tipo!=="Entrada"||(x.categoria!=="Sinal 30%"&&x.categoria!=="Pagamento integral"))return;const k=(x.data||"").slice(0,7);if(!ms.includes(k))return;sums[k]=(sums[k]||0)+(Number(x.valor)||0);});
  const max=Math.max(1,...ms.map(m=>sums[m]||0));
  const MN=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
  const lbl=m=>{const pp=m.split("-");return MN[+pp[1]-1]+"/"+pp[0].slice(2);};
@@ -1048,10 +1047,10 @@ function renderSheet(){const rows=filtered();setResumo(rows);
    +'<td><button class="delx" title="Excluir" onclick="delRow('+o.id+')">🗑</button></td>'
   +'</tr>';});
  h+='</tbody></table>';document.getElementById('sheetView').innerHTML=h;}
-function updCell(id,key,val){const o=state.orders.find(x=>x.id===id);if(!o)return;
+function updCell(id,key,val){const o=state.orders.find(x=>x.id===id);if(!o)return;const _antesPag=o.statusPag;
  if(['qtd','valorUnit','custoEntrega'].includes(key))val=parseFloat(String(val).replace(',','.'))||0;
  o[key]=val;if(key==='produto'&&state.precos[val]!=null&&(!o.valorUnit||confirm('Atualizar o valor unitário para o preço de tabela ('+BRL(state.precos[val])+')?'))){o.valorUnit=state.precos[val];}
- logAct('editou o atendimento #'+id+' (campo '+key+')');save();syncOrder(o);
+ logAct('editou o atendimento #'+id+' (campo '+key+')');save();syncOrder(o);if(key==='statusPag')finPagamento(o,_antesPag);
  const c=calc(o);const set=(pid,v)=>{const el=document.getElementById(pid);if(el)el.textContent=v;};
  set('shvt'+id,BRL(c.vt));set('shsn'+id,BRL(c.sinal));set('shmg'+id,BRL(c.mg));
  if(key==='produto')renderSheet();
@@ -1060,17 +1059,75 @@ function quickAdd(){const d={id:state.seq++,data:todayISO(),cliente:'',whats:'',
  state.orders.unshift(d);save();syncOrder(d);renderSheet();
  setTimeout(function(){const tr=document.getElementById('shr'+d.id);if(tr){const inp=tr.querySelectorAll('input')[1];if(inp)inp.focus();}},50);}
 function delRow(id){if(!confirm('Excluir o atendimento #'+id+'?'))return;logAct('excluiu o atendimento #'+id);state.orders=state.orders.filter(x=>x.id!==id);save();syncDelete(id);renderSheet();renderPainel&&renderPainel();}
-const CXCATS=["Insumos","Embalagem","Frete/Entrega","Anúncios","Salário/Mão de obra","Equipamento","Taxas","Venda","Outro"];
+// Financeiro no CRM (27/09/2026): o Caixa e o livro-caixa da empresa. Custo tem as categorias do Enzo; recebimento
+// de pedido digitado entra sozinho (sinal e integral) com o numero do pedido; venda do site vem direto do pedido,
+// sem lancamento. Ate agosto/2026 vale o historico importado da planilha (por isso o site so conta de setembro em diante).
+const CX_SAIDAS=["Materiais","Frete","Anúncio","Suculentas","Ambiente","Funcionários","Impostos","Software e assinaturas","Pró-labore","Outros"];
+const CX_ENTRADAS=["Sinal 30%","Pagamento integral","Outra entrada"];
+const CX_CONTAS=["PIX Santander","PIX Banco do Brasil","Crédito Santander","Crédito PAN","Dinheiro","Outra"];
+const CXCATS=CX_SAIDAS.concat(CX_ENTRADAS);
+const FIN_INICIO_CRM="2026-09",FIN_ID_SITE=700000000;
+function finNovoId(){let id;do{id=Date.now()*1000+Math.floor(Math.random()*1000);}while((state.caixa||[]).some(x=>x.id===id));return id;}
+async function cxDetectarExt(){try{const r=await fetch(sbUrl("caixa?select=conta,pedido_id,origem&limit=1"),{headers:sbHeaders()});CX_EXT=r.ok;}catch(e){CX_EXT=null;}}
+function finVendasSite(){return (state.orders||[]).filter(o=>Number(o.id)>=FIN_ID_SITE&&o.statusPag==="Pago"&&o.estagio!=="Perdido"&&(o.data||"").slice(0,7)>=FIN_INICIO_CRM).map(o=>({id:Number(o.id),data:o.data,tipo:"Entrada",categoria:"Pagamento integral",descr:"Venda do site · "+((o.cliente||"").trim()||"cliente"),valor:calc(o).vt,quem:"site",conta:"Yampi (site)",pedido_id:Number(o.id),origem:"site",virtual:true}));}
+function finLedger(){return (state.caixa||[]).concat(finVendasSite());}
+function finRecebido(pid,cat){return (state.caixa||[]).filter(x=>Number(x.pedido_id)===Number(pid)&&x.tipo==="Entrada"&&(!cat||x.categoria===cat)).reduce((s,x)=>s+(Number(x.valor)||0),0);}
+function finAviso(t){try{alert(t);}catch(e){}}
+// Pedido digitado virou "Sinal pago" ou "Pago": o dinheiro entra no Caixa, ligado ao pedido. Nunca apaga sozinho.
+function finPagamento(o,antes){
+ if(!o||Number(o.id)>=FIN_ID_SITE||o.statusPag===antes||!SHEET_URL)return;
+ const novo=o.statusPag,c=calc(o);
+ if(CX_EXT!==true){if((novo==="Sinal pago"||novo==="Pago")&&!_finAvisou){_finAvisou=true;finAviso("O recebimento não entrou no Caixa: falta rodar no Supabase o SQL do financeiro (crm_financeiro_rodar_no_supabase.sql).");}return;}
+ const rot="pedido #"+o.id+((o.cliente||"").trim()?" · "+o.cliente.trim():"");
+ const lanca=(cat,valor,txt)=>{const d={id:finNovoId(),data:todayISO(),tipo:"Entrada",categoria:cat,descr:txt+" do "+rot,valor:Math.round(valor*100)/100,quem:userName(),conta:"",pedido_id:Number(o.id),origem:"pedido"};state.caixa.push(d);syncCx(d);logAct("lançou no Caixa "+BRL(d.valor)+" ("+cat+") do "+rot);};
+ const total=finRecebido(o.id);
+ if(novo==="Sinal pago"&&total<=0&&c.sinal>0)lanca("Sinal 30%",c.sinal,"Sinal");
+ else if(novo==="Pago"){const falta=c.vt-total;if(falta>0.009)lanca("Pagamento integral",falta,total>0?"Restante":"Pagamento");}
+ else if(novo!=="Sinal pago"&&novo!=="Pago"&&total>0)finAviso("Este pedido tem "+BRL(total)+" de recebimento no Caixa. Se o dinheiro voltou, lance uma saída ou apague o lançamento no Caixa.");
+ save();if(document.getElementById("caixa")&&document.getElementById("caixa").classList.contains("active"))renderCaixa();}
+// Indicadores do Enzo no topo do Painel: verde = faturamento e caixa, vermelho = custos. Saem do Caixa
+// (lancamentos + venda do site) no periodo escolhido; crescimento compara com o periodo anterior.
+function finResumo(rows){const r={sinal:0,integral:0,outras:0,saidas:0,cat:{}};rows.forEach(x=>{const v=Number(x.valor)||0;if(x.tipo==="Entrada"){if(x.categoria==="Sinal 30%")r.sinal+=v;else if(x.categoria==="Pagamento integral")r.integral+=v;else r.outras+=v;}else{r.saidas+=v;const c=x.categoria||"Outros";r.cat[c]=(r.cat[c]||0)+v;}});r.bruto=r.sinal+r.integral;r.liquido=r.bruto-r.saidas;return r;}
+function finCresc(cur,prev){if(prev==null)return{txt:"sem comparação",cls:""};if(!prev)return cur?{txt:"novo",cls:"up"}:{txt:"0%",cls:""};const d=(cur-prev)/Math.abs(prev);return{txt:(d>=0?"▲ ":"▼ ")+Math.abs(d*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%",cls:d>=0?"up":"down"};}
+function renderFinBlocos(r,bk){const el=document.getElementById("finBlocos");if(!el)return;
+ const L=finLedger(),dentro=(x,a,b)=>x.data&&x.data>=a&&x.data<=b;
+ const A=finResumo(r?L.filter(x=>dentro(x,r.d1,r.d2)):L),P=r?finResumo(L.filter(x=>dentro(x,r.p1,r.p2))):null;
+ const fim=r?r.d2:"9999-12-31";let caixa=Number(state.caixaBase)||0;L.forEach(x=>{if(x.data&&x.data<=fim)caixa+=(x.tipo==="Entrada"?1:-1)*(Number(x.valor)||0);});
+ const ped=(state.orders||[]).filter(o=>["Fechado (ganho)","Em produção","Entregue","Pós-venda"].includes(o.estagio)&&(!r||inRange(o,bk||"data",r.d1,r.d2)));const vtp=ped.reduce((s,o)=>s+calc(o).vt,0);
+ const cb=finCresc(A.bruto,P?P.bruto:null),cl=finCresc(A.liquido,P?P.liquido:null);
+ const cor=c=>c.cls==="up"?"#2e7d46":c.cls==="down"?"#b00020":"";
+ const card=(cls,lbl,val,sub,estilo)=>'<div class="kpi '+cls+'"><div class="lbl">'+lbl+'</div><div class="val"'+(estilo?' style="'+estilo+'"':'')+'>'+val+'</div>'+(sub?'<div class="fin-sub">'+sub+'</div>':'')+'</div>';
+ const ate=r?dBR(r.d2):"hoje";
+ let h='<div class="fin-bloco fin-v"><h3 class="fin-tit">🟢 Faturamento e caixa</h3><div class="kpis">'
+  +card("fv","Faturamento bruto",BRL(A.bruto),"sinal + pagamento integral")
+  +card("fv","Faturamento líquido",BRL(A.liquido),"bruto menos todos os custos",A.liquido<0?"color:#b00020":"")
+  +card("fv","Crescimento do bruto",cb.txt,P?"vs período anterior ("+BRL(P.bruto)+")":"escolha um período",cor(cb)?"color:"+cor(cb):"")
+  +card("fv","Crescimento do líquido",cl.txt,P?"vs período anterior ("+BRL(P.liquido)+")":"escolha um período",cor(cl)?"color:"+cor(cl):"")
+  +card("fv","Sinal 30%",BRL(A.sinal),"")
+  +card("fv","Pagamento integral 70%",BRL(A.integral),"70% na entrega + pagos à vista (site)")
+  +card("fv","Caixa",BRL(caixa),"saldo inicial + tudo até "+ate,caixa<0?"color:#b00020":"")
+  +card("fv","Ticket médio",BRL(ped.length?vtp/ped.length:0),"pedidos fechados no CRM")
+  +card("fv","Número de pedidos",ped.length,"fechados no CRM")
+  +'</div></div>';
+ const CUSTOS=[["Materiais","Custo de materiais"],["Frete","Custo de frete"],["Anúncio","Custo de anúncio"],["Suculentas","Custo de suculentas"],["Ambiente","Custo de ambiente"],["Funcionários","Custo de funcionários"],["Impostos","Impostos"],["Software e assinaturas","Software e assinaturas"],["Pró-labore","Pró-labore"]];
+ const var_=c=>{if(!P)return"";const f=finCresc(A.cat[c]||0,P.cat[c]||0);return f.txt==="0%"||f.txt==="sem comparação"?"":f.txt+" vs período anterior";};
+ h+='<div class="fin-bloco fin-r"><h3 class="fin-tit">🔴 Custos · '+BRL(A.saidas)+'</h3>'
+  +(A.saidas?'':'<div class="note">Nenhum custo lançado neste período. Lance no Caixa (＋ Saída) para o líquido ficar certo.</div>')
+  +'<div class="kpis">'
+  +CUSTOS.map(([c,l])=>card("fr",l,BRL(A.cat[c]||0),c==="Anúncio"?"recargas lançadas, até ligar o gasto real do Meta e do Google":var_(c))).join('')
+  +Object.keys(A.cat).filter(c=>!CUSTOS.some(x=>x[0]===c)&&A.cat[c]).map(c=>card("fr",esc(c),BRL(A.cat[c]),c==="Histórico sem detalhe"?"total do mês na planilha antiga, sem separar por categoria":var_(c))).join('')
+  +'</div></div>';
+ el.innerHTML=h;}
 const SAZONAL=[["02-16","Carnaval","Volta às aulas: lembrancinha escolar",false],["03-08","Dia da Mulher","Presente + oferta para empresas (RH)",false],["03-15","Dia do Consumidor","Grande data de e-commerce",false],["04-05","Páscoa","Pré-venda do Dia das Mães começa AGORA",false],["05-10","DIA DAS MÃES","PICO Nº1 — investimento máximo, agenda trava",true],["06-12","Dia dos Namorados","Presente para casal",false],["07-26","Dia dos Avós","Presente afetivo + formaturas",false],["08-09","DIA DOS PAIS","Pico médio — personalizado masculino",true],["09-01","Setembro Amarelo","Empresas e clínicas compram lembrancinhas temáticas — prospectar B2B",false],["09-15","Dia do Cliente","Fidelização + primavera (alta de plantas)",false],["09-22","Primavera","Melhor época orgânica de plantas",false],["10-01","OUTUBRO ROSA","Kits temáticos p/ empresas, clínicas e salões — B2B de margem alta o mês inteiro",true],["10-12","Dia das Crianças","Lembrancinha escolar em lote",false],["10-15","Dia dos Professores","Escolas compram em LOTE — prospectar antes",false],["11-27","BLACK FRIDAY","PICO Nº2 — kits + captação de lista",true],["12-25","NATAL","PICO Nº3 — corporativo de fim de ano (margem alta)",true]];
 function mesLabel(m){const MN=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];const p=m.split("-");return MN[+p[1]-1]+"/"+p[0];}
-function cxAdd(){const d={id:state.seqC++,data:todayISO(),tipo:"Saída",categoria:"Insumos",descr:"",valor:0,quem:userName()};state.caixa.push(d);logAct("criou um lançamento no Caixa");save();syncCx(d);renderCaixa();setTimeout(()=>{const tr=document.getElementById("cxr"+d.id);if(tr){const i=tr.querySelectorAll("input")[1];if(i)i.focus();}},50);}
-function cxUpd(id,key,val){const o=state.caixa.find(x=>x.id===id);if(!o)return;if(key==="valor")val=parseFloat(String(val).replace(",","."))||0;o[key]=val;logAct("editou um lançamento do Caixa ("+(o.descr||o.categoria)+")");save();syncCx(o);if(key==="data"||key==="tipo"||key==="valor")renderCaixa();}
+function cxAdd(tipo){tipo=tipo==="Entrada"?"Entrada":"Saída";const d={id:finNovoId(),data:todayISO(),tipo:tipo,categoria:tipo==="Entrada"?"Outra entrada":"Materiais",descr:"",valor:0,quem:userName(),conta:"",pedido_id:null,origem:"manual"};state.caixa.push(d);logAct("criou um lançamento no Caixa");save();syncCx(d);const sel=document.getElementById("cxMes");if(sel&&sel.value!=="tudo")sel.value=d.data.slice(0,7);renderCaixa();setTimeout(()=>{const tr=document.getElementById("cxr"+d.id);if(tr){const i=tr.querySelector("input[type=text]");if(i)i.focus();}},50);}
+function cxUpd(id,key,val){const o=state.caixa.find(x=>x.id===id);if(!o)return;if(key==="valor")val=parseFloat(String(val).replace(",","."))||0;o[key]=val;if(key==="tipo"){const l=val==="Entrada"?CX_ENTRADAS:CX_SAIDAS;if(!l.includes(o.categoria))o.categoria=val==="Entrada"?"Outra entrada":"Materiais";}logAct("editou um lançamento do Caixa ("+(o.descr||o.categoria)+")");save();syncCx(o);if(key==="data"||key==="tipo"||key==="valor")renderCaixa();}
 function cxDel(id){if(!confirm("Excluir este lançamento?"))return;logAct("excluiu um lançamento do Caixa");state.caixa=state.caixa.filter(x=>x.id!==id);save();syncCxDel(id);renderCaixa();}
 function cxSetBase(v){state.caixaBase=parseFloat(String(v).replace(",","."))||0;logAct("alterou o saldo inicial do Caixa para "+BRL(state.caixaBase));save();syncConfig();renderCaixa();}
 function setMarco(v){state.resetMarco=v||"";logAct("definiu o marco de reset: "+(v||"(vazio)"));save();syncConfig();renderCaixa();}
 function cxSums(rows){let e=0,sa=0;rows.forEach(o=>{const v=Number(o.valor)||0;o.tipo==="Entrada"?e+=v:sa+=v;});return{e,s:sa,r:e-sa};}
 function renderCaixa(){
- const cx=state.caixa||[];const curM=todayISO().slice(0,7);
+ const cx=finLedger();const curM=todayISO().slice(0,7);
  const meses=[...new Set(cx.map(o=>(o.data||"").slice(0,7)).filter(Boolean))];if(!meses.includes(curM))meses.push(curM);meses.sort().reverse();
  const sel=document.getElementById("cxMes");const prev=sel.value;
  sel.innerHTML='<option value="tudo">📊 Todos os meses</option>'+meses.map(m=>'<option value="'+m+'">'+mesLabel(m)+'</option>').join('');
@@ -1087,16 +1144,23 @@ function renderCaixa(){
   '<div class="kpi g"><div class="ic">🏁</div><div class="lbl">Saldo inicial (base do caixa)</div><div class="val" style="display:flex;align-items:center;gap:4px">R$ <input type="number" step="0.01" value="'+(state.caixaBase||0)+'" onchange="cxSetBase(this.value)" style="width:120px;border:1px dashed var(--line);border-radius:8px;padding:4px 8px;font-size:18px;font-weight:800;color:var(--green-dk);background:var(--card)"></div></div>'
   +[["Entradas"+(mSel==="tudo"?"":" · "+mesLabel(mSel)),BRL(K.e),"","📥",dE],["Saídas"+(mSel==="tudo"?"":" · "+mesLabel(mSel)),BRL(K.s),"t","📤",dS],["Resultado"+(mSel==="tudo"?"":" do mês"),BRL(K.r),K.r>=0?"":"t","🧮",dR],["SALDO ATUAL (base + tudo)",BRL(saldo),saldo>=0?"g":"t","🏦",""]].map(x=>'<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div>'+(x[4]||"")+'</div>').join("");
  (function(){var sIn=0,s70=0,realizado=0,nAb=0,rMes=0,r3m=0,rMarco=0;var cm=todayISO().slice(0,7);var _d3=new Date();_d3.setUTCMonth(_d3.getUTCMonth()-2);var lim3=_d3.toISOString().slice(0,7);var marco=(state.resetMarco||"");(state.orders||[]).forEach(function(o){var c=calc(o);if(o.statusPag==="Sinal pago"){sIn+=c.sinal;s70+=c.saldo;nAb++;}else if(o.statusPag==="Pago"){realizado+=c.vt;var mk=(o.data||"").slice(0,7);if(mk===cm)rMes+=c.vt;if(mk>=lim3)r3m+=c.vt;if(marco&&(o.data||"")>=marco)rMarco+=c.vt;}});var totAb=sIn+s70;var elS=document.getElementById("cxSinais");if(elS){elS.innerHTML='<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:0 0 10px">'+'<div class="kpi g"><div class="ic">💵</div><div class="lbl">Sinais 30% já no caixa (pedidos em aberto)</div><div class="val">'+BRL(sIn)+'</div></div>'+'<div class="kpi t"><div class="ic">📥</div><div class="lbl">Falta entrar (70% desses pedidos)</div><div class="val">'+BRL(s70)+'</div></div>'+'<div class="kpi"><div class="ic">🧾</div><div class="lbl">Valor total desses pedidos (100%)</div><div class="val">'+BRL(totAb)+'</div></div>'+'<div class="kpi"><div class="ic">✅</div><div class="lbl">Já realizado · TOTAL (histórico todo)</div><div class="val">'+BRL(realizado)+'</div></div>'+'</div>'+'<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(165px,1fr));margin:0 0 8px">'+'<div class="kpi"><div class="ic">📅</div><div class="lbl">Realizado · este mês</div><div class="val">'+BRL(rMes)+'</div></div>'+'<div class="kpi"><div class="ic">📆</div><div class="lbl">Realizado · últimos 3 meses</div><div class="val">'+BRL(r3m)+'</div></div>'+'<div class="kpi '+(marco?'g':'')+'"><div class="ic">📌</div><div class="lbl">Realizado · desde o reset'+(marco?' ('+dBR(marco)+')':'')+'</div><div class="val">'+(marco?BRL(rMarco):'—')+'</div></div>'+'</div>'+'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px"><span class="mini" style="color:var(--muted)">📌 Marco do reset (início da fase atual):</span><input type="date" value="'+esc(marco)+'" onchange="setMarco(this.value)" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:13px"><span class="mini" style="color:var(--muted)">separa o histórico antigo do atual</span></div>'+'<p class="mini" style="color:var(--muted);margin:0">São '+nAb+' pedido(s) em aberto. O sinal de 30% ('+BRL(sIn)+') já está no caixa, mas é de pedido que ainda não fechou. Quando entra o 70% e você finaliza, o pedido vira 100% realizado e sai desta lista. O TOTAL inclui todo o histórico (inclusive a fase antiga em que as finanças estavam misturadas); use o mês, os 3 meses ou o marco do reset pra ver só a fase atual.</p>';}})();
- let h='<table><thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th><th>Valor (R$)</th><th>Quem</th><th></th></tr></thead><tbody>';
- if(!rows.length)h+='<tr><td colspan="7" style="padding:22px;text-align:center;color:#999">Nenhum lançamento neste mês. Clique em "＋ Lançamento".</td></tr>';
- rows.forEach(o=>{h+='<tr id="cxr'+o.id+'">'
-  +'<td>'+ '<input type="date" value="'+esc(o.data)+'" onchange="cxUpd('+o.id+',\'data\',this.value)">'+'</td>'
+ const opts=(lista,val)=>((lista.includes(val)||!val)?lista:[val].concat(lista)).map(c=>'<option'+(c===val?' selected':'')+'>'+esc(c)+'</option>').join('');
+ const pedLink=o=>{if(!o.pedido_id)return'<span style="color:var(--muted)">·</span>';const pid=Number(o.pedido_id),n=pid>=FIN_ID_SITE?'site':'#'+pid;return (state.orders||[]).some(x=>Number(x.id)===pid)?'<a href="#" onclick="openForm('+pid+');return false">'+n+'</a>':n;};
+ let h='<table><thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th><th>Valor (R$)</th><th>Conta</th><th>Pedido</th><th>Quem</th><th></th></tr></thead><tbody>';
+ if(!rows.length)h+='<tr><td colspan="9" style="padding:22px;text-align:center;color:#999">Nenhum lançamento neste mês. Use "＋ Saída" ou "＋ Entrada".</td></tr>';
+ rows.forEach(o=>{
+  if(o.virtual){h+='<tr><td class="ro" style="text-align:left">'+dBR(o.data)+'</td><td class="ro" style="text-align:left;color:#2e7d46;font-weight:700">Entrada</td><td class="ro" style="text-align:left">'+esc(o.categoria)+'</td><td class="ro" style="text-align:left">'+esc(o.descr)+' <span class="mini">(automático)</span></td><td class="ro">'+BRL(o.valor)+'</td><td class="ro" style="text-align:left">'+esc(o.conta)+'</td><td class="ro" style="text-align:left">'+pedLink(o)+'</td><td class="ro" style="text-align:left">site</td><td></td></tr>';return;}
+  h+='<tr id="cxr'+o.id+'">'
+  +'<td>'+'<input type="date" value="'+esc(o.data)+'" onchange="cxUpd('+o.id+',\'data\',this.value)">'+'</td>'
   +'<td><select onchange="cxUpd('+o.id+',\'tipo\',this.value)" style="color:'+(o.tipo==="Entrada"?"#2e7d46":"#b00020")+';font-weight:700">'+["Saída","Entrada"].map(t=>'<option'+(t===o.tipo?' selected':'')+'>'+t+'</option>').join('')+'</select></td>'
-  +'<td><select onchange="cxUpd('+o.id+',\'categoria\',this.value)">'+CXCATS.map(c=>'<option'+(c===o.categoria?' selected':'')+'>'+c+'</option>').join('')+'</select></td>'
+  +'<td><select onchange="cxUpd('+o.id+',\'categoria\',this.value)">'+opts(o.tipo==="Entrada"?CX_ENTRADAS:CX_SAIDAS,o.categoria)+'</select></td>'
   +'<td><input type="text" value="'+esc(o.descr)+'" style="min-width:220px" onchange="cxUpd('+o.id+',\'descr\',this.value)"></td>'
   +'<td><input type="number" step="0.01" value="'+(Number(o.valor)||0)+'" style="min-width:90px" onchange="cxUpd('+o.id+',\'valor\',this.value)"></td>'
+  +'<td>'+(CX_EXT===true?'<select onchange="cxUpd('+o.id+',\'conta\',this.value)"><option value="">escolher…</option>'+opts(CX_CONTAS,o.conta||"")+'</select>':'<span class="mini" style="color:var(--muted)">depois do SQL</span>')+'</td>'
+  +'<td class="ro" style="text-align:left">'+pedLink(o)+'</td>'
   +'<td style="color:var(--muted);font-size:12px;white-space:nowrap">'+esc(o.quem||"")+'</td>'+'<td><button class="delx" onclick="cxDel('+o.id+')">🗑</button></td></tr>';});
  h+='</tbody></table>';document.getElementById("cxSheet").innerHTML=h;
+ const av=document.getElementById("cxAviso");if(av)av.innerHTML=(SHEET_URL&&CX_EXT===false)?'<div class="note">Falta rodar no Supabase o SQL do financeiro (<b>crm_financeiro_rodar_no_supabase.sql</b>): ele cria a conta e a ligação com o pedido e traz o histórico da planilha. Até lá, o Caixa salva só data, tipo, categoria, descrição e valor.</div>':'';
  const byM={};cx.forEach(o=>{const m=(o.data||"").slice(0,7);if(!m)return;byM[m]=byM[m]||{e:0,s:0};const v=Number(o.valor)||0;o.tipo==="Entrada"?byM[m].e+=v:byM[m].s+=v;});
  const mk=Object.keys(byM).sort();let acc=state.caixaBase||0;
  let mh='<table><thead><tr><th>Mês</th><th class="num">Entradas</th><th class="num">Saídas</th><th class="num">Resultado</th><th class="num">vs mês anterior</th><th class="num">Saldo do caixa</th></tr></thead><tbody>';
@@ -1107,101 +1171,6 @@ function renderCaixa(){
   mh+='<tr'+(m===curM?' style="background:var(--hover);font-weight:700"':'')+'><td>'+mesLabel(m)+'</td><td class="num">'+BRL(byM[m].e)+'</td><td class="num">'+BRL(byM[m].s)+'</td><td class="num" style="color:'+(r>=0?"#2e7d46":"#b00020")+'">'+BRL(r)+'</td><td class="num">'+cmp+'</td><td class="num">'+BRL(acc)+'</td></tr>';
   prevR=r;});
  mh+='</tbody></table>';document.getElementById("cxMeses").innerHTML=mh;}
-// Custos: espelho da aba Despesas da planilha "Sucs Finanças NEW" (Apps Script -> Supabase, tabela custos).
-// A edicao continua SO na planilha. Categoria da planilha -> grupo do CRM por um mapa: o padrao abaixo + o que a
-// equipe ligar aqui (salvo em config id=2, fora da linha id=1 para uma aba antiga aberta nao apagar o mapa).
-// No lucro do mes NAO entram compra de produto (o custo ja esta em cada pedido) nem recarga de anuncio (vai vir do
-// gasto real do Meta e do Google); os dois aparecem na conferencia do caixa. Decisoes do JEV em 27/09/2026.
-const CS_PLANILHA="https://docs.google.com/spreadsheets/d/117q5trDgq4FIR3s9YEODaYOVFzvQ2AhiFFLcoXfnyDU/edit";
-const CS_GRUPOS=["Anúncios","Frete/Entrega","Insumos","Embalagem","Salário/Mão de obra","Equipamento","Taxas","Outro"];
-const CS_NO_LUCRO={"Frete/Entrega":1,"Salário/Mão de obra":1,"Equipamento":1,"Taxas":1,"Outro":1};
-const CS_MAPA_PADRAO={"ads":"Anúncios","anuncios":"Anúncios","marketing / anuncios":"Anúncios","frete":"Frete/Entrega","frete / entregas":"Frete/Entrega","frete/entrega":"Frete/Entrega","suculentas":"Insumos","materiais":"Insumos","insumos":"Insumos","materia-prima (mudas/sementes)":"Insumos","substrato / terra / adubo":"Insumos","vasos / embalagens":"Embalagem","embalagem":"Embalagem","ferramentas":"Equipamento","equipamento":"Equipamento","manutencao":"Equipamento","mao de obra":"Salário/Mão de obra","salarios / ajudantes":"Salário/Mão de obra","salario/mao de obra":"Salário/Mão de obra","taxas / impostos":"Taxas","taxas":"Taxas","aluguel / estufa":"Outro","agua / energia":"Outro","outros":"Outro","outro":"Outro"};
-const CS_GANHO=["Fechado (ganho)","Em produção","Entregue","Pós-venda"];
-let csCarregado=false;
-function csChave(c){return String(c||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/\s+/g," ").trim();}
-function csGrupo(cat){const k=csChave(cat);return (state.mapaCustos||{})[k]||CS_MAPA_PADRAO[k]||"";}
-function csDesde(ts){if(!ts)return"";const min=Math.round((Date.now()-new Date(ts).getTime())/60000);return min<1?"agora":min<60?("há "+min+" min"):min<1440?("há "+Math.round(min/60)+" h"):("há "+Math.round(min/1440)+" dias");}
-async function custosCarregar(forcar){
- if(csCarregado&&!forcar)return "ok";
- try{
-  const r=await fetch(sbUrl("custos?select=*&order=data.desc.nullslast,linha.desc"),{headers:sbHeaders()});
-  if(r.status===404)return "sem_tabela";
-  if(!r.ok)throw new Error("HTTP "+r.status);
-  state.custos=await r.json();
-  const rs=await fetch(sbUrl("custos_sync?select=em,linhas,total&order=em.desc&limit=1"),{headers:sbHeaders()});
-  state.custosSync=rs.ok?((await rs.json())[0]||null):null;
-  const rm=await fetch(sbUrl("config?select=dados&id=eq.2"),{headers:sbHeaders()});
-  if(rm.ok){const j=await rm.json();state.mapaCustos=(j[0]&&j[0].dados&&j[0].dados.mapaCustos)||{};}
-  csCarregado=true;return "ok";
- }catch(e){console.warn("custos",e);return "erro: "+String((e&&e.message)||e);}
-}
-async function csLigar(cat,grupo){const k=csChave(cat);if(!k||!grupo)return;
- state.mapaCustos=Object.assign({},state.mapaCustos||{});state.mapaCustos[k]=grupo;setSave("saving");
- try{const r=await fetch(sbUrl("config?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([{id:2,dados:{mapaCustos:state.mapaCustos}}])});
-  if(!r.ok)throw new Error("HTTP "+r.status);setSave("ok");}
- catch(e){setSave("err");console.warn("mapaCustos",e);}
- logAct("ligou a categoria \""+cat+"\" da planilha ao grupo "+grupo+" (Custos)");renderCustos();}
-function csMesPedidos(m){let fat=0,cus=0,ent=0,n=0,n0=0,v0=0;(state.orders||[]).forEach(o=>{if((o.data||"").slice(0,7)!==m||!CS_GANHO.includes(o.estagio))return;const c=calc(o);fat+=c.vt;cus+=c.ct;ent+=c.de;n++;if(!o.produto){n0++;v0+=c.vt;}});return{fat,cus,ent,n,n0,v0};}
-// quanto o produto custou, em media, nos pedidos que TEM produto (ultimos 12 meses): so para o aviso
-function csRazaoProduto(){const lim=new Date();lim.setUTCMonth(lim.getUTCMonth()-12);const d=lim.toISOString().slice(0,10);let vt=0,ct=0;(state.orders||[]).forEach(o=>{if(!o.produto||!CS_GANHO.includes(o.estagio)||(o.data||"")<d)return;const c=calc(o);vt+=c.vt;ct+=c.ct;});return vt?ct/vt:0;}
-function csResumo(lista){const g={},f={};let tot=0,lucro=0,semForma=0;lista.forEach(c=>{const v=Number(c.valor)||0,gr=csGrupo(c.categoria)||"(sem grupo)";tot+=v;g[gr]=(g[gr]||0)+v;if(CS_NO_LUCRO[gr])lucro+=v;const fp=(c.forma_pagamento||"").trim();if(!fp)semForma++;f[fp||"(sem forma de pagamento)"]=(f[fp||"(sem forma de pagamento)"]||0)+v;});return{tot,lucro,g,f,semForma,n:lista.length};}
-function csAdsMes(m){const f=state.fixos||{};const p=m.split("-");const dias=new Date(Date.UTC(+p[0],+p[1],0)).getUTCDate();return (Number(f.anunciosDia)||0)*dias;}
-async function renderCustos(forcar){
- const el=document.getElementById("csView");if(!el)return;
- if(!SHEET_URL){el.innerHTML='<div class="mini" style="padding:16px">Entre na nuvem (faça login) para ver os custos.</div>';return;}
- if(!csCarregado||forcar)el.innerHTML='<div class="mini" style="padding:16px;color:#888">Carregando...</div>';
- const st=await custosCarregar(forcar);
- const syncEl=document.getElementById("csSync");
- if(st==="sem_tabela"){if(syncEl)syncEl.textContent="";
-  el.innerHTML='<div class="panel wide"><h3>🔌 Falta ligar a planilha</h3><div class="mini" style="line-height:1.8">1. No Supabase (SQL Editor), rode <b>crm_custos_1_rodar_no_supabase.sql</b> e copie o código secreto que aparece no fim.<br>2. Na planilha, <b>Extensões &gt; Apps Script</b>: cole <b>crm_custos_2_colar_no_apps_script.js</b>, salve e execute <b>setup</b> (ele pede a chave anon e o código).<br>3. Volte aqui e clique em Atualizar.</div></div>';return;}
- if(st!=="ok"){el.innerHTML='<div class="mini" style="padding:16px;color:var(--danger)">Não consegui carregar os custos. '+esc(st)+'</div>';return;}
- const cs=state.custos||[],S=state.custosSync;
- if(syncEl)syncEl.textContent=S?("planilha sincronizada "+csDesde(S.em)+" · "+S.linhas+" lançamentos"):"a planilha ainda não enviou nada";
- const curM=todayISO().slice(0,7);
- const meses=[...new Set(cs.map(c=>c.competencia).filter(x=>/^\d{4}-\d{2}$/.test(x||"")))];if(!meses.includes(curM))meses.push(curM);meses.sort().reverse();
- const sel=document.getElementById("csMes");const prev=sel.value;
- sel.innerHTML=meses.map(m=>'<option value="'+m+'">'+mesLabel(m)+'</option>').join('');
- sel.value=(prev&&meses.includes(prev))?prev:curM;const m=sel.value;
- const doMes=cs.filter(c=>c.competencia===m);
- const R=csResumo(doMes),P=csMesPedidos(m),ads=csAdsMes(m),recargas=R.g["Anúncios"]||0;
- const produto=(R.g["Insumos"]||0)+(R.g["Embalagem"]||0);
- const margem=P.fat-P.cus-P.ent,lucro=margem-R.lucro-ads;
- let h='';
- if(!doMes.length){const ult=meses.find(x=>x<m&&cs.some(c=>c.competencia===x));
-  h+='<div class="panel wide" style="margin-bottom:16px;border-left:4px solid #c2872b"><b>Nenhum lançamento de '+mesLabel(m)+' na planilha ainda.</b>'+(ult?' <span class="mini">O último mês com lançamentos é '+mesLabel(ult)+': <a href="#" onclick="document.getElementById(\'csMes\').value=\''+ult+'\';renderCustos();return false">ver</a>.</span>':'')+'</div>';}
- h+='<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">'
-  +[["Saídas na planilha · "+mesLabel(m),BRL(R.tot),"t","💸"],["Entram no lucro",BRL(R.lucro),"t","🧮"],["Compra de produto (caixa)",BRL(produto),"g","🪴"],["Recargas de anúncio (caixa)",BRL(recargas),"g","📣"],["Lançamentos",R.n,"b","🧾"],["Sem forma de pagamento",R.semForma,R.semForma?"t":"g","❔"]]
-   .map(x=>'<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div></div>').join('')+'</div>';
- const semGrupo=[...new Set(cs.filter(c=>c.categoria&&!csGrupo(c.categoria)).map(c=>c.categoria.trim()))];
- if(semGrupo.length){h+='<div class="panel wide" style="margin:16px 0;border-left:4px solid var(--danger)"><h3>⚠ Categoria nova na planilha, sem grupo no CRM</h3><div class="mini" style="margin-bottom:8px">Escolha o grupo uma vez; vale para todos os lançamentos com esse nome.</div>'
-  +semGrupo.map(c=>'<div style="display:flex;gap:10px;align-items:center;padding:4px 0"><b style="min-width:160px">'+esc(c)+'</b><select style="padding:7px 10px;border:1px solid var(--line);border-radius:9px;font-size:13px" onchange="csLigar(this.dataset.cat,this.value)" data-cat="'+esc(c)+'"><option value="">escolher grupo…</option>'+CS_GRUPOS.map(g=>'<option>'+g+'</option>').join('')+'</select></div>').join('')+'</div>';}
- const linhaDre=(rot,val,cls,nota)=>'<tr'+(cls?' style="'+cls+'"':'')+'><td>'+rot+(nota?'<div class="mini" style="color:var(--muted)">'+nota+'</div>':'')+'</td><td class="num" style="white-space:nowrap">'+BRL(val)+'</td></tr>';
- let dre='<table class="itable"><tbody>'
-  +linhaDre('<b>Faturamento</b> · '+P.n+' pedidos fechados no CRM',P.fat,'','Pedidos com data em '+mesLabel(m)+'. Pedido que não está no CRM não entra.')
-  +linhaDre('(−) Custo dos produtos',-P.cus,'','Pela ficha de cada produto (Produtos &amp; Custos).'+(P.n0?'<div style="color:var(--danger);font-weight:600;margin-top:4px">⚠ '+P.n0+' pedido'+(P.n0>1?'s':'')+' sem produto preenchido ('+BRL(P.v0)+') entra'+(P.n0>1?'m':'')+' com custo zero, então o lucro abaixo está alto demais. Nos pedidos com produto, o produto custou '+PCT(csRazaoProduto())+' do faturamento.</div>':''))
-  +(P.ent?linhaDre('(−) Entrega lançada nos pedidos',-P.ent,''):'')
-  +linhaDre('<b>= Margem dos pedidos</b>',margem,'background:var(--cream);font-weight:700');
- CS_GRUPOS.filter(g=>CS_NO_LUCRO[g]&&R.g[g]).forEach(g=>{dre+=linhaDre('(−) '+g+' · planilha',-R.g[g],'');});
- if(R.g["(sem grupo)"])dre+=linhaDre('(sem grupo) · planilha',0,'','R$ '+R.g["(sem grupo)"].toFixed(2).replace('.',',')+' fora da conta até alguém escolher o grupo.');
- dre+=linhaDre('(−) Anúncios ≈',-ads,'','Estimativa do Painel ('+BRL((state.fixos||{}).anunciosDia||0)+' por dia) até ligar o gasto real do Meta e do Google. Recargas na planilha no mês: '+BRL(recargas)+'.')
-  +linhaDre('<b>= Lucro do mês (estimado)</b>',lucro,'background:var(--cream);font-weight:800;color:'+(lucro>=0?'#2e7d46':'#b00020'))
-  +'</tbody></table>';
- h+='<div class="grid2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:16px">'
-  +'<div class="panel"><h3>🧮 Resultado de '+mesLabel(m)+'</h3><div class="tablewrap" style="box-shadow:none;border:0">'+dre+'</div><div class="mini" style="color:var(--muted);margin-top:8px">Compra de suculenta e material ('+BRL(produto)+') não entra aqui para não contar duas vezes: o custo do produto já está em cada pedido.</div></div>'
-  +'<div class="panel"><h3>🏦 Para bater com o banco · saídas por conta</h3><div class="tablewrap" style="box-shadow:none;border:0"><table class="itable"><tbody>'
-  +Object.entries(R.f).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<tr><td'+(k.startsWith("(sem")?' style="color:var(--danger)"':'')+'>'+esc(k)+'</td><td class="num" style="white-space:nowrap">'+BRL(v)+'</td></tr>').join('')
-  +'<tr style="font-weight:700"><td>Total</td><td class="num">'+BRL(R.tot)+'</td></tr></tbody></table></div>'
-  +'<h3 style="margin-top:14px">Por grupo</h3><div class="tablewrap" style="box-shadow:none;border:0"><table class="itable"><tbody>'
-  +Object.entries(R.g).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<tr><td>'+esc(k)+(CS_NO_LUCRO[k]?'':' <span class="mini" style="color:var(--muted)">· só caixa</span>')+'</td><td class="num" style="white-space:nowrap">'+BRL(v)+'</td></tr>').join('')
-  +'</tbody></table></div></div></div>';
- h+='<div class="panel wide" style="margin-top:16px"><h3>🧾 Lançamentos de '+mesLabel(m)+' · edite na planilha</h3><div class="tablewrap" style="box-shadow:none;border:0;max-height:420px"><table><thead><tr><th>Data</th><th>Categoria</th><th>Grupo</th><th>Descrição</th><th class="num">Valor</th><th>Pagamento</th><th>Linha</th></tr></thead><tbody>'
-  +(doMes.length?doMes.map(c=>{const g=csGrupo(c.categoria);return '<tr><td style="white-space:nowrap">'+(c.data?dBR(c.data):'<span class="mini" style="color:var(--muted)">sem data</span>')+'</td><td>'+esc(c.categoria||'')+'</td><td>'+(g?esc(g):'<span style="color:var(--danger)">sem grupo</span>')+'</td><td>'+esc(c.descricao||'')+(c.comentarios?'<div class="mini" style="color:var(--muted)">'+esc(c.comentarios)+'</div>':'')+'</td><td class="num">'+BRL(Number(c.valor)||0)+'</td><td>'+(c.forma_pagamento?esc(c.forma_pagamento):'<span class="mini" style="color:var(--muted)">não informada</span>')+'</td><td class="mini">'+c.linha+'</td></tr>';}).join(''):'<tr><td colspan="7" class="mini" style="padding:18px;text-align:center;color:var(--muted)">Nada neste mês.</td></tr>')
-  +'</tbody></table></div></div>';
- const todos=[...new Set(cs.map(c=>c.competencia).filter(x=>/^\d{4}-\d{2}$/.test(x||"")))].sort().reverse();
- h+='<div class="panel wide" style="margin-top:16px"><h3>📅 Mês a mês</h3><div class="tablewrap" style="box-shadow:none;border:0"><table><thead><tr><th>Mês</th><th class="num">Saídas (planilha)</th><th class="num">Entram no lucro</th><th class="num">Faturamento (CRM)</th><th class="num">Lucro estimado</th></tr></thead><tbody>'
-  +todos.map(x=>{const r=csResumo(cs.filter(c=>c.competencia===x)),p=csMesPedidos(x),l=p.fat-p.cus-p.ent-r.lucro-csAdsMes(x);return '<tr><td>'+mesLabel(x)+'</td><td class="num">'+BRL(r.tot)+'</td><td class="num">'+BRL(r.lucro)+'</td><td class="num">'+BRL(p.fat)+'</td><td class="num" style="color:'+(l>=0?'#2e7d46':'#b00020')+'">'+BRL(l)+'</td></tr>';}).join('')
-  +'</tbody></table></div></div>';
- el.innerHTML=h;}
 // Producao & Vendas: le as duas planilhas (sincronizadas pelo Apps Script para o Supabase)
 // e cruza com os atendimentos do CRM pelo nome do cliente normalizado.
 function normNome(s){return String(s||"").split(" - ")[0].normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z\s]/g,"").replace(/\s+/g," ").trim();}
@@ -1422,7 +1391,7 @@ function onProdChange(){f_valor.value=state.precos[f_produto.value]??0;calcModal
 function calcModal(){const c=calc({qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,produto:f_produto.value,custoEntrega:+f_custoent.value||0});c_vt.textContent=BRL(c.vt);c_sinal.textContent=BRL(c.sinal);c_cu.textContent=BRL(c.cu);c_ct.textContent=BRL(c.ct);c_de.textContent=BRL(c.de);c_mg.textContent=BRL(c.mg);c_mp.textContent=PCT(c.mp);}
 function saveForm(){if(!f_cliente.value.trim()){alert('Informe o nome do cliente.');return;}
  const d={data:f_data.value,cliente:f_cliente.value.trim(),whats:f_whats.value.trim(),cidade:f_cidade.value.trim(),canal:f_canal.value,tipoCli:f_tipo.value,tipoEv:f_evento.value,dataEv:f_dataEv.value,produto:f_produto.value,descr:f_descr.value.trim(),qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,estagio:f_estagio.value,statusPag:f_statuspag.value,formaPag:f_formapag.value,entrega:f_entrega.value,custoEntrega:+f_custoent.value||0,followup:f_followup.value,obs:f_obs.value.trim()};
- let _sv;if(currentId){_sv=Object.assign(state.orders.find(x=>x.id===currentId),d);logAct('atualizou o atendimento #'+_sv.id+' ('+_sv.cliente+')');}else{d.id=state.seq++;_sv=d;state.orders.unshift(d);logAct('criou o atendimento #'+d.id+' ('+d.cliente+')');}save();syncOrder(_sv);closeForm();renderAtend();renderPainel();if(document.getElementById('calendario')&&document.getElementById('calendario').classList.contains('active'))renderCalendario();}
+ let _sv,_antesPag=null;if(currentId){const _cur=state.orders.find(x=>x.id===currentId);_antesPag=_cur?_cur.statusPag:null;_sv=Object.assign(_cur,d);logAct('atualizou o atendimento #'+_sv.id+' ('+_sv.cliente+')');}else{d.id=state.seq++;_sv=d;state.orders.unshift(d);logAct('criou o atendimento #'+d.id+' ('+d.cliente+')');}save();syncOrder(_sv);finPagamento(_sv,_antesPag);closeForm();renderAtend();renderPainel();if(document.getElementById('calendario')&&document.getElementById('calendario').classList.contains('active'))renderCalendario();}
 function deleteCurrent(){if(currentId&&confirm('Excluir este atendimento?')){const _id=currentId;logAct('excluiu o atendimento #'+_id);state.orders=state.orders.filter(x=>x.id!==_id);save();syncDelete(_id);closeForm();renderAtend();renderPainel();}}
 document.getElementById('overlay').addEventListener('click',function(e){/* clicar fora nao fecha: evita perder o que foi digitado */});
 
@@ -1486,13 +1455,13 @@ async function init(){
  state.insumos=Object.assign({},defaultData().insumos,state.insumos);delete state.insumos.madeirinha;
  if(state.caixaBase==null)state.caixaBase=0;if(state.resetMarco==null)state.resetMarco="";
  if(!state.caixa)state.caixa=[];
- if(SHEET_URL){const cx=await cxFetch();if(cx!==null)state.caixa=cx;}
+ if(SHEET_URL){const cx=await cxFetch();if(cx!==null)state.caixa=cx;await cxDetectarExt();}
  state.seqC=state.caixa.reduce((m,o)=>Math.max(m,Number(o.id)||0),0)+1;
  save();initFilters();renderAll();setStatus();
 }
 function reloadData(){init();}
 function renderCadastros(){var el=document.getElementById('cadList');if(!el)return;if(!SHEET_URL){el.innerHTML='<div class="mini" style="padding:16px">Entre na nuvem (faça login) para ver os cadastros.</div>';return;}el.innerHTML='<div class="mini" style="padding:16px;color:#888">Carregando...</div>';fetch(sbUrl("cadastros?select=*&order=id.desc"),{headers:sbHeaders()}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(rows){state.cadastros=rows;var nv=rows.filter(function(x){return (x.status||'novo')==='novo';}).length;var c=document.getElementById('cadCount');if(c)c.textContent=nv;if(!rows.length){el.innerHTML='<div class="mini" style="padding:22px;text-align:center;color:#999">Nenhum cadastro ainda. Quando um cliente preencher o formulário, aparece aqui.</div>';return;}el.innerHTML=rows.map(function(o){var imp=(o.status==='importado');return '<div style="border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:'+(imp?'var(--cream)':'var(--card)')+'">'+'<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">'+'<div><b style="color:var(--green-dk);font-size:15px">'+esc(o.nome||'(sem nome)')+'</b> <span class="mini" style="color:var(--muted)">'+esc(o.whats||'')+'</span></div>'+(imp?'<span class="mini" style="color:var(--green2);font-weight:800">✓ virou atendimento</span>':'<button class="btn" onclick="cadConverter('+o.id+')">➕ Virar atendimento</button>')+' <button class="btn ghost" style="color:var(--danger)" onclick="cadDelete('+o.id+')" title="Apagar cadastro">🗑</button>'+'</div><div class="mini" style="color:var(--ink);margin-top:8px;line-height:1.6">'+'📅 Evento: '+esc(o.data_evento||'-')+' · 📦 '+esc(o.produto||'-')+' · Qtd: '+esc(o.qtd||'-')+'<br>'+'✏️ '+esc(o.personalizacao||'-')+'<br>'+'🎨 '+esc(o.tema||'-')+'<br>'+'📍 '+esc(o.endereco||'-')+' · CEP '+esc(o.cep||'-')+(o.cpf?' · CPF '+esc(o.cpf):'')+'</div></div>';}).join('');}).catch(function(e){el.innerHTML='<div class="mini" style="padding:16px;color:var(--danger)">Não consegui carregar. '+esc(String(e.message||e))+'</div>';});}
-function cadConverter(id){var o=(state.cadastros||[]).find(function(x){return x.id===id;});if(!o)return;if(!confirm('Criar um atendimento a partir do cadastro de '+(o.nome||'')+'?'))return;var novo={id:state.seq++,data:todayISO(),cliente:o.nome||'',whats:o.whats||'',cidade:o.endereco||'',canal:'Formulário',tipoCli:'Evento',tipoEv:'',dataEv:o.data_evento||'',produto:o.produto||PRODUTOS[0],descr:o.personalizacao||'',qtd:Number(o.qtd)||30,valorUnit:state.precos[o.produto]||0,estagio:'Fechado (ganho)',statusPag:'Sinal pago',formaPag:'Pix',entrega:'',custoEntrega:0,followup:'',obs:'Tema/cores: '+(o.tema||'')+(o.cpf?' | CPF: '+o.cpf:'')+' | CEP: '+(o.cep||'')};state.orders.unshift(novo);if(typeof logAct==='function')logAct('importou o cadastro de '+(o.nome||'')+' como atendimento #'+novo.id);save();syncOrder(novo);o.status='importado';if(SHEET_URL)fetch(sbUrl("cadastros?id=eq."+id),{method:'PATCH',headers:sbHeaders(),body:JSON.stringify({status:'importado'})}).catch(function(e){});renderCadastros();if(typeof renderAtend==='function')renderAtend();if(typeof renderPainel==='function')renderPainel();alert('Pronto! Virou o atendimento #'+novo.id+', já está na aba Atendimentos.');}
+function cadConverter(id){var o=(state.cadastros||[]).find(function(x){return x.id===id;});if(!o)return;if(!confirm('Criar um atendimento a partir do cadastro de '+(o.nome||'')+'?'))return;var novo={id:state.seq++,data:todayISO(),cliente:o.nome||'',whats:o.whats||'',cidade:o.endereco||'',canal:'Formulário',tipoCli:'Evento',tipoEv:'',dataEv:o.data_evento||'',produto:o.produto||PRODUTOS[0],descr:o.personalizacao||'',qtd:Number(o.qtd)||30,valorUnit:state.precos[o.produto]||0,estagio:'Fechado (ganho)',statusPag:'Sinal pago',formaPag:'Pix',entrega:'',custoEntrega:0,followup:'',obs:'Tema/cores: '+(o.tema||'')+(o.cpf?' | CPF: '+o.cpf:'')+' | CEP: '+(o.cep||'')};state.orders.unshift(novo);if(typeof logAct==='function')logAct('importou o cadastro de '+(o.nome||'')+' como atendimento #'+novo.id);save();syncOrder(novo);finPagamento(novo,'');o.status='importado';if(SHEET_URL)fetch(sbUrl("cadastros?id=eq."+id),{method:'PATCH',headers:sbHeaders(),body:JSON.stringify({status:'importado'})}).catch(function(e){});renderCadastros();if(typeof renderAtend==='function')renderAtend();if(typeof renderPainel==='function')renderPainel();alert('Pronto! Virou o atendimento #'+novo.id+', já está na aba Atendimentos.');}
 var lastSaveErr="";
 function setSave(st){var e=document.getElementById("saveStat");if(!e)return;if(st==="saving"){e.textContent="⏳ Salvando…";e.style.color="#c2872b";}else if(st==="ok"){e.textContent="✓ Salvo";e.style.color="#2e7d46";setTimeout(function(){if(e&&e.textContent==="✓ Salvo")e.textContent="";},1500);}else{e.textContent="⚠ não salvou · toque em Salvar tudo";e.style.color="#c0271f";}}
 async function salvarTudo(){if(!SHEET_URL){alert("Você está em modo local (sem nuvem). Faça login para salvar para a equipe.");return;}setSave("saving");var ok=true,msg="";try{var os=(state.orders||[]).map(pickCols);for(var i=0;i<os.length;i+=200){var r=await fetch(sbUrl("pedidos?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify(os.slice(i,i+200))});if(!r.ok){ok=false;msg="pedidos -> HTTP "+r.status+" "+(await r.text()).slice(0,160);break;}}if(ok){var rc=await fetch(sbUrl("config?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([{id:1,dados:{insumos:state.insumos,precos:state.precos,clientsMeta:state.clientsMeta,fixos:state.fixos,caixaBase:state.caixaBase||0,resetMarco:state.resetMarco||""}}])});if(!rc.ok){ok=false;msg="config (saldo/precos) -> HTTP "+rc.status+" "+(await rc.text()).slice(0,160);}}if(ok&&(state.caixa||[]).length){var cs=state.caixa.map(pickCx);for(var j=0;j<cs.length;j+=200){var rr=await fetch(sbUrl("caixa?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify(cs.slice(j,j+200))});if(!rr.ok){ok=false;msg="caixa -> HTTP "+rr.status+" "+(await rr.text()).slice(0,160);break;}}}}catch(e){ok=false;msg=String((e&&e.message)||e);}if(ok){setSave("ok");alert("Tudo salvo na nuvem com sucesso ✓");}else{setSave("err");alert("NAO consegui salvar. Motivo:\n\n"+msg+"\n\nProvavel causa: a tabela config/caixa nao existe ou esta bloqueada no Supabase. Rode o SQL schema_completo_supabase.sql e tente de novo.");}}
