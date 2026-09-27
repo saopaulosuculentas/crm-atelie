@@ -563,6 +563,7 @@ tbody tr:hover{background:#f0f5ec}
   <button data-v="clientes"><span class="ic">👥</span> Clientes</button>
   <button data-v="produtos"><span class="ic">🪴</span> Produtos &amp; Custos</button>
   <button data-v="caixa"><span class="ic">💰</span> Caixa</button>
+  <button data-v="custos"><span class="ic">💸</span> Custos</button>
   <button data-v="sazonal"><span class="ic">🔥</span> Radar Sazonal</button>
   <button data-v="producao"><span class="ic">📦</span> Produção &amp; Vendas</button>
  </nav>
@@ -648,6 +649,17 @@ tbody tr:hover{background:#f0f5ec}
    <div class="panel wide" id="cxSinaisWrap" style="margin-bottom:16px"><h3>💵 Sinais de 30% · dos pedidos em aberto</h3><div id="cxSinais"></div></div>
    <div class="tablewrap sheet" id="cxSheet" style="max-height:46vh;margin-bottom:18px"></div>
    <div class="panel wide"><h3>📅 Mês a mês — evolução do caixa</h3><div class="tablewrap" style="box-shadow:none;border:0;max-height:380px" id="cxMeses"></div></div>
+  </section>
+
+  <section class="view" id="custos">
+   <div class="toolbar">
+    <select id="csMes" onchange="renderCustos()" style="padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:13px;font-weight:600"></select>
+    <button class="btn ghost" onclick="renderCustos(true)">🔄 Atualizar</button>
+    <span class="mini" id="csSync"></span>
+    <div style="flex:1"></div>
+    <a class="mini" href="https://docs.google.com/spreadsheets/d/117q5trDgq4FIR3s9YEODaYOVFzvQ2AhiFFLcoXfnyDU/edit" target="_blank" rel="noopener">abrir a planilha ↗</a>
+   </div>
+   <div id="csView"></div>
   </section>
 
   <section class="view" id="sazonal">
@@ -831,7 +843,7 @@ const PRODUTOS=["Suculenta + Rótulo Personalizado","Suculenta + Rótulo Pronto"
 const STAGE_COLORS={"Lead novo":"#8a94a6","Em conversa":"#3b82c4","Orçamento enviado":"#d99a2b","Negociação":"#c2693f","Fechado (ganho)":"#2e7d46","Em produção":"#1f8a8a","Entregue":"#1c4327","Pós-venda":"#6aa17a","Perdido":"#b00020"};
 const PAY_COLORS={"Pago":"#2e7d46","Sinal pago":"#d99a2b","Pendente":"#b00020","Estornado":"#8a94a6"};
 const SINAL_PCT=0.30; // sinal = 30% do valor
-const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O dinheiro de verdade: defina o saldo inicial, lance entradas e saídas e acompanhe mês a mês.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo.",producao:"As duas planilhas do Google lidas aqui dentro e cruzadas com os atendimentos: o que está produzido, o que foi vendido e o que não bate."};
+const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O dinheiro de verdade: defina o saldo inicial, lance entradas e saídas e acompanhe mês a mês.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo.",custos:"Vem da planilha de finanças (aba Despesas). Para lançar ou corrigir, edite a planilha: o CRM atualiza sozinho em até 15 minutos.",producao:"As duas planilhas do Google lidas aqui dentro e cruzadas com os atendimentos: o que está produzido, o que foi vendido e o que não bate."};
 
 const KEY="crm_atelie_v1";let state,currentId=null,viewMode="table",memFallback=null;
 /* ===== CONEXAO COM A NUVEM (Supabase) ===== */
@@ -913,7 +925,7 @@ document.getElementById('nav').addEventListener('click',e=>{const b=e.target.clo
  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.v).classList.add('active');
  const v=b.dataset.v;document.getElementById('ttl').textContent=b.textContent.trim();document.getElementById('sub').textContent=SUBS[v];
- if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();if(v==='producao')renderProducao();document.body.classList.remove('menu-open');});
+ if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();if(v==='producao')renderProducao();if(v==='custos')renderCustos();document.body.classList.remove('menu-open');});
 function toggleMenu(){document.body.classList.toggle('menu-open');}
 function setView(m){viewMode=m;[['vbTable','table'],['vbSheet','sheet'],['vbKanban','kanban']].forEach(function(x){var b=document.getElementById(x[0]);if(b)b.classList.toggle('active',m===x[1]);});
  document.getElementById('tableView').style.display=m==='table'?'':'none';document.getElementById('sheetView').style.display=m==='sheet'?'':'none';document.getElementById('kanbanView').style.display=m==='kanban'?'':'none';renderAtend();}
@@ -1093,6 +1105,101 @@ function renderCaixa(){
   mh+='<tr'+(m===curM?' style="background:var(--hover);font-weight:700"':'')+'><td>'+mesLabel(m)+'</td><td class="num">'+BRL(byM[m].e)+'</td><td class="num">'+BRL(byM[m].s)+'</td><td class="num" style="color:'+(r>=0?"#2e7d46":"#b00020")+'">'+BRL(r)+'</td><td class="num">'+cmp+'</td><td class="num">'+BRL(acc)+'</td></tr>';
   prevR=r;});
  mh+='</tbody></table>';document.getElementById("cxMeses").innerHTML=mh;}
+// Custos: espelho da aba Despesas da planilha "Sucs Finanças NEW" (Apps Script -> Supabase, tabela custos).
+// A edicao continua SO na planilha. Categoria da planilha -> grupo do CRM por um mapa: o padrao abaixo + o que a
+// equipe ligar aqui (salvo em config id=2, fora da linha id=1 para uma aba antiga aberta nao apagar o mapa).
+// No lucro do mes NAO entram compra de produto (o custo ja esta em cada pedido) nem recarga de anuncio (vai vir do
+// gasto real do Meta e do Google); os dois aparecem na conferencia do caixa. Decisoes do JEV em 27/09/2026.
+const CS_PLANILHA="https://docs.google.com/spreadsheets/d/117q5trDgq4FIR3s9YEODaYOVFzvQ2AhiFFLcoXfnyDU/edit";
+const CS_GRUPOS=["Anúncios","Frete/Entrega","Insumos","Embalagem","Salário/Mão de obra","Equipamento","Taxas","Outro"];
+const CS_NO_LUCRO={"Frete/Entrega":1,"Salário/Mão de obra":1,"Equipamento":1,"Taxas":1,"Outro":1};
+const CS_MAPA_PADRAO={"ads":"Anúncios","anuncios":"Anúncios","marketing / anuncios":"Anúncios","frete":"Frete/Entrega","frete / entregas":"Frete/Entrega","frete/entrega":"Frete/Entrega","suculentas":"Insumos","materiais":"Insumos","insumos":"Insumos","materia-prima (mudas/sementes)":"Insumos","substrato / terra / adubo":"Insumos","vasos / embalagens":"Embalagem","embalagem":"Embalagem","ferramentas":"Equipamento","equipamento":"Equipamento","manutencao":"Equipamento","mao de obra":"Salário/Mão de obra","salarios / ajudantes":"Salário/Mão de obra","salario/mao de obra":"Salário/Mão de obra","taxas / impostos":"Taxas","taxas":"Taxas","aluguel / estufa":"Outro","agua / energia":"Outro","outros":"Outro","outro":"Outro"};
+const CS_GANHO=["Fechado (ganho)","Em produção","Entregue","Pós-venda"];
+let csCarregado=false;
+function csChave(c){return String(c||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/\s+/g," ").trim();}
+function csGrupo(cat){const k=csChave(cat);return (state.mapaCustos||{})[k]||CS_MAPA_PADRAO[k]||"";}
+function csDesde(ts){if(!ts)return"";const min=Math.round((Date.now()-new Date(ts).getTime())/60000);return min<1?"agora":min<60?("há "+min+" min"):min<1440?("há "+Math.round(min/60)+" h"):("há "+Math.round(min/1440)+" dias");}
+async function custosCarregar(forcar){
+ if(csCarregado&&!forcar)return "ok";
+ try{
+  const r=await fetch(sbUrl("custos?select=*&order=data.desc.nullslast,linha.desc"),{headers:sbHeaders()});
+  if(r.status===404)return "sem_tabela";
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  state.custos=await r.json();
+  const rs=await fetch(sbUrl("custos_sync?select=em,linhas,total&order=em.desc&limit=1"),{headers:sbHeaders()});
+  state.custosSync=rs.ok?((await rs.json())[0]||null):null;
+  const rm=await fetch(sbUrl("config?select=dados&id=eq.2"),{headers:sbHeaders()});
+  if(rm.ok){const j=await rm.json();state.mapaCustos=(j[0]&&j[0].dados&&j[0].dados.mapaCustos)||{};}
+  csCarregado=true;return "ok";
+ }catch(e){console.warn("custos",e);return "erro: "+String((e&&e.message)||e);}
+}
+async function csLigar(cat,grupo){const k=csChave(cat);if(!k||!grupo)return;
+ state.mapaCustos=Object.assign({},state.mapaCustos||{});state.mapaCustos[k]=grupo;setSave("saving");
+ try{const r=await fetch(sbUrl("config?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([{id:2,dados:{mapaCustos:state.mapaCustos}}])});
+  if(!r.ok)throw new Error("HTTP "+r.status);setSave("ok");}
+ catch(e){setSave("err");console.warn("mapaCustos",e);}
+ logAct("ligou a categoria \""+cat+"\" da planilha ao grupo "+grupo+" (Custos)");renderCustos();}
+function csMesPedidos(m){let fat=0,cus=0,ent=0,n=0,n0=0,v0=0;(state.orders||[]).forEach(o=>{if((o.data||"").slice(0,7)!==m||!CS_GANHO.includes(o.estagio))return;const c=calc(o);fat+=c.vt;cus+=c.ct;ent+=c.de;n++;if(!o.produto){n0++;v0+=c.vt;}});return{fat,cus,ent,n,n0,v0};}
+// quanto o produto custou, em media, nos pedidos que TEM produto (ultimos 12 meses): so para o aviso
+function csRazaoProduto(){const lim=new Date();lim.setUTCMonth(lim.getUTCMonth()-12);const d=lim.toISOString().slice(0,10);let vt=0,ct=0;(state.orders||[]).forEach(o=>{if(!o.produto||!CS_GANHO.includes(o.estagio)||(o.data||"")<d)return;const c=calc(o);vt+=c.vt;ct+=c.ct;});return vt?ct/vt:0;}
+function csResumo(lista){const g={},f={};let tot=0,lucro=0,semForma=0;lista.forEach(c=>{const v=Number(c.valor)||0,gr=csGrupo(c.categoria)||"(sem grupo)";tot+=v;g[gr]=(g[gr]||0)+v;if(CS_NO_LUCRO[gr])lucro+=v;const fp=(c.forma_pagamento||"").trim();if(!fp)semForma++;f[fp||"(sem forma de pagamento)"]=(f[fp||"(sem forma de pagamento)"]||0)+v;});return{tot,lucro,g,f,semForma,n:lista.length};}
+function csAdsMes(m){const f=state.fixos||{};const p=m.split("-");const dias=new Date(Date.UTC(+p[0],+p[1],0)).getUTCDate();return (Number(f.anunciosDia)||0)*dias;}
+async function renderCustos(forcar){
+ const el=document.getElementById("csView");if(!el)return;
+ if(!SHEET_URL){el.innerHTML='<div class="mini" style="padding:16px">Entre na nuvem (faça login) para ver os custos.</div>';return;}
+ if(!csCarregado||forcar)el.innerHTML='<div class="mini" style="padding:16px;color:#888">Carregando...</div>';
+ const st=await custosCarregar(forcar);
+ const syncEl=document.getElementById("csSync");
+ if(st==="sem_tabela"){if(syncEl)syncEl.textContent="";
+  el.innerHTML='<div class="panel wide"><h3>🔌 Falta ligar a planilha</h3><div class="mini" style="line-height:1.8">1. No Supabase (SQL Editor), rode <b>crm_custos_1_rodar_no_supabase.sql</b> e copie o código secreto que aparece no fim.<br>2. Na planilha, <b>Extensões &gt; Apps Script</b>: cole <b>crm_custos_2_colar_no_apps_script.js</b>, salve e execute <b>setup</b> (ele pede a chave anon e o código).<br>3. Volte aqui e clique em Atualizar.</div></div>';return;}
+ if(st!=="ok"){el.innerHTML='<div class="mini" style="padding:16px;color:var(--danger)">Não consegui carregar os custos. '+esc(st)+'</div>';return;}
+ const cs=state.custos||[],S=state.custosSync;
+ if(syncEl)syncEl.textContent=S?("planilha sincronizada "+csDesde(S.em)+" · "+S.linhas+" lançamentos"):"a planilha ainda não enviou nada";
+ const curM=todayISO().slice(0,7);
+ const meses=[...new Set(cs.map(c=>c.competencia).filter(x=>/^\d{4}-\d{2}$/.test(x||"")))];if(!meses.includes(curM))meses.push(curM);meses.sort().reverse();
+ const sel=document.getElementById("csMes");const prev=sel.value;
+ sel.innerHTML=meses.map(m=>'<option value="'+m+'">'+mesLabel(m)+'</option>').join('');
+ sel.value=(prev&&meses.includes(prev))?prev:curM;const m=sel.value;
+ const doMes=cs.filter(c=>c.competencia===m);
+ const R=csResumo(doMes),P=csMesPedidos(m),ads=csAdsMes(m),recargas=R.g["Anúncios"]||0;
+ const produto=(R.g["Insumos"]||0)+(R.g["Embalagem"]||0);
+ const margem=P.fat-P.cus-P.ent,lucro=margem-R.lucro-ads;
+ let h='';
+ if(!doMes.length){const ult=meses.find(x=>x<m&&cs.some(c=>c.competencia===x));
+  h+='<div class="panel wide" style="margin-bottom:16px;border-left:4px solid #c2872b"><b>Nenhum lançamento de '+mesLabel(m)+' na planilha ainda.</b>'+(ult?' <span class="mini">O último mês com lançamentos é '+mesLabel(ult)+': <a href="#" onclick="document.getElementById(\'csMes\').value=\''+ult+'\';renderCustos();return false">ver</a>.</span>':'')+'</div>';}
+ h+='<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">'
+  +[["Saídas na planilha · "+mesLabel(m),BRL(R.tot),"t","💸"],["Entram no lucro",BRL(R.lucro),"t","🧮"],["Compra de produto (caixa)",BRL(produto),"g","🪴"],["Recargas de anúncio (caixa)",BRL(recargas),"g","📣"],["Lançamentos",R.n,"b","🧾"],["Sem forma de pagamento",R.semForma,R.semForma?"t":"g","❔"]]
+   .map(x=>'<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div></div>').join('')+'</div>';
+ const semGrupo=[...new Set(cs.filter(c=>c.categoria&&!csGrupo(c.categoria)).map(c=>c.categoria.trim()))];
+ if(semGrupo.length){h+='<div class="panel wide" style="margin:16px 0;border-left:4px solid var(--danger)"><h3>⚠ Categoria nova na planilha, sem grupo no CRM</h3><div class="mini" style="margin-bottom:8px">Escolha o grupo uma vez; vale para todos os lançamentos com esse nome.</div>'
+  +semGrupo.map(c=>'<div style="display:flex;gap:10px;align-items:center;padding:4px 0"><b style="min-width:160px">'+esc(c)+'</b><select style="padding:7px 10px;border:1px solid var(--line);border-radius:9px;font-size:13px" onchange="csLigar(this.dataset.cat,this.value)" data-cat="'+esc(c)+'"><option value="">escolher grupo…</option>'+CS_GRUPOS.map(g=>'<option>'+g+'</option>').join('')+'</select></div>').join('')+'</div>';}
+ const linhaDre=(rot,val,cls,nota)=>'<tr'+(cls?' style="'+cls+'"':'')+'><td>'+rot+(nota?'<div class="mini" style="color:var(--muted)">'+nota+'</div>':'')+'</td><td class="num" style="white-space:nowrap">'+BRL(val)+'</td></tr>';
+ let dre='<table class="itable"><tbody>'
+  +linhaDre('<b>Faturamento</b> · '+P.n+' pedidos fechados no CRM',P.fat,'','Pedidos com data em '+mesLabel(m)+'. Pedido que não está no CRM não entra.')
+  +linhaDre('(−) Custo dos produtos',-P.cus,'','Pela ficha de cada produto (Produtos &amp; Custos).'+(P.n0?'<div style="color:var(--danger);font-weight:600;margin-top:4px">⚠ '+P.n0+' pedido'+(P.n0>1?'s':'')+' sem produto preenchido ('+BRL(P.v0)+') entra'+(P.n0>1?'m':'')+' com custo zero, então o lucro abaixo está alto demais. Nos pedidos com produto, o produto custou '+PCT(csRazaoProduto())+' do faturamento.</div>':''))
+  +(P.ent?linhaDre('(−) Entrega lançada nos pedidos',-P.ent,''):'')
+  +linhaDre('<b>= Margem dos pedidos</b>',margem,'background:var(--cream);font-weight:700');
+ CS_GRUPOS.filter(g=>CS_NO_LUCRO[g]&&R.g[g]).forEach(g=>{dre+=linhaDre('(−) '+g+' · planilha',-R.g[g],'');});
+ if(R.g["(sem grupo)"])dre+=linhaDre('(sem grupo) · planilha',0,'','R$ '+R.g["(sem grupo)"].toFixed(2).replace('.',',')+' fora da conta até alguém escolher o grupo.');
+ dre+=linhaDre('(−) Anúncios ≈',-ads,'','Estimativa do Painel ('+BRL((state.fixos||{}).anunciosDia||0)+' por dia) até ligar o gasto real do Meta e do Google. Recargas na planilha no mês: '+BRL(recargas)+'.')
+  +linhaDre('<b>= Lucro do mês (estimado)</b>',lucro,'background:var(--cream);font-weight:800;color:'+(lucro>=0?'#2e7d46':'#b00020'))
+  +'</tbody></table>';
+ h+='<div class="grid2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:16px">'
+  +'<div class="panel"><h3>🧮 Resultado de '+mesLabel(m)+'</h3><div class="tablewrap" style="box-shadow:none;border:0">'+dre+'</div><div class="mini" style="color:var(--muted);margin-top:8px">Compra de suculenta e material ('+BRL(produto)+') não entra aqui para não contar duas vezes: o custo do produto já está em cada pedido.</div></div>'
+  +'<div class="panel"><h3>🏦 Para bater com o banco · saídas por conta</h3><div class="tablewrap" style="box-shadow:none;border:0"><table class="itable"><tbody>'
+  +Object.entries(R.f).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<tr><td'+(k.startsWith("(sem")?' style="color:var(--danger)"':'')+'>'+esc(k)+'</td><td class="num" style="white-space:nowrap">'+BRL(v)+'</td></tr>').join('')
+  +'<tr style="font-weight:700"><td>Total</td><td class="num">'+BRL(R.tot)+'</td></tr></tbody></table></div>'
+  +'<h3 style="margin-top:14px">Por grupo</h3><div class="tablewrap" style="box-shadow:none;border:0"><table class="itable"><tbody>'
+  +Object.entries(R.g).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<tr><td>'+esc(k)+(CS_NO_LUCRO[k]?'':' <span class="mini" style="color:var(--muted)">· só caixa</span>')+'</td><td class="num" style="white-space:nowrap">'+BRL(v)+'</td></tr>').join('')
+  +'</tbody></table></div></div></div>';
+ h+='<div class="panel wide" style="margin-top:16px"><h3>🧾 Lançamentos de '+mesLabel(m)+' · edite na planilha</h3><div class="tablewrap" style="box-shadow:none;border:0;max-height:420px"><table><thead><tr><th>Data</th><th>Categoria</th><th>Grupo</th><th>Descrição</th><th class="num">Valor</th><th>Pagamento</th><th>Linha</th></tr></thead><tbody>'
+  +(doMes.length?doMes.map(c=>{const g=csGrupo(c.categoria);return '<tr><td style="white-space:nowrap">'+(c.data?dBR(c.data):'<span class="mini" style="color:var(--muted)">sem data</span>')+'</td><td>'+esc(c.categoria||'')+'</td><td>'+(g?esc(g):'<span style="color:var(--danger)">sem grupo</span>')+'</td><td>'+esc(c.descricao||'')+(c.comentarios?'<div class="mini" style="color:var(--muted)">'+esc(c.comentarios)+'</div>':'')+'</td><td class="num">'+BRL(Number(c.valor)||0)+'</td><td>'+(c.forma_pagamento?esc(c.forma_pagamento):'<span class="mini" style="color:var(--muted)">não informada</span>')+'</td><td class="mini">'+c.linha+'</td></tr>';}).join(''):'<tr><td colspan="7" class="mini" style="padding:18px;text-align:center;color:var(--muted)">Nada neste mês.</td></tr>')
+  +'</tbody></table></div></div>';
+ const todos=[...new Set(cs.map(c=>c.competencia).filter(x=>/^\d{4}-\d{2}$/.test(x||"")))].sort().reverse();
+ h+='<div class="panel wide" style="margin-top:16px"><h3>📅 Mês a mês</h3><div class="tablewrap" style="box-shadow:none;border:0"><table><thead><tr><th>Mês</th><th class="num">Saídas (planilha)</th><th class="num">Entram no lucro</th><th class="num">Faturamento (CRM)</th><th class="num">Lucro estimado</th></tr></thead><tbody>'
+  +todos.map(x=>{const r=csResumo(cs.filter(c=>c.competencia===x)),p=csMesPedidos(x),l=p.fat-p.cus-p.ent-r.lucro-csAdsMes(x);return '<tr><td>'+mesLabel(x)+'</td><td class="num">'+BRL(r.tot)+'</td><td class="num">'+BRL(r.lucro)+'</td><td class="num">'+BRL(p.fat)+'</td><td class="num" style="color:'+(l>=0?'#2e7d46':'#b00020')+'">'+BRL(l)+'</td></tr>';}).join('')
+  +'</tbody></table></div></div>';
+ el.innerHTML=h;}
 // Producao & Vendas: le as duas planilhas (sincronizadas pelo Apps Script para o Supabase)
 // e cruza com os atendimentos do CRM pelo nome do cliente normalizado.
 function normNome(s){return String(s||"").split(" - ")[0].normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z\s]/g,"").replace(/\s+/g," ").trim();}
