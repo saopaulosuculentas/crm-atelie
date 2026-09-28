@@ -88,7 +88,12 @@ function lerPlanilha(abas) {
       var b = texto(v[1]);
       if (!b) return;
       var s = /SEMANA\s+DIA\s+(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{2,4})\s+AT[ÉE]\s+(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{2,4})/i.exec(b);
-      if (s) { semana = b; ini = data(s[1], s[2], s[3]); fim = data(s[4], s[5], s[6]); return; }
+      if (s) {
+        semana = b; ini = data(s[1], s[2], s[3]); fim = data(s[4], s[5], s[6]);
+        // cabecalho digitado errado (ex.: 15/01 no lugar de 15/06): usa os 7 dias ate o fim da semana
+        if (ini > fim || dias(ini, fim) > 13) ini = somaDias(fim, -6);
+        return;
+      }
       if (/^SEMANA\b/i.test(b)) { semana = b; return; }
       var partes = b.split(/\s+-\s*|\s*-\s+/).map(function (p) { return p.trim(); }).filter(function (p) { return p; });
       var nome = partes[0] || '';
@@ -110,7 +115,7 @@ function lerPlanilha(abas) {
         chave: aba.nome + '|' + chaveNome + '|' + vistos[chaveNome],
         aba: aba.nome, linha: r + 1, semana: semana, semana_ini: ini, semana_fim: fim,
         status: texto(v[0]).toUpperCase(), nome: nome, ecommerce: ecommerce, pago: pago, numero: numero,
-        logistica: logistica.join(' · '), pedido: pedido, qtd: q ? Number(q[1]) : null, produto: produto(pedido),
+        logistica: logistica.join(' · '), pedido: pedido, qtd: q ? Number(q[1]) : 1, produto: produto(pedido),
         nome_tag: nomeTag, arte: texto(v[4]), tag: texto(v[5]), video: texto(v[6]), pagou: texto(v[7]), obs: obsI
       });
     });
@@ -130,6 +135,8 @@ function produto(p) {
   return 'Personalizado (outro)';
 }
 
+function dias(a, b) { return Math.round((Date.parse(b + 'T12:00:00Z') - Date.parse(a + 'T12:00:00Z')) / 864e5); }
+function somaDias(a, n) { var d = new Date(Date.parse(a + 'T12:00:00Z') + n * 864e5); return d.getUTCFullYear() + '-' + dois(d.getUTCMonth() + 1) + '-' + dois(d.getUTCDate()); }
 function texto(x) { return x === null || x === undefined ? '' : String(x).trim(); }
 function dois(n) { return (Number(n) < 10 ? '0' : '') + Number(n); }
 function data(d, m, a) { a = Number(a); if (a < 100) a += 2000; return a + '-' + dois(m) + '-' + dois(d); }
