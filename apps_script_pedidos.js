@@ -1,10 +1,11 @@
 // CRM Ateliê: manda os pedidos da planilha "Pedidos Sucs" para o CRM (abas de Junho/26 em diante).
 // Onde colar: na planilha Pedidos Sucs, menu Extensões > Apps Script > apague o que tiver > cole tudo > salvar.
-// Depois escolha a funcao "setup" no topo e clique em Executar (uma vez so):
+// Antes de executar, cadastre as duas chaves (uma vez so): no Apps Script, engrenagem "Configurações do projeto" >
+// "Propriedades do script" > Adicionar: ANON = chave "anon public" do Supabase (Project Settings > API Keys) e
+// SEGREDO = codigo que saiu no fim do SQL. Salvar. Depois volte ao Editor, escolha "setup" e clique em Executar:
 //   1. o Google pede autorizacao (e a sua propria conta: Avancado > Acessar);
-//   2. volte para a aba da planilha: aparecem duas caixinhas, uma pede a chave anon do Supabase
-//      (Project Settings > API Keys) e a outra o codigo que saiu no fim do SQL;
-//   3. ele faz o primeiro envio e mostra o resumo (quantos pedidos entraram).
+//   2. ele cria os gatilhos e faz o primeiro envio; o resumo aparece no "Registro de execucao" embaixo do codigo.
+// (Nao usamos caixinha na planilha: rodando pelo editor, o Google nao deixa o script abrir caixinha.)
 // Daqui para frente: toda edicao manda de novo (no maximo a cada 2 minutos) e, por garantia, confere a cada 5 minutos.
 // A planilha nao e alterada: o script so le.
 //
@@ -18,18 +19,16 @@ var MESES = {janeiro: 1, fevereiro: 2, marco: 3, abril: 4, maio: 5, junho: 6, ju
              setembro: 9, outubro: 10, novembro: 11, dezembro: 12};
 
 function setup() {
-  var ui = SpreadsheetApp.getUi();
   var props = PropertiesService.getScriptProperties();
-  var k = ui.prompt('CRM: chave anon', 'Cole a chave "anon public" do Supabase (Project Settings > API Keys).', ui.ButtonSet.OK_CANCEL);
-  if (k.getSelectedButton() !== ui.Button.OK || !k.getResponseText().trim()) return;
-  var s = ui.prompt('CRM: codigo secreto', 'Cole o codigo que apareceu no fim do SQL (coluna codigo_secreto_para_o_script).', ui.ButtonSet.OK_CANCEL);
-  if (s.getSelectedButton() !== ui.Button.OK || !s.getResponseText().trim()) return;
-  props.setProperty('ANON', k.getResponseText().trim());
-  props.setProperty('SEGREDO', s.getResponseText().trim());
+  if (!props.getProperty('ANON') || !props.getProperty('SEGREDO')) {
+    throw new Error('Falta cadastrar ANON e SEGREDO em Configurações do projeto > Propriedades do script.');
+  }
   ScriptApp.getProjectTriggers().forEach(function (t) { ScriptApp.deleteTrigger(t); });
   ScriptApp.newTrigger('aoEditar').forSpreadsheet(SpreadsheetApp.getActive()).onEdit().create();
   ScriptApp.newTrigger('aCada5min').timeBased().everyMinutes(5).create();
-  ui.alert('Pedidos para o CRM', sincronizar(), ui.ButtonSet.OK);
+  var resultado = sincronizar();
+  console.log('Pedidos para o CRM: ' + resultado);
+  return resultado;
 }
 
 function aoEditar(e) {
