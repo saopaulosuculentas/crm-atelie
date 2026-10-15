@@ -654,6 +654,7 @@ tbody tr:hover{background:#f0f5ec}
  .seg button{flex:1 1 0;min-height:42px;padding:8px 6px;font-size:14.5px}
  .tb-atend .seg{order:1}.tb-atend #search{order:2}.tb-atend .tb-rola{order:3}
  .tb-atend #plSync{order:4;flex:1 1 100%;font-size:12px!important;line-height:1.35}
+ #plSync a{color:var(--green-dk);font-weight:700}
  #atendResumo{font-size:13.5px!important}
  #painel .toolbar select{flex:1 1 0;min-width:0}
  #pInfo{flex:1 1 100%;font-size:12.5px}
@@ -695,6 +696,8 @@ tbody tr:hover{background:#f0f5ec}
  .pgrid{grid-template-columns:minmax(0,1fr)}
  #produtos .panel{overflow-x:auto}
  table{font-size:13.5px}
+ /* Clientes: o nome fica preso na esquerda e quebra linha; o resto rola dentro da caixa */
+ #clientesView td.cli,#clientesView th.cli{position:sticky;left:0;max-width:150px;min-width:120px;white-space:normal;word-break:break-word}
  .badge{font-size:12px;padding:4px 10px}
  .note{font-size:13.5px}
  .kcol{min-width:80vw;width:80vw;scroll-snap-align:start}
@@ -706,7 +709,7 @@ tbody tr:hover{background:#f0f5ec}
  /* ---- Tarefas: sub-abas em controle segmentado e filtros numa linha ---- */
  .cu-views{flex-wrap:wrap;border-bottom:0;gap:10px;margin:0 0 12px;overflow:visible}
  .cu-seg{display:flex;width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
- .cu-seg button{flex:1 1 0;justify-content:center;border-bottom:0!important;margin:0;border-radius:9px;min-height:40px;font-size:14.5px;padding:8px 6px}
+ .cu-seg button{flex:1 1 0;justify-content:center;border-bottom:0!important;margin:0;border-radius:9px;min-height:40px;font-size:14.5px;padding:8px 6px;line-height:1}
  .cu-seg button.on{background:var(--green);color:#fff}
  .cu-acoes{margin-left:0!important;width:100%;flex-wrap:nowrap!important;overflow-x:auto;padding:0!important;gap:8px!important;scrollbar-width:none}
  .cu-acoes::-webkit-scrollbar{display:none}
@@ -778,6 +781,8 @@ tbody tr:hover{background:#f0f5ec}
  .pd-meta{font-size:14px}
  .pd-data{font-size:13px}
  .pag-chip{font-size:13px;padding:6px 11px}
+ .pd-menu{max-width:none;flex:0 0 44%;padding:0 8px}
+ .pd-avancar{font-size:15px;line-height:1.2}
 
  /* ---- janelas (modais) em tela cheia, botões grandes ---- */
  .overlay{padding:0;align-items:stretch}
@@ -1865,7 +1870,7 @@ function pdCartao(o,hoje){
   :'<button type="button" class="btn pd-avancar" onclick="pdIrPara('+o.id+',&#39;Postado&#39;)"'+dis+'>'+(pago?'':'🔒 ')+'Confirmar postagem</button>';
  var trava=pago?'':'<div class="pd-trava">🔒 Não produzir: confirme o pagamento no pedido (toque no nome do cliente).</div>';
  var menu='<select class="pd-menu" onchange="pdIrPara('+o.id+',this.value);this.value=&#39;&#39;"'+(pode?'':' disabled')+' aria-label="Voltar ou mudar a etapa">'
-  +'<option value="">↩ Voltar / mudar</option>'
+  +'<option value="">↩ Mudar etapa</option>'
   +PROD_ETAPAS.filter(function(x){return x!==et;}).map(function(x){return '<option value="'+esc(x)+'">'+(PROD_ETAPAS.indexOf(x)<i?'↩ ':'')+esc(x)+'</option>';}).join('')
   +'</select>';
  return '<div class="pd-card" style="border-left-color:'+cor+'">'
@@ -1940,7 +1945,7 @@ function renderProducao(){
    +'<span class="cu-status" style="background:'+g[2]+';color:'+tTextoSobre(g[2])+'">'+esc(g[1])+'</span>'
    +'<span class="cu-gcount">'+lista.length+'</span></div>'
    +(g[0]==='pag'?'<div class="pd-grid"><div class="mini" style="grid-column:1/-1;line-height:1.5;font-size:13px">Pedido fechado sem pagamento confirmado: não produza. Quando o pagamento entrar, abra o pedido e marque <b>Pago</b> ou <b>Sinal pago</b>; ele sai daqui sozinho.</div></div>':'')
-   +(g[0]==='passou'?'<div class="pd-grid"><div class="mini" style="grid-column:1/-1;line-height:1.5">Pedidos sem arte aprovada cujo evento já passou. Se já foram entregues, abra "↩ Voltar / mudar" e escolha Postado: o pedido vai para Entregue e sai daqui.</div></div>':'')
+   +(g[0]==='passou'?'<div class="pd-grid"><div class="mini" style="grid-column:1/-1;line-height:1.5">Pedidos sem arte aprovada cujo evento já passou. Se já foram entregues, abra "↩ Mudar etapa" e escolha Postado: o pedido vai para Entregue e sai daqui.</div></div>':'')
    +'<div class="pd-grid">'+lista.map(function(o){return pdCartao(o,hoje);}).join('')+'</div></div>';}).join('');
  if(!h)h='<div class="pd-vazio">'+(q||fResp?'Nenhum pedido com esse filtro.':'Nenhum pedido para produzir agora. Pedido fechado ou pago aparece aqui sozinho. 👏')+'</div>';
 
