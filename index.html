@@ -2876,7 +2876,9 @@ async function init(){
 var _cadNovos=0;
 async function cadContar(){if(!SHEET_URL)return;try{var r=await fetch(sbUrl("cadastros?select=id,status"),{headers:sbHeaders()});if(!r.ok)return;
  _cadNovos=(await r.json()).filter(function(x){return (x.status||'novo')==='novo';}).length;menuContagens();}catch(e){}}
-function reloadData(){init();}
+/* Atualizar dados (menu): recarrega tudo e redesenha a aba aberta (Cadastros e Caixa não entram no renderAll) */
+async function reloadData(){await init();var a=document.querySelector('#nav button.active'),v=a?a.dataset.v:'';
+ if(v==='cadastros')renderCadastros();else if(v==='caixa')renderCaixa();else if(v==='calendario')renderCalendario();else if(v==='sazonal')renderSazonal();}
 /* Cadastros (visual v2): grupo Novos e o recolhido "Já viraram atendimento"; data em dd/mm, telefone formatado,
    campo vazio some; "Virar atendimento" é o botão do cartão e Excluir fica no "..." (longe do principal) */
 var cadImpAberto=false,cadNovosFechado=false,cadAcaoId=null;
