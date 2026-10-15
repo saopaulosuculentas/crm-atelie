@@ -341,7 +341,7 @@ button.prog:active i{transform:scale(.88)}
 .folha-baixo .rotulo:first-of-type{margin-top:6px}
 .folha-baixo .linha2col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .folha-resumo{font-size:15px;line-height:20px;color:var(--tx-2);margin:14px 2px 0}
-.folha-resumo a{font-weight:600}
+.folha-resumo a{font-weight:600;display:inline-flex;align-items:center;min-height:44px}
 
 /* aviso com Desfazer (mbAviso): embaixo, fundo invertido */
 .mb-aviso{position:fixed;left:12px;right:12px;bottom:calc(12px + var(--safe-b));z-index:300;background:#1d1d1b;color:#fff;border-radius:var(--r2);box-shadow:var(--sombra-2);
@@ -523,6 +523,83 @@ body:has(.overlay.open){overflow:hidden}
 }
 
 
+/* ===================== ATENDIMENTOS (Lista, Planilha, Kanban) =====================
+   Lista em grupos por ação (Follow-up vencido, Evento em 7 dias, Em negociação, Fechados,
+   Concluídos). Celular: linha de 2 andares. Computador: as mesmas linhas em colunas, com a
+   caixinha de seleção. Filtros híbridos: 3 pílulas + botão Filtros com a folha que sobe. */
+#atendimentos .folha{display:flex;flex-direction:column}
+#atendimentos .folha>*{min-width:0}
+#atResumoLista{order:9}
+.at-barra .pilulas{overflow-x:auto;scrollbar-width:none}
+.at-barra .pilulas::-webkit-scrollbar{display:none}
+.at-barra .pilula>span{max-width:170px}
+#atendimentos .tablewrap{background:none;border:0;border-radius:0;overflow:visible;max-height:none}
+.sel-barra{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 8px;padding:6px 6px 6px 14px;background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);font-size:15px}
+.sel-barra b{flex:1;min-width:0}
+.linha .val{font-variant-numeric:tabular-nums}
+/* computador: lista com colunas (Cliente, Estágio, Pagamento, Valor, Evento, Follow-up) */
+.cols{display:grid;grid-template-columns:36px 44px minmax(120px,2fr) minmax(100px,1.1fr) minmax(90px,1fr) 100px minmax(0,1.5fr) 88px;align-items:center;column-gap:8px}
+.cols-cab{font-size:13px;font-weight:600;color:var(--tx-2);height:36px;padding:0 12px 0 0;border-bottom:1px solid var(--linha)}
+.cols-cab .c.v{text-align:right}
+.lc{position:relative;min-height:48px;padding:0 12px 0 0;font-size:15px;cursor:pointer}
+.lc+.lc::before{content:"";position:absolute;left:80px;right:0;top:0;height:1px;background:var(--linha)}
+.lc:hover{background:var(--sup-2)}
+.lc .prog{margin-top:0}
+.lc .nome{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc .c{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--tx-2);min-width:0}
+.lc .c.v{text-align:right;color:var(--tx);font-weight:600}
+.lc .c.est{color:var(--c);font-weight:600}
+.lc .c.dt-atras{color:var(--perigo)}.lc .c.dt-hoje{color:var(--alerta)}
+.lc-sel{display:flex;align-items:center;justify-content:center;width:36px;height:44px;cursor:pointer}
+.lc-sel input{width:18px;height:18px;margin:0;accent-color:var(--acento);cursor:pointer}
+/* Kanban: no celular uma coluna por tela (85%, a próxima espiando, com encaixe) */
+.kanban{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 16px 12px;margin:0 -16px;scroll-padding-left:16px;align-items:flex-start}
+.kcol{flex:0 0 85%;scroll-snap-align:start;background:var(--sup-2);border:1px solid var(--linha);border-radius:var(--r2);padding:8px;min-height:120px}
+.kcol.drag{outline:2px dashed var(--tx-3);outline-offset:-4px;background:var(--campo)}
+.kcab{display:flex;align-items:center;gap:8px;min-height:36px;margin:0 4px 6px}
+.kcab b{font-size:15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kcab .cnt{font-size:14px;color:var(--tx-2);white-space:nowrap}
+.kcard{background:var(--sup);border:1px solid var(--linha);border-radius:10px;padding:10px 12px 4px;margin-bottom:8px;cursor:pointer}
+.kcard:active{background:var(--sup-2)}
+.kc-l1{display:flex;gap:8px;align-items:baseline}
+.kc-name{flex:1;min-width:0;font-size:16px;font-weight:600;line-height:21px;overflow-wrap:anywhere}
+.kc-val{font-size:15px;font-weight:600;white-space:nowrap}
+.kc-meta{font-size:14px;color:var(--tx-2);margin-top:2px}
+.kc-l3{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.kc-l3 .chip{font-size:13px;min-height:30px}
+.kempty{font-size:14px;color:var(--tx-2);text-align:center;padding:16px 6px;border:1px dashed var(--linha-forte);border-radius:10px}
+/* Planilha (e a tabela do Caixa): rola de lado dentro da caixa, cabeçalho cinza, células de 44 px */
+.tablewrap.sheet{background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);overflow:auto;-webkit-overflow-scrolling:touch}
+#atendimentos .tablewrap.sheet{overflow:auto;border:1px solid var(--linha);border-radius:var(--r2);background:var(--sup);max-height:none}
+.sheet table{min-width:1700px;font-size:15px}
+.sheet th{background:var(--sup-2);color:var(--tx-2);font-size:13px;font-weight:600;height:36px}
+.sheet td{padding:2px 3px;height:48px}
+.sheet td.ro{padding:0 9px;color:var(--tx-2);font-size:14px;white-space:nowrap;text-align:right}
+.sheet input,.sheet select{width:100%;min-height:40px;border:1px solid transparent;background:transparent;padding:0 6px;font-size:15px;border-radius:8px;color:var(--tx);text-overflow:ellipsis}
+.sheet select{min-width:120px}
+.sheet input[type=date]{min-width:150px}
+.sheet input:focus,.sheet select:focus{border-color:var(--tx);background:var(--sup);outline:0;box-shadow:var(--foco)}
+.sheet .delx{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--tx-2);opacity:1;font-size:16px}
+.sheet-barra{display:flex;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--linha);background:var(--sup-2);position:sticky;left:0}
+.sheet-barra .t-sub{font-size:14px}
+@media (max-width:700px){
+ .sheet input,.sheet select{min-height:44px;font-size:16px}
+ .sheet-barra{flex-wrap:wrap}
+ .lc-sel{display:none}
+}
+@media (min-width:701px){
+ .at-barra{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+ .at-barra .seg{width:300px;margin:0}
+ .at-barra .pilulas{margin:0}
+ #atResumoLista{order:1;text-align:left;margin:6px 2px 0}
+ #selBar{order:2}
+ #tableView,#sheetView,#kanbanView{order:3}
+ .kanban{margin:0;padding:2px 0 12px}
+ .kcol{flex:0 0 272px}
+ .kcard:hover{border-color:var(--linha-forte)}
+}
+
+
 /* ===================== ABAS QUE AINDA USAM AS PEÇAS ANTIGAS =====================
    Início (Painel), Caixa, Clientes, Produtos, Calendário, Cadastros, Sazonal, Login e a
    tabela antiga. Mesmas classes de antes, agora só com tokens (seguem o tema sozinhas). */
@@ -580,10 +657,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 .wa.empty{color:var(--tx-2)}
 .overdue{color:var(--perigo);font-weight:600}
 .celledit{width:108px;border:1px solid var(--linha-forte);border-radius:7px;padding:5px 7px;font-size:14px;background:var(--sup);color:var(--tx)}
-.sheet td.ro{padding:8px 9px;color:var(--tx-2);font-size:14px;white-space:nowrap;text-align:right}
-.sheet input,.sheet select{width:100%;border:1px solid transparent;background:transparent;padding:7px 6px;font-size:14px;border-radius:7px;color:var(--tx)}
-.sheet input:focus,.sheet select:focus{border-color:var(--tx);background:var(--sup);outline:0;box-shadow:var(--foco)}
-.sheet .delx{background:none;border:0;cursor:pointer;opacity:.6;font-size:14px}
 /* Produtos */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
 .itable{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
@@ -664,26 +737,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 }
 
 /* ===== CSS antigo das abas que ainda não foram refeitas (sai aba por aba) ===== */
-.sheet table{min-width:1700px}
-.sheet td{padding:2px 3px}
-.sheet input,.sheet select{width:100%;border:1px solid transparent;background:transparent;padding:7px 6px;font-size:12.5px;border-radius:7px;font-family:inherit}
-.sheet input:hover,.sheet select:hover{border-color:var(--line);background:var(--input)}
-.sheet input:focus,.sheet select:focus{border-color:var(--green);background:var(--input);outline:2px solid #2e7d4633}
-.sheet td.ro{padding:8px 9px;color:var(--muted);font-size:12.5px;white-space:nowrap;text-align:right}
-.sheet .delx{background:none;border:0;cursor:pointer;opacity:.45;font-size:14px}
-.sheet .delx:hover{opacity:1}
-.kanban{display:flex;gap:13px;overflow-x:auto;padding-bottom:14px;align-items:flex-start}
-.kcol{background:#e9efe4;border-radius:14px;min-width:236px;width:236px;flex-shrink:0;padding:11px;max-height:72vh;overflow:auto}
-.kcol h4{margin:0 0 10px;font-size:12.5px;font-family:'Segoe UI',sans-serif;font-weight:700;color:var(--green-dk);display:flex;justify-content:space-between;align-items:center;gap:6px;padding-left:9px;border-left:4px solid var(--green)}
-.kcol h4 .cnt{background:#fff;border-radius:20px;padding:2px 9px;font-size:10.5px;color:var(--muted);font-weight:700;white-space:nowrap}
-.kcard{background:#fff;border:1px solid var(--line);border-left:4px solid var(--green);border-radius:11px;padding:10px 11px;margin-bottom:9px;box-shadow:0 1px 4px rgba(0,0,0,.05);cursor:pointer;transition:transform .08s}
-.kcard:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
-.kcard .kc-name{font-weight:700;font-size:13px}
-.kcard .kc-meta{font-size:11px;color:var(--muted);margin:3px 0}
-.kcard .kc-val{font-weight:700;color:var(--green-dk);font-size:13.5px}
-.kcard select{margin-top:7px;width:100%;font-size:11px;padding:4px;border-radius:7px;border:1px solid var(--line);background:#fbfbf8}
-.kempty{color:#aab1a3;font-size:12px;text-align:center;padding:14px 0}
-.kcol.drag{outline:2px dashed var(--green2);outline-offset:-4px;background:var(--kdrag)}
 .modal{background:#fff;border-radius:18px;width:780px;max-width:100%;box-shadow:0 30px 70px rgba(0,0,0,.35);overflow:hidden}
 .modal .mhead{background:var(--green-dk);padding:17px 24px;color:#fff}
 .modal .mhead h2{font-size:18px}
@@ -697,8 +750,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 .calcbox{grid-column:1/3;background:var(--cream);border:1px dashed var(--gold);border-radius:11px;padding:12px 15px;display:flex;gap:24px;flex-wrap:wrap;font-size:13px}
 .calcbox b{color:var(--green-dk);font-size:15px}
 .mfoot{padding:15px 24px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px}
-.kcard{border-radius:13px;transition:transform .13s ease,box-shadow .13s ease}
-.kcard:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.10)}
 .cu-ghead{display:flex;align-items:center;gap:8px;padding:4px 2px 7px;cursor:pointer;user-select:none}
 .cu-caret{font-size:10px;color:var(--muted);width:12px;transition:transform .13s;display:inline-block}
 .cu-status{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
@@ -775,9 +826,7 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 .tmen:hover,.tmen.sel{background:var(--hover)}
 .tmen .av{width:22px;height:22px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:800;
  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
-[data-tema="escuro"] .kcol{background:#151d18}
 [data-tema="escuro"] .field input::placeholder,[data-tema="escuro"] .field textarea::placeholder{color:#6f7d72}
-[data-tema="escuro"] .kcol h4 .cnt{background:#141c17;color:var(--muted);border-color:var(--line)}
 [data-tema="escuro"] .modal{background:var(--card);color:var(--ink)}
 [data-tema="escuro"] .cu-descr:focus{background:#151d18}
 [data-tema="escuro"] .tanexo .nm{color:var(--ink)}
@@ -823,25 +872,9 @@ tbody tr:hover td.cli{background:var(--sup-2)}
  .cu-titulo{font-size:19px}
 }
 @media (max-width:700px){
- .pc-so{display:none}
- .kcol{min-width:80vw;width:80vw;scroll-snap-align:start}
- .kanban{scroll-snap-type:x mandatory}
  .cu-ghead{position:sticky;top:var(--mb-top);z-index:6;background:var(--bg);min-height:44px;padding:8px 2px 8px;margin:0}
  .cu-status{font-size:12px;padding:4px 10px}
  .cu-gcount{font-size:13px}
- .pc-lista{display:flex;flex-direction:column;gap:10px}
- .pc-card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--green);border-radius:14px;
-  padding:12px 14px;display:flex;flex-direction:column;gap:5px;cursor:pointer;box-shadow:var(--shadow);
-  -webkit-tap-highlight-color:transparent}
- .pc-card:active{background:var(--hover)}
- .pc-l1{display:flex;align-items:flex-start;gap:10px}
- .pc-cli{flex:1 1 auto;min-width:0;font-size:16px;font-weight:800;color:var(--ink);line-height:1.25;word-break:break-word}
- .pc-val{flex:0 0 auto;font-size:15.5px;font-weight:800;color:var(--green-dk);white-space:nowrap}
- .pc-meta{font-size:14px;color:var(--muted);line-height:1.4;word-break:break-word}
- .pc-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:3px}
- .pc-wa{font-size:14px;padding:4px 2px}
- .pc-mais{width:100%;min-height:48px;margin-top:4px}
- .pc-vazio{padding:28px 12px;text-align:center;color:var(--muted);font-size:15px}
  .pd-grid{gap:10px}
  .pd-card{padding:12px 14px}
  .pd-meta{font-size:14px}
@@ -1052,29 +1085,45 @@ tbody tr:hover td.cli{background:var(--sup-2)}
   </section>
 
   <section class="view" id="atendimentos">
+   <div class="topo-l2">
+    <label class="busca"><svg class="i p" aria-hidden="true"><use href="#i-busca"/></svg><input type="search" id="search" placeholder="Buscar cliente ou produto" aria-label="Buscar atendimento" autocomplete="off" oninput="renderAtend()"></label>
+    <button type="button" class="btn-filtro" id="atFiltrosBtn" onclick="folhaAbrir('atFiltros')" aria-label="Filtros"><svg class="i" aria-hidden="true"><use href="#i-filtro"/></svg><b id="atFiltrosN" style="display:none"></b></button>
+   </div>
    <div class="folha">
-   <!-- no celular: sub-abas em cima, busca e os filtros numa linha que rola (.tb-rola).
-        No computador .tb-rola e display:contents, entao a barra fica igual a antes. -->
-   <div class="toolbar tb-atend">
-    <span class="mini" id="plSync" style="align-self:center"></span>
-    <input type="text" id="search" placeholder="Buscar cliente, cidade, produto..." oninput="renderAtend()">
-    <div class="tb-rola">
-    <select id="fEstagio" onchange="renderAtend()"><option value="">Todos os estágios</option></select>
-    <select id="fTipo" onchange="renderAtend()"><option value="">Todos os tipos</option></select>
-    <select id="fDateBase" onchange="renderAtend()" title="Base da data"><option value="dataEv">📅 por data do evento</option><option value="data">📅 por data de fechamento</option></select>
-    <input type="date" id="fDe" onchange="renderAtend()" title="De" style="padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px">
-    <input type="date" id="fAte" onchange="renderAtend()" title="Até" style="padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px">
-    <button class="btn ghost" onclick="clearDates()">Limpar datas</button>
-    <label class="chk"><input type="checkbox" id="fConcluidos" checked onchange="renderAtend()"> Mostrar concluídos</label>
+    <!-- Lista, Planilha, Kanban (setView) e as 3 pílulas; o resto dos filtros fica na folha "Filtros" -->
+    <div class="at-barra">
+     <div class="seg" role="tablist" aria-label="Visão dos atendimentos">
+      <button type="button" id="vbTable" class="active" onclick="setView('table')">Lista</button>
+      <button type="button" id="vbSheet" onclick="setView('sheet')">Planilha</button>
+      <button type="button" id="vbKanban" onclick="setView('kanban')">Kanban</button>
+     </div>
+     <div class="pilulas">
+      <label class="pilula" id="plEstagio"><span><span id="plEstagioTxt">Estágio</span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg></span><select id="fEstagio" onchange="renderAtend()" aria-label="Filtrar por estágio"><option value="">Todos os estágios</option></select></label>
+      <label class="pilula" id="plTipo"><span><span id="plTipoTxt">Tipo</span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg></span><select id="fTipo" onchange="renderAtend()" aria-label="Filtrar por tipo de cliente"><option value="">Todos os tipos</option></select></label>
+      <label class="pilula on" id="plConc"><input type="checkbox" id="fConcluidos" checked onchange="renderAtend()"><span><svg class="i pp ok-ic" aria-hidden="true"><use href="#i-check"/></svg>Concluídos</span></label>
+     </div>
     </div>
-    <div class="seg"><button id="vbTable" class="active" onclick="setView('table')"><span class="pc-so">Tabela</span><span class="mb-so">Lista</span></button><button id="vbSheet" onclick="setView('sheet')">✏️ Planilha</button><button id="vbKanban" onclick="setView('kanban')">Kanban</button></div>
+    <p class="resumo-lista" id="atResumoLista"></p>
+    <div id="selBar" class="sel-barra" style="display:none"><b><span id="selCount">0</span> selecionado(s)</b><button type="button" class="btn btn-sec" onclick="exportarSelecionados()">Exportar para planilha</button><button type="button" class="btn btn-perigo" onclick="excluirSelecionados()">Excluir selecionados</button><button type="button" class="btn btn-fant" onclick="limparSel()">Limpar</button></div>
+    <div id="tableView" class="tablewrap"></div>
+    <div id="sheetView" class="tablewrap sheet" style="display:none"></div>
+    <div id="kanbanView" class="kanban" style="display:none"></div>
    </div>
-   <div id="atendResumo" class="mini" style="margin:-2px 0 12px;color:var(--green-dk);font-weight:700;font-size:13px"></div>
-   <div id="selBar" style="display:none;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px;padding:9px 13px;background:var(--moss);border-radius:12px;font-size:13px"><b><span id="selCount">0</span> selecionado(s)</b><button class="btn ghost" onclick="exportarSelecionados()">⬇ Exportar p/ planilha</button><button class="btn ghost" style="color:var(--danger)" onclick="excluirSelecionados()">🗑 Excluir selecionados</button><button class="btn ghost" onclick="limparSel()">Limpar</button></div>
-   <div id="tableView" class="tablewrap"></div>
-   <div id="sheetView" class="tablewrap sheet" style="display:none"></div>
-   <div id="kanbanView" class="kanban" style="display:none"></div>
-   </div>
+   <div class="veu" id="atFiltrosVeu" onclick="folhaFechar('atFiltros')"></div>
+   <section class="folha-baixo" id="atFiltros" role="dialog" aria-modal="true" aria-labelledby="atFiltrosTit">
+    <div class="alca" aria-hidden="true"></div>
+    <div class="folha-cab"><span></span><h3 id="atFiltrosTit">Filtros</h3><button type="button" class="fechar-x" onclick="folhaFechar('atFiltros')" aria-label="Fechar"><span><svg class="i pp" aria-hidden="true"><use href="#i-x"/></svg></span></button></div>
+    <label class="rotulo" for="fDateBase">Período pela data</label>
+    <select id="fDateBase" class="campo" onchange="renderAtend()"><option value="dataEv">do evento</option><option value="data">de fechamento</option></select>
+    <div class="linha2col">
+     <div><label class="rotulo" for="fDe">De</label><input type="date" id="fDe" class="campo" onchange="renderAtend()"></div>
+     <div><label class="rotulo" for="fAte">Até</label><input type="date" id="fAte" class="campo" onchange="renderAtend()"></div>
+    </div>
+    <button type="button" class="btn btn-sec btn-larga" style="margin-top:12px" onclick="clearDates()">Limpar datas</button>
+    <p class="folha-resumo" id="atendResumo"></p>
+    <p class="folha-resumo" id="plSync"></p>
+    <button type="button" class="btn btn-pri btn-larga" style="margin-top:16px" onclick="folhaFechar('atFiltros')">Ver resultados</button>
+   </section>
   </section>
 
   <section class="view" id="caixa">
@@ -1583,55 +1632,111 @@ function filtered(){const q=(document.getElementById('search').value||'').toLowe
   if(d1||d2){const dv=o[bk]||'';if(!dv)return false;if(d1&&dv<d1)return false;if(d2&&dv>d2)return false;}
   if(q){const b=(o.cliente+' '+o.cidade+' '+o.produto+' '+o.descr+' '+o.tipoEv).toLowerCase();if(!b.includes(q))return false;}return true;});}
 function clearDates(){var a=document.getElementById('fDe'),b=document.getElementById('fAte');if(a)a.value='';if(b)b.value='';renderAtend();}
-function setResumo(rows){var el=document.getElementById('atendResumo');if(!el)return;var fat=0,sin=0;rows.forEach(function(o){var c=calc(o);fat+=c.vt;sin+=c.sinal;});var be=document.getElementById('fDateBase'),d1=(document.getElementById('fDe')||{}).value||'',d2=(document.getElementById('fAte')||{}).value||'';var per=(d1||d2)?(' · período '+(d1?dBR(d1):'…')+' a '+(d2?dBR(d2):'…')+' ('+(be&&be.value==='data'?'fechamento':'evento')+')'):'';el.textContent=rows.length+' pedidos · Faturamento '+BRL(fat)+' · Sinais '+BRL(sin)+per;}
+function setResumo(rows){var el=document.getElementById('atendResumo');var fat=0,sin=0;rows.forEach(function(o){var c=calc(o);fat+=c.vt;sin+=c.sinal;});var be=document.getElementById('fDateBase'),d1=(document.getElementById('fDe')||{}).value||'',d2=(document.getElementById('fAte')||{}).value||'';var per=(d1||d2)?(' · período '+(d1?dBR(d1):'…')+' a '+(d2?dBR(d2):'…')+' ('+(be&&be.value==='data'?'fechamento':'evento')+')'):'';
+ if(el)el.textContent=rows.length+' pedidos · Faturamento '+BRL(fat)+' · Sinais '+BRL(sin)+per;
+ var rl=document.getElementById('atResumoLista');if(rl)rl.innerHTML=rows.length?rows.length+' pedidos <span class="sep">·</span> '+BRL(fat)+' <span class="sep">·</span> sinais '+BRL(sin)+(d1||d2?' <span class="sep">·</span> com período':''):'';
+ atPilulas();}
+/* pílulas Estágio, Tipo e Concluídos acendem quando filtram; o botão Filtros conta o período */
+function atPilulas(){var g=function(id){return document.getElementById(id);};
+ var fe=(g('fEstagio')||{}).value||'',ft=(g('fTipo')||{}).value||'',fc=!!(g('fConcluidos')||{}).checked;
+ var pe=g('plEstagio'),pt=g('plTipo'),pc=g('plConc'),te=g('plEstagioTxt'),tt=g('plTipoTxt');
+ if(pe)pe.classList.toggle('on',!!fe);if(te)te.textContent=fe?estCurto(fe):'Estágio';
+ if(pt)pt.classList.toggle('on',!!ft);if(tt)tt.textContent=ft||'Tipo';
+ if(pc)pc.classList.toggle('on',fc);
+ var n=((g('fDe')||{}).value||(g('fAte')||{}).value)?1:0,b=g('atFiltrosN');if(b){b.textContent=n?String(n):'';b.style.display=n?'':'none';}}
+function atFiltrando(){var g=function(id){return (document.getElementById(id)||{}).value||'';};
+ return !!(g('search')||g('fEstagio')||g('fTipo')||g('fDe')||g('fAte'));}
+/* "Limpar busca e filtros" do estado vazio */
+function atLimparTudo(){['search','fEstagio','fTipo','fDe','fAte'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+ var c=document.getElementById('fConcluidos');if(c)c.checked=true;renderAtend();}
 function renderAtend(){viewMode==='table'?renderTable():viewMode==='sheet'?renderSheet():renderKanban();updateSelBar();menuContagens();}
 function renderTable(){const rows=filtered();setResumo(rows);
  const tv=document.getElementById('tableView');
- /* no celular a tabela de 21 colunas vira lista de cartões; tocar abre o mesmo modal */
- if(mbCel()){tv.classList.add('pc-modo');tv.innerHTML=pcCartoes(rows);updateSelBar();return;}
- tv.classList.remove('pc-modo');
- const head=["#","Data","Cliente","WhatsApp","Cidade","Canal","Tipo","Evento","Data ev.","Produto","Qtd","V.unit","V.total","Custo prod.","Entrega R$","Margem","Mg%","Estágio","Pgto","Follow-up",""];
- let h='<table><thead><tr><th style="width:32px;text-align:center"><input type="checkbox" onclick="selAll(this.checked)" title="Selecionar todos"></th>'+head.map((x,i)=>`<th class="${i===2?'cli':''} ${[10,11,12,13,14,15,16].includes(i)?'num':''}">${x}</th>`).join('')+'</tr></thead><tbody>';
- if(!rows.length)h+='<tr><td colspan="22" style="padding:24px;text-align:center;color:#999">Nenhum atendimento aqui. Clique em “+ Novo atendimento”.</td></tr>';
- rows.forEach(o=>{const c=calc(o),od=o.followup&&o.followup<todayISO();
-  h+=`<tr ondblclick="openForm(${o.id})"><td style="text-align:center"><input type="checkbox" class="rowsel" ${selSet.has(o.id)?'checked':''} onclick="event.stopPropagation();toggleSel(${o.id},this.checked)"></td><td>${o.id}</td><td>${dBR(o.data)}</td><td class="cli">${esc(o.cliente)}</td>
-   <td>${o.whats?`<a class="wa" target="_blank" href="https://wa.me/55${o.whats.replace(/\D/g,'')}">🟢 ${esc(o.whats)}</a>`:'<span class="wa empty">+ add</span>'}</td>
-   <td>${esc(o.cidade)}</td><td>${esc(o.canal)}</td><td>${esc(o.tipoCli)}</td><td>${esc(o.tipoEv)}</td><td>${dBR(o.dataEv)}</td>
-   <td>${esc(o.produto)}</td><td class="num">${o.qtd}</td><td class="num">${BRL(o.valorUnit)}</td><td class="num">${BRL(c.vt)}</td><td class="num">${BRL(c.ct)}</td><td class="num">${BRL(c.de)}</td><td class="num">${BRL(c.mg)}</td><td class="num">${PCT(c.mp)}</td>
-   <td><span class="badge" style="--c:${STAGE_COLORS[o.estagio]||'#8a94a6'}">${esc(o.estagio)}</span></td>
-   <td>${o.statusPag?`<span class="badge" style="--c:${PAY_COLORS[o.statusPag]||'#8a94a6'}">${esc(o.statusPag)}</span>`:''}</td>
-   <td class="${od?'overdue':''}">${dBR(o.followup)}</td><td class="row-actions"><button onclick="event.stopPropagation();openForm(${o.id})">✏️</button></td></tr>`;});
- h+='</tbody></table>';document.getElementById('tableView').innerHTML=h;updateSelBar();}
-/* cartões de pedido no celular: mais novo primeiro (a tabela do computador
-   continua na ordem de sempre) e de 60 em 60 para o iPhone não engasgar com
-   os mais de mil pedidos */
-var pcLimite=60;
+ /* lista em grupos por ação: no celular, linhas de 2 andares (pcCartoes); no computador, as mesmas em colunas */
+ tv.innerHTML=mbCel()?pcCartoes(rows):pcTabela(rows);updateSelBar();}
+/* ===== Atendimentos em grupos por ação (visual v2) =====
+   O primeiro que valer: Follow-up vencido (aberto e follow-up antes de hoje), Evento em 7 dias,
+   Em negociação, Fechados, Concluídos (Entregue, Pós-venda e Perdido; recolhido).
+   Dentro do grupo: follow-up, depois evento, depois contato mais recente. 60 por grupo e "Ver mais". */
+var pcLimite=60,pcLim={},pcFechados={concl:true};
+var PC_GRUPOS=[["venc","Follow-up vencido","#c42b22","sino"],["ev7","Evento em 7 dias","#f76808","presente"],
+ ["neg","Em negociação","#3e63dd",""],["fech","Fechados","#008844",""],["concl","Concluídos","#87909e",""]];
+function pcGrupoDe(o,hoje,em7){
+ var fim=DONE.indexOf(o.estagio)>=0;
+ if(!fim&&o.followup&&o.followup<hoje)return "venc";
+ if(!fim&&o.dataEv&&o.dataEv>=hoje&&o.dataEv<=em7)return "ev7";
+ if(fim)return "concl";
+ if(o.estagio==="Fechado (ganho)"||o.estagio==="Em produção")return "fech";
+ return "neg";}
+function pcGrupos(rows){
+ var hoje=calHojeISO(),em7=pdSomaDias(hoje,7),G={};PC_GRUPOS.forEach(function(g){G[g[0]]=[];});
+ rows.forEach(function(o){G[pcGrupoDe(o,hoje,em7)].push(o);});
+ var ordem=function(a,b){var x=a.followup||'9999',y=b.followup||'9999';if(x!==y)return x<y?-1:1;
+  x=a.dataEv||'9999';y=b.dataEv||'9999';if(x!==y)return x<y?-1:1;return String(b.data||'').localeCompare(String(a.data||''))||(Number(b.id)-Number(a.id));};
+ Object.keys(G).forEach(function(k){G[k].sort(k==="concl"?function(a,b){return String(b.data||'').localeCompare(String(a.data||''))||(Number(b.id)-Number(a.id));}:ordem);});
+ return PC_GRUPOS.filter(function(g){return G[g[0]].length;}).map(function(g){return {k:g[0],nome:g[1],cor:g[2],icone:g[3],lista:G[g[0]]};});}
+function pcToggle(k){pcFechados[k]=!pcFechados[k];renderTable();}
+function pcMais(k){pcLim[k]=(pcLim[k]||pcLimite)+pcLimite;renderTable();}
+function pcVazio(){
+ if(!state.orders.length)return '<div class="vazio-bloco"><b>Nenhum atendimento ainda</b><p>Cada conversa de WhatsApp vira um atendimento aqui.</p><button type="button" class="btn btn-pri btn-pilula" onclick="openForm()">'+ic('mais','i p')+'Novo</button></div>';
+ var q=(document.getElementById('search')||{}).value||'';
+ return '<div class="vazio-bloco"><b>'+(q?'Nada encontrado para “'+esc(q)+'”':'Nenhum atendimento com esses filtros')+'</b><p>Procuro no cliente, cidade, produto, descrição e evento.</p><button type="button" class="btn btn-sec" onclick="atLimparTudo()">Limpar busca e filtros</button></div>';}
+/* o que vai na linha 2 depois do estágio: follow-up vencido em vermelho ou evento e data */
+function pcResto(o,k,hoje){
+ var site=Number(o.id)>=FIN_ID_SITE&&!o.produto;
+ if(k==="venc")return '<span class="dt-atras">follow-up '+esc(dataCurta(o.followup,hoje))+'</span>'+(o.tipoEv?' · '+esc(o.tipoEv):'');
+ var ev=o.tipoEv?esc(o.tipoEv):'',dt=o.dataEv?esc(dataCurta(o.dataEv,hoje)):'',cls=(k!=="concl"&&o.dataEv)?dataCls(o.dataEv,hoje):'';
+ if(dt&&cls)dt='<span class="'+cls+'">'+dt+'</span>';
+ if(ev||dt)return ev+(ev&&dt?(k==="ev7"?' ':' · '):'')+dt;
+ return site?'Pedido do site':((Number(o.qtd)||0)+' un · '+esc(o.produto||'sem produto'));}
 function pcCartoes(rows){
- if(!rows.length)return '<div class="pc-vazio">Nenhum atendimento aqui. Toque em “＋ Novo” lá em cima.</div>';
- var hoje=todayISO(),lista=rows.slice().sort(function(a,b){return String(b.data||'').localeCompare(String(a.data||''))||(Number(b.id)-Number(a.id));});
- var n=Math.min(lista.length,pcLimite);
- var h=lista.slice(0,n).map(function(o){
-  var c=calc(o),col=STAGE_COLORS[o.estagio]||'#8a94a6',site=Number(o.id)>=FIN_ID_SITE&&!o.produto;
-  var ev=(o.tipoEv?'🎉 '+esc(o.tipoEv):'')+(o.dataEv?(o.tipoEv?' · ':'')+'📅 '+dBR(o.dataEv):'');
-  var prod=site?'🛒 Pedido do site (itens na Yampi)':((Number(o.qtd)||0)+' un · '+esc(o.produto||'sem produto'));
-  var fu=o.followup&&o.followup<hoje&&DONE.indexOf(o.estagio)<0;
-  return '<div class="pc-card" style="border-left-color:'+col+'" onclick="openForm('+o.id+')" role="button" tabindex="0" title="Abrir o atendimento #'+o.id+'">'
-   +'<div class="pc-l1"><span class="pc-cli">'+esc(o.cliente||'(sem nome)')+'</span><span class="pc-val">'+BRL(c.vt)+'</span></div>'
-   +'<div class="pc-meta">'+(ev||'Sem data de evento')+'</div>'
-   +'<div class="pc-meta">'+prod+'</div>'
-   +'<div class="pc-chips"><span class="badge" style="--c:'+col+'">'+esc(o.estagio||'sem estágio')+'</span>'+pagChip(o)
-   +(fu?'<span class="badge" style="--c:#b00020">🔔 follow-up '+dBR(o.followup).slice(0,5)+'</span>':'')
-   +(o.whats?'<a class="wa pc-wa" target="_blank" rel="noopener" onclick="event.stopPropagation()" href="https://wa.me/55'+String(o.whats).replace(/\D/g,'')+'">🟢 WhatsApp</a>':'')
-   +'</div></div>';}).join('');
- if(lista.length>n)h+='<button type="button" class="btn ghost pc-mais" onclick="pcLimite+=60;renderTable()">Mostrar mais ('+(lista.length-n)+' restantes)</button>';
- return '<div class="pc-lista">'+h+'</div>';}
+ if(!rows.length)return pcVazio();
+ var hoje=calHojeISO();
+ return pcGrupos(rows).map(function(g){
+  var fechado=!!pcFechados[g.k],lim=pcLim[g.k]||pcLimite,n=Math.min(g.lista.length,lim);
+  var cab=grupoCab(g.nome,g.cor,g.lista.length,fechado,"pcToggle('"+g.k+"')",g.icone);
+  if(fechado)return cab;
+  return cab+'<div class="grupo">'+g.lista.slice(0,n).map(function(o){
+   var c=calc(o),est=o.estagio||'';
+   return '<div class="linha" role="button" tabindex="0" onclick="openForm('+o.id+')" onkeydown="if(event.key===\'Enter\')openForm('+o.id+')" title="Abrir o atendimento #'+o.id+'">'
+    +estProg(est)+'<div class="tit">'+esc(o.cliente||'(sem nome)')+'</div>'
+    +'<div class="dir"><span class="val num">'+BRL(c.vt)+'</span></div>'
+    +'<div class="sub"><span class="fixo est" style="--c:'+estCor(est)+'">'+esc(estCurto(est))+'</span><span class="sep fixo">·</span>'
+    +'<span class="corta">'+pcResto(o,g.k,hoje)+'</span>'+pagChip(o,false,true)+'</div></div>';}).join('')
+   +(g.lista.length>n?'<button type="button" class="mais" onclick="pcMais(\''+g.k+'\')">Ver mais '+(g.lista.length-n)+'</button>':'')
+   +'</div>';}).join('');}
+/* computador: os mesmos grupos em colunas, com a caixinha de seleção (toggleSel, #selBar) */
+function selGrupo(k,ch){var rows=filtered(),hoje=calHojeISO(),em7=pdSomaDias(hoje,7);
+ rows.filter(function(o){return pcGrupoDe(o,hoje,em7)===k;}).forEach(function(o){if(ch)selSet.add(o.id);else selSet.delete(o.id);});renderAtend();}
+function pcTabela(rows){
+ if(!rows.length)return pcVazio();
+ var hoje=calHojeISO();
+ return pcGrupos(rows).map(function(g){
+  var fechado=!!pcFechados[g.k],lim=pcLim[g.k]||pcLimite,n=Math.min(g.lista.length,lim);
+  var cab=grupoCab(g.nome,g.cor,g.lista.length,fechado,"pcToggle('"+g.k+"')",g.icone);
+  if(fechado)return cab;
+  var todos=g.lista.every(function(o){return selSet.has(o.id);});
+  return cab+'<div class="grupo"><div class="cols cols-cab"><label class="lc-sel" title="Selecionar o grupo"><input type="checkbox" aria-label="Selecionar todos de '+esc(g.nome)+'"'+(todos?' checked':'')+' onclick="selGrupo(\''+g.k+'\',this.checked)"></label><span></span><span>Cliente</span><span>Estágio</span><span>Pagamento</span><span class="c v">Valor</span><span>Evento</span><span>Follow-up</span></div>'
+   +g.lista.slice(0,n).map(function(o){
+    var c=calc(o),est=o.estagio||'',fu=o.followup?dataCurta(o.followup,hoje):'',fuc=(o.followup&&DONE.indexOf(est)<0)?dataCls(o.followup,hoje):'';
+    var ev=[o.tipoEv,o.dataEv?dataCurta(o.dataEv,hoje):''].filter(Boolean).join(' ');
+    return '<div class="cols lc" role="button" tabindex="0" onclick="openForm('+o.id+')" onkeydown="if(event.key===\'Enter\')openForm('+o.id+')" title="Abrir o atendimento #'+o.id+'">'
+     +'<label class="lc-sel" onclick="event.stopPropagation()"><input type="checkbox" class="rowsel" aria-label="Selecionar '+esc(o.cliente||'#'+o.id)+'"'+(selSet.has(o.id)?' checked':'')+' onclick="event.stopPropagation();toggleSel('+o.id+',this.checked)"></label>'
+     +estProg(est)+'<span class="nome">'+esc(o.cliente||'(sem nome)')+'</span>'
+     +'<span class="c est" style="--c:'+estCor(est)+'">'+esc(estCurto(est))+'</span>'
+     +'<span class="c">'+pagChip(o,false,true)+'</span>'
+     +'<span class="c v num">'+BRL(c.vt)+'</span>'
+     +'<span class="c">'+esc(ev)+'</span>'
+     +'<span class="c '+fuc+'">'+esc(fu)+'</span></div>';}).join('')
+   +(g.lista.length>n?'<button type="button" class="mais" onclick="pcMais(\''+g.k+'\')">Ver mais '+(g.lista.length-n)+'</button>':'')
+   +'</div>';}).join('');}
 function selCell(id,key,val,arr){return '<select onchange="updCell('+id+',\''+key+'\',this.value)">'+arr.map(v=>'<option value="'+esc(v)+'"'+(v===val?' selected':'')+'>'+(esc(v)||'(vazio)')+'</option>').join('')+'</select>';}
 function inCell(id,key,val,type,w){return '<input type="'+(type||'text')+'" value="'+esc(val==null?'':val)+'" '+(w?'style="min-width:'+w+'px"':'')+' onchange="updCell('+id+',\''+key+'\',this.value)">';}
 function renderSheet(){const rows=filtered();setResumo(rows);
  const head=["#","Data","Cliente","WhatsApp","Cidade","Canal","Tipo","Evento","Data ev.","Produto","Qtd","V.unit","V.total","Sinal 30%","Margem","Estágio","Pgto","Forma","Entrega","Custo entr.","Follow-up","Obs",""];
- let h='<div style="padding:10px 12px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;background:var(--cream)"><button class="btn" onclick="quickAdd()">＋ Linha rápida</button><span class="mini">Clique em qualquer célula e edite direto: salva sozinho ao sair do campo. Dê Tab para ir para a próxima.</span></div>';
+ let h='<div class="sheet-barra"><button type="button" class="btn btn-sec" onclick="quickAdd()">'+ic('mais','i p')+'Linha rápida</button><span class="t-sub">Toque numa célula e edite: salva sozinho ao sair do campo.</span></div>';
  h+='<table><thead><tr>'+head.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>';
- if(!rows.length)h+='<tr><td colspan="23" style="padding:24px;text-align:center;color:#999">Nada aqui. Clique em "＋ Linha rápida" para começar.</td></tr>';
+ if(!rows.length)h+='<tr><td colspan="23" class="t-sub" style="padding:24px;text-align:center">Nada aqui. Toque em "Linha rápida" para começar.</td></tr>';
  rows.forEach(o=>{const c=calc(o);
   h+='<tr id="shr'+o.id+'">'
    +'<td class="ro">'+o.id+'</td>'
@@ -1656,7 +1761,7 @@ function renderSheet(){const rows=filtered();setResumo(rows);
    +'<td>'+inCell(o.id,'custoEntrega',o.custoEntrega,'number',70)+'</td>'
    +'<td>'+inCell(o.id,'followup',o.followup,'date')+'</td>'
    +'<td>'+inCell(o.id,'obs',o.obs,'text',160)+'</td>'
-   +'<td><button class="delx" title="Excluir" onclick="delRow('+o.id+')">🗑</button></td>'
+   +'<td><button type="button" class="delx" title="Excluir" aria-label="Excluir o atendimento #'+o.id+'" onclick="delRow('+o.id+')">'+ic('x','i p')+'</button></td>'
   +'</tr>';});
  h+='</tbody></table>';document.getElementById('sheetView').innerHTML=h;}
 function updCell(id,key,val){const o=state.orders.find(x=>x.id===id);if(!o)return;const _antesPag=o.statusPag;
@@ -1808,10 +1913,21 @@ function renderSazonal(){const el=document.getElementById("cxSazonal");if(!el)re
    +'<div><div style="font-weight:800;font-size:13px;color:var(--titulo)">'+(it.pico?"⭐ ":"")+it.nome+(urg?' <span style="background:#c2693f;color:#fff;border-radius:99px;padding:1px 8px;font-size:10px;margin-left:4px">PREPARAR AGORA</span>':"")+'</div>'
    +'<div style="font-size:11.5px;color:var(--muted)">'+it.dica+'</div></div></div>';}).join('');}
 function renderKanban(){const rows=filtered(),box=document.getElementById('kanbanView');setResumo(rows);
- box.innerHTML=STAGES.map(st=>{const list=rows.filter(o=>o.estagio===st),col=STAGE_COLORS[st]||'#999',tot=list.reduce((s,o)=>s+calc(o).vt,0);
-  return `<div class="kcol" data-stage="${esc(st)}" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="dropCard(event,this)"><h4 style="border-left-color:${col}"><span>${st}</span><span class="cnt">${list.length} · ${BRL(tot)}</span></h4>`+
-   (list.length?list.map(o=>{const c=calc(o);return `<div class="kcard" draggable="true" ondragstart="dragStart(event,${o.id})" style="border-left-color:${col}" onclick="openForm(${o.id})"><div class="kc-name">${esc(o.cliente)}</div><div class="kc-meta">${o.qtd} un · ${esc(o.produto)}</div><div class="kc-val">${BRL(c.vt)}</div><select onclick="event.stopPropagation()" onchange="moveStage(${o.id},this.value)">${STAGES.map(s=>`<option ${s===o.estagio?'selected':''}>${s}</option>`).join('')}</select></div>`;}).join(''):'<div class="kempty">Arraste cartões para cá</div>')+`</div>`;}).join('');}
-function moveStage(id,st){const o=state.orders.find(x=>x.id===id);if(o){o.estagio=st;logAct('moveu o atendimento #'+id+' ('+o.cliente+') para "'+st+'"');save();syncOrder(o);renderAtend();}}
+ const hoje=calHojeISO();
+ box.innerHTML=STAGES.map(st=>{const list=rows.filter(o=>o.estagio===st),tot=list.reduce((s,o)=>s+calc(o).vt,0);
+  return `<div class="kcol" data-stage="${esc(st)}" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="dropCard(event,this)">`
+   +`<div class="kcab"><i class="tdot" style="background:${estCor(st)}"></i><b>${esc(estCurto(st))}</b><span class="cnt">${list.length} · ${BRL(tot)}</span></div>`+
+   (list.length?list.map(o=>{const c=calc(o),ev=[o.tipoEv,o.dataEv?dataCurta(o.dataEv,hoje):''].filter(Boolean).join(' ');
+    /* o select de estágio virou o chip "Mudar estágio": o select fica transparente por cima (seletor do iPhone), mesmo moveStage */
+    return `<div class="kcard" draggable="true" ondragstart="dragStart(event,${o.id})" onclick="openForm(${o.id})" role="button" tabindex="0" title="Abrir o atendimento #${o.id}">`
+     +`<div class="kc-l1"><span class="kc-name">${esc(o.cliente||'(sem nome)')}</span><span class="kc-val num">${BRL(c.vt)}</span></div>`
+     +`<div class="kc-meta">${esc(ev||((Number(o.qtd)||0)+' un · '+(o.produto||'sem produto')))}</div>`
+     +`<div class="kc-l3">${pagChip(o,false,true)||'<span></span>'}<label class="toq" onclick="event.stopPropagation()"><span class="chip">Mudar estágio${ic('baixo','i pp')}</span>`
+     +`<select onchange="moveStage(${o.id},this.value)" aria-label="Mudar o estágio de ${esc(o.cliente||'#'+o.id)}">${STAGES.map(s=>`<option ${s===o.estagio?'selected':''}>${s}</option>`).join('')}</select></label></div></div>`;}).join(''):'<div class="kempty">Nenhum pedido aqui</div>')+`</div>`;}).join('');}
+/* mudar estágio (Kanban): aviso com Desfazer, como concluir tarefa */
+function moveStage(id,st){const o=state.orders.find(x=>x.id===id);if(!o)return;const antes=o.estagio;if(antes===st)return;
+ o.estagio=st;logAct('moveu o atendimento #'+id+' ('+o.cliente+') para "'+st+'"');save();syncOrder(o);renderAtend();
+ mbAviso('Movido para '+estCurto(st),'Desfazer',function(){o.estagio=antes;logAct('desfez: o atendimento #'+id+' voltou para "'+antes+'"');save();syncOrder(o);renderAtend();});}
 function dragStart(ev,id){ev.dataTransfer.setData("text/plain",String(id));ev.dataTransfer.effectAllowed="move";}
 function dropCard(ev,col){ev.preventDefault();col.classList.remove("drag");var id=+ev.dataTransfer.getData("text/plain");var st=col.getAttribute("data-stage");if(id&&st)moveStage(id,st);}
 
