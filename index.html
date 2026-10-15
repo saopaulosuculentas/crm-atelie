@@ -7,7 +7,17 @@
      Luan via a tela antiga achando que o deploy nao tinha subido. Com ETag a
      revalidacao volta 304 e nao custa banda. -->
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
-<title>CRM — Ateliê das Suculentas</title>
+<title>CRM Ateliê das Suculentas</title>
+<!-- App no celular (PWA, 15/10/2026): manifest + icones da roseta da loja. O sw.js
+     nao guarda nada em cache; existe so para o CRM poder ser instalado. -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#14532D">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CRM Ateliê">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -529,6 +539,45 @@ tbody tr:hover{background:#f0f5ec}
  .caldia .pontos{display:flex}
  .calbar .mes{font-size:17px;min-width:0;flex:1}
 }
+/* ===================== PRODUÇÃO (aba nova, 15/10/2026) =====================
+   Pensada primeiro para o celular do Felipe: um cartão por pedido, botão
+   grande de Avançar. Só variáveis de cor, então nasce certa nos dois temas.
+   Os grupos reaproveitam o cabeçalho da lista de Tarefas (.cu-grupo). */
+.nbadge{margin-left:auto;background:#c0271f;color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:1px 8px;min-width:22px;text-align:center;line-height:1.5}
+.pd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:11px;margin:2px 0 6px}
+.cu-grupo.fechado .pd-grid{display:none}
+.pd-card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--green);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;min-width:0}
+.pd-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.pd-cli{font-size:15px;font-weight:800;color:var(--ink);cursor:pointer;line-height:1.25;word-break:break-word;background:none;border:0;padding:0;text-align:left;font-family:inherit}
+.pd-cli:hover{color:var(--green-dk);text-decoration:underline}
+.pd-meta{font-size:12.5px;color:var(--muted);line-height:1.4}
+.pd-datas{display:flex;flex-wrap:wrap;gap:6px}
+.pd-data{font-size:12px;font-weight:700;background:var(--pill);color:var(--ink);border-radius:8px;padding:4px 9px;white-space:nowrap}
+.pd-data.late{background:#fbe4e2;color:var(--danger)}
+.pd-data.hoje{background:#fdf1dc;color:#9a6a17}
+.pd-alerta{font-size:12.5px;font-weight:700;color:var(--danger);background:color-mix(in srgb,var(--danger) 10%,transparent);border-radius:8px;padding:6px 9px}
+.pd-arte{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-weight:700}
+.pd-arte input{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--input);color:var(--ink);font-family:inherit;font-size:13px;color-scheme:light}
+[data-tema="escuro"] .pd-arte input{color-scheme:dark}
+.pd-acoes{display:flex;gap:8px;align-items:stretch;margin-top:2px}
+.pd-avancar{flex:1;min-height:46px;font-size:14.5px;font-weight:800}
+.pd-avancar[disabled]{opacity:.45;cursor:not-allowed;filter:none;transform:none}
+.pd-menu{flex:0 0 auto;max-width:46%;min-height:46px;padding:0 10px;border:1px solid var(--line);border-radius:11px;background:var(--card);color:var(--ink);font-family:inherit;font-size:13px;font-weight:600}
+.pd-menu[disabled]{opacity:.45}
+.pd-desfazer{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:11px;padding:10px 14px;font-weight:700;font-size:13px}
+.pd-vazio{font-size:13px;color:var(--muted);padding:18px 4px}
+[data-tema="escuro"] .pd-data.late{background:#3d1e1b;color:#f08a80}
+[data-tema="escuro"] .pd-data.hoje{background:#3a2f14;color:#e0b56a}
+/* ajuda para instalar no celular */
+.inst-passos{margin:0;padding-left:20px;line-height:1.65;font-size:13.5px;color:var(--ink)}
+.inst-bloco{border:1px solid var(--line);border-radius:13px;padding:12px 15px;margin-bottom:12px;background:var(--cream)}
+.inst-bloco h3{font-size:15px;color:var(--green-dk);margin-bottom:6px}
+@media(max-width:820px){
+ .pd-grid{grid-template-columns:1fr}
+ .pd-avancar,.pd-menu{min-height:52px}
+ .pd-avancar{font-size:15.5px}
+ .pd-cli{font-size:16px}
+}
 
 </style>
 <script>
@@ -562,6 +611,7 @@ tbody tr:hover{background:#f0f5ec}
  <nav id="nav">
   <button data-v="painel" class="active"><span class="ic">📊</span> Painel</button>
   <button data-v="atendimentos"><span class="ic">💬</span> Atendimentos</button>
+  <button data-v="producao" data-ttl="📦 Produção"><span class="ic">📦</span> Produção<span class="nbadge" id="pdBadge" style="display:none" title="Atrasados + postar hoje"></span></button>
   <button data-v="calendario"><span class="ic">📅</span> Calendário</button>
   <button data-v="cadastros"><span class="ic">📥</span> Cadastros</button>
   <button data-v="tarefas"><span class="ic">✅</span> Tarefas</button>
@@ -572,6 +622,7 @@ tbody tr:hover{background:#f0f5ec}
  </nav>
  <div class="grow"></div>
  <div class="data">
+  <button id="btnInstalar" onclick="instAbrir()">📲 Instalar no celular</button>
   <button onclick="reloadData()">🔄 Atualizar</button>
   <button onclick="salvarTudo()">💾 Salvar tudo</button>
   <button id="btnTema" onclick="alternarTema()">🌙 Tema escuro</button>
@@ -579,7 +630,7 @@ tbody tr:hover{background:#f0f5ec}
   <div class="hint" id="whoami" style="margin-top:8px"></div>
   <!-- versao a vista: se alguem disser "esta diferente aqui", da pra saber na
        hora se e cache ou se e outra coisa -->
-  <div class="hint" id="versao" style="opacity:.55">versão 2026-08-14c</div>
+  <div class="hint" id="versao" style="opacity:.55">versão 2026-10-15 (Produção + app)</div>
   <div class="hint">☁ Salva sozinho. Se aparecer "⚠ não salvou" no topo, toque em "Salvar tudo".</div>
   <button onclick="toggleMais()" style="background:transparent;color:var(--muted);font-size:12px;padding:6px 4px;text-align:left">⋯ Mais opções</button>
   <div id="maisOpc" style="display:none">
@@ -725,6 +776,17 @@ tbody tr:hover{background:#f0f5ec}
    </div>
   </section>
 
+  <!-- Agenda de produção (15/10/2026): pedido fechado até ser postado. -->
+  <section class="view" id="producao">
+   <div id="pdAviso"></div>
+   <div class="kpis" id="pdKpis"></div>
+   <div class="toolbar">
+    <input type="text" id="pdBusca" placeholder="Buscar cliente, produto..." oninput="renderProducao()">
+    <select id="pdResp" onchange="renderProducao()" style="display:none"><option value="">Todos os responsáveis</option></select>
+   </div>
+   <div id="pdLista" class="cu-lista"></div>
+  </section>
+
 
  </div>
 </div>
@@ -816,6 +878,28 @@ tbody tr:hover{background:#f0f5ec}
  </div>
 </div>
 
+<!-- Ajuda para instalar o CRM como aplicativo (PWA). Clicar fora fecha: aqui nao ha nada digitado para perder. -->
+<div class="overlay" id="instOverlay" onclick="if(event.target===this)instFechar()">
+ <div class="modal" style="width:520px">
+  <div class="mhead" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2>📲 Instalar no celular</h2><button type="button" onclick="instFechar()" aria-label="Fechar" title="Fechar" style="background:transparent;border:0;color:#fff;font-size:24px;line-height:1;cursor:pointer;padding:0 6px">✕</button></div>
+  <div class="mbody">
+   <p style="margin:0 0 12px;font-size:13.5px">O CRM vira um ícone na tela do celular: um toque e ele abre direto, em tela cheia, sem procurar o link.</p>
+   <div class="inst-bloco"><h3>iPhone (Safari)</h3><ol class="inst-passos">
+    <li>Abra o CRM no <b>Safari</b>.</li>
+    <li>Toque em <b>Compartilhar</b> (o quadrado com a seta para cima).</li>
+    <li>Toque em <b>Adicionar à Tela de Início</b> e depois em <b>Adicionar</b>.</li>
+   </ol></div>
+   <div class="inst-bloco"><h3>Android (Chrome)</h3><ol class="inst-passos">
+    <li>Abra o CRM no <b>Chrome</b>.</li>
+    <li>Toque no menu <b>⋮</b> (três pontinhos no canto de cima).</li>
+    <li>Toque em <b>Instalar app</b> (em alguns celulares aparece "Adicionar à tela inicial").</li>
+   </ol></div>
+   <button type="button" class="btn" id="instAgora" style="display:none;margin-bottom:10px" onclick="instAgora()">Instalar agora</button>
+   <div class="mini" style="line-height:1.5">No iPhone, na primeira vez o app pede o login de novo (o iPhone guarda o app separado do Safari). Endereço: <b>saopaulosuculentas.github.io/crm-atelie</b></div>
+  </div>
+ </div>
+</div>
+
 <script>
 const STAGES=["Lead novo","Em conversa","Orçamento enviado","Negociação","Fechado (ganho)","Em produção","Entregue","Pós-venda","Perdido"];
 const DONE=["Entregue","Pós-venda","Perdido"];
@@ -829,7 +913,7 @@ const PRODUTOS=["Suculenta + Rótulo Personalizado","Suculenta + Rótulo Pronto"
 const STAGE_COLORS={"Lead novo":"#8a94a6","Em conversa":"#3b82c4","Orçamento enviado":"#d99a2b","Negociação":"#c2693f","Fechado (ganho)":"#2e7d46","Em produção":"#1f8a8a","Entregue":"#1c4327","Pós-venda":"#6aa17a","Perdido":"#b00020"};
 const PAY_COLORS={"Pago":"#2e7d46","Sinal pago":"#d99a2b","Pendente":"#b00020","Estornado":"#8a94a6"};
 const SINAL_PCT=0.30; // sinal = 30% do valor
-const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O livro-caixa da empresa: custos por categoria, recebimentos ligados ao pedido e as vendas do site. O Painel calcula os indicadores daqui.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30–45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas — salva sozinho pra todo mundo."};
+const SUBS={painel:"Atualiza sozinho conforme você preenche os atendimentos.",atendimentos:"O coração da operação. Cada conversa de WhatsApp = uma linha, com estágio, valor, custo e follow-up.",clientes:"Gerado automaticamente dos atendimentos. “Recompra devida” = comprou há mais de 6 meses.",produtos:"A base da margem. Altere custos e preços que todos os atendimentos recalculam sozinhos.",caixa:"O livro-caixa da empresa: custos por categoria, recebimentos ligados ao pedido e as vendas do site. O Painel calcula os indicadores daqui.",sazonal:"As datas que movem o negócio, ordenadas pela proximidade. Prepare cada pico com 30 a 45 dias de antecedência.",calendario:"Todo evento com data marcada, dia a dia. Arraste o cartão para outro dia pra mudar a data do evento.",cadastros:"Cada cliente que preenche o formulário do link cai aqui. Vire em atendimento num clique.",producao:"Todo pedido fechado até ser postado. Postar até = arte aprovada e pagamento + 2 dias úteis; Correios até 5 dias úteis (total até 7).",tarefas:"O que a equipe precisa fazer. Arraste o cartão entre as etapas: salva sozinho pra todo mundo."};
 
 const KEY="crm_atelie_v1";let state,currentId=null,viewMode="table",memFallback=null;
 /* ===== CONEXAO COM A NUVEM (Supabase) ===== */
@@ -840,7 +924,11 @@ const COLS=["id","data","cliente","whats","cidade","canal","tipoCli","tipoEv","d
 function sbBase(){return SUPA_URL;}
 function sbUrl(path){return sbBase()+"/rest/v1/"+path;}
 function sbHeaders(extra){const h={"apikey":SUPA_ANON,"Authorization":"Bearer "+(ACCESS||SUPA_ANON),"Content-Type":"application/json"};if(extra)Object.assign(h,extra);return h;}
-function pickCols(o){const r={};COLS.forEach(k=>{r[k]=(o&&o[k]!==undefined&&o[k]!==null)?o[k]:"";});return r;}
+function pickCols(o){const r={};COLS.forEach(k=>{r[k]=(o&&o[k]!==undefined&&o[k]!==null)?o[k]:"";});if(PROD_EXT===true){PROD_COLS.forEach(k=>{const v=o&&o[k];r[k]=(v===undefined||v===null||v==="")?null:v;});}return r;}
+/* Producao (15/10/2026): prod_etapa, arte_aprovada_em e postado_em so vao no upsert quando o schema_producao.sql ja rodou.
+   Antes disso o PostgREST devolve 400 para o pedido INTEIRO, entao elas ficam de fora. Vazio vira null: data vazia ("") quebra coluna date. */
+var PROD_EXT=null;const PROD_COLS=["prod_etapa","arte_aprovada_em","postado_em"];
+async function prodDetectarExt(){try{const r=await fetch(sbUrl("pedidos?select=prod_etapa&limit=1"),{headers:sbHeaders()});PROD_EXT=r.ok?true:(r.status===400?false:null);}catch(e){PROD_EXT=null;}}
 function openCfg(){var u=prompt("Cole o link do projeto Supabase (https://xxxxx.supabase.co). Deixe em branco para modo local:",SHEET_URL||"");if(u===null)return;var t=prompt("Cole a chave do projeto (anon public):",TOKEN||"");if(t===null)return;_cfg={url:(u||"").trim(),token:(t||"").trim()};localStorage.setItem(CFGKEY,JSON.stringify(_cfg));SHEET_URL=_cfg.url;TOKEN=_cfg.token;alert(SHEET_URL?"Conectado. Carregando dados da nuvem...":"Modo local ativado.");init();}
 async function apiGet(){
  const r1=await fetch(sbUrl("pedidos?select=*&order=id.asc"),{headers:sbHeaders()});
@@ -914,8 +1002,8 @@ const todayISO=()=>new Date().toISOString().slice(0,10);
 document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.v).classList.add('active');
- const v=b.dataset.v;document.getElementById('ttl').textContent=b.textContent.trim();document.getElementById('sub').textContent=SUBS[v];
- if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();document.body.classList.remove('menu-open');});
+ const v=b.dataset.v;document.getElementById('ttl').textContent=(b.getAttribute('data-ttl')||b.textContent).trim();try{history.replaceState(null,'','#'+v);}catch(e){}document.getElementById('sub').textContent=SUBS[v];
+ if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();if(v==='producao')renderProducao();document.body.classList.remove('menu-open');});
 function toggleMenu(){document.body.classList.toggle('menu-open');}
 function setView(m){viewMode=m;[['vbTable','table'],['vbSheet','sheet'],['vbKanban','kanban']].forEach(function(x){var b=document.getElementById(x[0]);if(b)b.classList.toggle('active',m===x[1]);});
  document.getElementById('tableView').style.display=m==='table'?'':'none';document.getElementById('sheetView').style.display=m==='sheet'?'':'none';document.getElementById('kanbanView').style.display=m==='kanban'?'':'none';renderAtend();}
@@ -1349,6 +1437,242 @@ function calDrop(ev,cell){ev.preventDefault();cell.classList.remove("drag");
  var id=+ev.dataTransfer.getData("text/plain");var dia=cell.getAttribute("data-dia");
  if(id&&dia)moveData(id,dia);}
 
+/* ===================== PRODUÇÃO (aba nova, 15/10/2026) =====================
+   Agenda de produção: todo pedido fechado que ainda não foi postado.
+   Regra do Luan (15/10/2026): postagem em 2 dias úteis depois da arte aprovada
+   e do pagamento; Correios até 5 dias úteis; total até 7 dias úteis.
+   "Postar até" = arte_aprovada_em + 2 dias úteis (sábado, domingo e feriado
+   não contam). É calculado aqui, não fica gravado no banco.
+
+   Entra: estágio "Fechado (ganho)" ou "Em produção", ou statusPag "Pago" ou
+   "Sinal pago". Fica fora: o que já tem postado_em e os estágios encerrados
+   (Perdido, Entregue, Pós-venda). Entregue e Pós-venda ficam fora porque já
+   saíram da produção; sem isso todo pedido antigo pago lotaria a aba.
+
+   As 3 colunas vêm do schema_producao.sql. Antes de rodar, PROD_EXT fica
+   false: a aba mostra os pedidos e o aviso, e os botões não gravam.
+   Reaproveita: cal2, calHojeISO, calDias, STAGE_COLORS, dBR, esc, openForm,
+   logAct, save, syncOrder e o cabeçalho de grupo da lista de Tarefas.
+========================================================================== */
+var PROD_ETAPAS=["Aguardando arte","Arte aprovada","Produzindo","Pronto","Postado"];
+var PROD_COR={"Aguardando arte":"#8a94a6","Arte aprovada":"#3b82c4","Produzindo":"#d99a2b","Pronto":"#1f8a8a","Postado":"#2e7d46"};
+var PROD_POSTAR_DU=2,PROD_CORREIOS_DU=5;
+/* Feriados nacionais de 2026 e 2027 (dia que não conta como dia útil).
+   Carnaval (segunda e terça) e Corpus Christi são ponto facultativo nacional,
+   mas o país para e o Corpus Christi é feriado na cidade de São Paulo: entram
+   como dia parado. Se o ateliê trabalhar num deles, é só apagar a linha. */
+var PROD_FERIADOS={
+ "2026-01-01":"Confraternização Universal","2026-02-16":"Carnaval","2026-02-17":"Carnaval",
+ "2026-04-03":"Paixão de Cristo","2026-04-21":"Tiradentes","2026-05-01":"Dia do Trabalho",
+ "2026-06-04":"Corpus Christi","2026-09-07":"Independência","2026-10-12":"Nossa Senhora Aparecida",
+ "2026-11-02":"Finados","2026-11-15":"Proclamação da República","2026-11-20":"Consciência Negra",
+ "2026-12-25":"Natal",
+ "2027-01-01":"Confraternização Universal","2027-02-08":"Carnaval","2027-02-09":"Carnaval",
+ "2027-03-26":"Paixão de Cristo","2027-04-21":"Tiradentes","2027-05-01":"Dia do Trabalho",
+ "2027-05-27":"Corpus Christi","2027-09-07":"Independência","2027-10-12":"Nossa Senhora Aparecida",
+ "2027-11-02":"Finados","2027-11-15":"Proclamação da República","2027-11-20":"Consciência Negra",
+ "2027-12-25":"Natal"};
+var PROD_DSEM=["dom","seg","ter","qua","qui","sex","sáb"];
+var pdFechados={postados:true};   // grupos recolhidos (os postados começam fechados)
+
+/* datas sempre como "YYYY-MM-DD" e conta em UTC: sem fuso nem horário de verão no meio */
+function pdData(iso){var p=String(iso).slice(0,10).split("-");return new Date(Date.UTC(+p[0],+p[1]-1,+p[2]));}
+function pdISO(d){return d.getUTCFullYear()+"-"+cal2(d.getUTCMonth()+1)+"-"+cal2(d.getUTCDate());}
+function pdDiaUtil(iso){var w=pdData(iso).getUTCDay();return w!==0&&w!==6&&!PROD_FERIADOS[iso];}
+/* soma n dias úteis: o dia de partida não conta (arte aprovada na sexta + 2 = terça) */
+function pdSomaUteis(iso,n){var d=pdData(iso),k=0;while(k<n){d.setUTCDate(d.getUTCDate()+1);if(pdDiaUtil(pdISO(d)))k++;}return pdISO(d);}
+function pdSomaDias(iso,n){var d=pdData(iso);d.setUTCDate(d.getUTCDate()+n);return pdISO(d);}
+/* domingo desta semana; no sábado e no domingo, "esta semana" já é a que vem */
+function pdFimSemana(hoje){var w=pdData(hoje).getUTCDay();return pdSomaDias(hoje,w===0?7:(w===6?8:7-w));}
+function pdISOok(v){v=String(v||"").slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(v)?v:"";}
+function pdDiaSem(iso){var v=pdISOok(iso);return v?PROD_DSEM[pdData(v).getUTCDay()]+" "+dBR(v).slice(0,5):String(iso||"");}
+/* data do evento (dataEv e texto no banco; o que nao for AAAA-MM-DD fica sem conta de prazo) */
+function pdEv(o){return pdISOok(o&&o.dataEv);}
+
+function pdArte(o){return pdISOok(o&&o.arte_aprovada_em);}
+function pdEtapa(o){var e=o&&o.prod_etapa;if(PROD_ETAPAS.indexOf(e)>=0)return e;return pdArte(o)?"Arte aprovada":"Aguardando arte";}
+function pdPostarAte(o){var a=pdArte(o);return a?pdSomaUteis(a,PROD_POSTAR_DU):"";}
+/* chega até: postagem (ou hoje, se já atrasou) + 5 dias úteis dos Correios.
+   Sem arte aprovada, conta como se a arte fosse aprovada hoje. */
+function pdChegaAte(o,hoje){var pa=pdPostarAte(o)||pdSomaUteis(hoje,PROD_POSTAR_DU);if(pa<hoje)pa=hoje;return pdSomaUteis(pa,PROD_CORREIOS_DU);}
+function pdEntra(o){
+ if(!o||o.postado_em)return false;
+ if(DONE.indexOf(o.estagio)>=0)return false;
+ return o.estagio==="Fechado (ganho)"||o.estagio==="Em produção"||o.statusPag==="Pago"||o.statusPag==="Sinal pago";}
+/* pedido ainda não tem responsável; se um dia tiver (texto, separado por vírgula), o filtro aparece sozinho */
+function pdResps(o){return String((o&&o.responsavel)||"").split(",").map(function(x){return x.trim();}).filter(Boolean);}
+function pdPodeGravar(){return !SHEET_URL||PROD_EXT===true;}
+function pdAtiva(){var s=document.getElementById('producao');return !!(s&&s.classList.contains('active'));}
+function pdPedido(id){return (state.orders||[]).find(function(x){return x.id===id;});}
+
+function pdGrupoDe(o,hoje,prox,fimSem){
+ var pa=pdPostarAte(o);
+ if(!pa)return "arte";
+ if(pa<hoje)return "atras";
+ if(pa===hoje)return "hoje";
+ if(pa<=prox)return "amanha";
+ if(pa<=fimSem)return "semana";
+ return "depois";}
+
+function pdCartao(o,hoje){
+ var et=pdEtapa(o),cor=PROD_COR[et],pa=pdPostarAte(o),i=PROD_ETAPAS.indexOf(et),prox=PROD_ETAPAS[i+1];
+ var pode=pdPodeGravar(),dis=pode?'':' disabled title="Falta rodar o schema_producao.sql no Supabase"';
+ var meta=(o.qtd||0)+' un · '+esc(o.produto||'sem produto')+(o.tipoEv?' · '+esc(o.tipoEv):'');
+ var datas='';
+ if(pa){var d=calDias(pa),cls=pa<hoje?' late':(pa===hoje?' hoje':'');
+  datas+='<span class="pd-data'+cls+'">📦 Postar até '+pdDiaSem(pa)+(pa<hoje?' · atrasado '+Math.abs(d)+(Math.abs(d)===1?' dia':' dias'):(pa===hoje?' · hoje':''))+'</span>';}
+ else datas+='<span class="pd-data">📦 Postar até: falta a arte</span>';
+ datas+='<span class="pd-data">🎉 Chega até '+(o.dataEv?esc(pdDiaSem(o.dataEv)):'sem data')+'</span>';
+ var alerta='';
+ if(pdEv(o)&&pdChegaAte(o,hoje)>pdEv(o))
+  alerta='<div class="pd-alerta">⚠️ pode chegar depois do evento'+(pa?'':' (mesmo aprovando a arte hoje)')+'</div>';
+ var arte=pdArte(o)?'<label class="pd-arte">Arte aprovada em <input type="date" value="'+pdArte(o)+'" onchange="pdMudarArte('+o.id+',this.value)"'+(pode?'':' disabled')+'></label>':'';
+ var pl='';if(o.producao&&typeof o.producao==='object'){var p=o.producao,sn=function(v){v=String(v||'').trim();return /^sim$/i.test(v)?'✅':/^n[aã]o$/i.test(v)?'❌':'·';};
+  pl='<div class="mini">📋 Planilha: '+esc(p.status||'sem status')+' · Arte '+sn(p.arte)+' · Tag '+sn(p.tag)+'</div>';}
+ var wa=o.whats?' <a class="wa" target="_blank" rel="noopener" href="https://wa.me/55'+String(o.whats).replace(/\D/g,'')+'">🟢 WhatsApp</a>':'';
+ var botao=prox
+  ?'<button type="button" class="btn pd-avancar" onclick="pdAvancar('+o.id+')"'+dis+'>Avançar ▸ '+esc(prox)+'</button>'
+  :'<button type="button" class="btn pd-avancar" onclick="pdIrPara('+o.id+',&#39;Postado&#39;)"'+dis+'>Confirmar postagem</button>';
+ var menu='<select class="pd-menu" onchange="pdIrPara('+o.id+',this.value);this.value=&#39;&#39;"'+(pode?'':' disabled')+' aria-label="Voltar ou mudar a etapa">'
+  +'<option value="">↩ Voltar etapa</option>'
+  +PROD_ETAPAS.filter(function(x){return x!==et;}).map(function(x){return '<option value="'+esc(x)+'">'+(PROD_ETAPAS.indexOf(x)<i?'↩ ':'')+esc(x)+'</option>';}).join('')
+  +'</select>';
+ return '<div class="pd-card" style="border-left-color:'+cor+'">'
+  +'<div class="pd-top"><button type="button" class="pd-cli" onclick="openForm('+o.id+')" title="Abrir o atendimento #'+o.id+'">'+esc(o.cliente||'(sem nome)')+'</button>'
+  +'<span class="badge" style="--c:'+cor+'">'+esc(et)+'</span></div>'
+  +'<div class="pd-meta">'+meta+wa+'</div>'
+  +'<div class="pd-datas">'+datas+'</div>'
+  +alerta+arte+pl
+  +'<div class="pd-acoes">'+botao+menu+'</div>'
+  +'</div>';}
+
+function pdCartaoPostado(o){
+ return '<div class="pd-card" style="border-left-color:'+PROD_COR.Postado+'">'
+  +'<div class="pd-top"><button type="button" class="pd-cli" onclick="openForm('+o.id+')">'+esc(o.cliente||'(sem nome)')+'</button>'
+  +'<span class="badge" style="--c:'+PROD_COR.Postado+'">Postado '+esc(pdDiaSem(o.postado_em))+'</span></div>'
+  +'<div class="pd-meta">'+(o.qtd||0)+' un · '+esc(o.produto||'')+(o.tipoEv?' · '+esc(o.tipoEv):'')+'</div>'
+  +'<div class="pd-acoes"><button type="button" class="pd-desfazer" onclick="pdDesfazerPostado('+o.id+')"'+(pdPodeGravar()?'':' disabled')+'>↩ Desfazer: voltar para Pronto</button></div>'
+  +'</div>';}
+
+function pdToggle(k){pdFechados[k]=!pdFechados[k];renderProducao();}
+
+function renderProducao(){
+ if(typeof state==="undefined"||!state||!state.orders)return;
+ var hoje=calHojeISO(),amanha=pdSomaDias(hoje,1),prox=pdSomaUteis(hoje,1),fimSem=pdFimSemana(hoje);
+ var todos=state.orders.filter(pdEntra);
+ /* badge da barra lateral: atrasados + postar hoje */
+ var nUrg=todos.filter(function(o){var pa=pdPostarAte(o);return pa&&pa<=hoje;}).length;
+ var bd=document.getElementById('pdBadge');if(bd){bd.textContent=nUrg?String(nUrg):'';bd.style.display=nUrg?'':'none';}
+ var box=document.getElementById('pdLista');if(!box)return;
+
+ var av=document.getElementById('pdAviso');
+ if(av){
+  if(SHEET_URL&&PROD_EXT===false)av.innerHTML='<div class="note">⚠️ <b>Falta rodar o schema_producao.sql no Supabase.</b> Até lá a aba só mostra os pedidos: as etapas e as datas ainda não salvam.</div>';
+  else if(SHEET_URL&&PROD_EXT!==true)av.innerHTML='<div class="note">Não consegui conferir a tabela de pedidos agora (sem conexão?). As etapas não salvam até a conexão voltar: toque em 🔄 Atualizar.</div>';
+  else if(!SHEET_URL)av.innerHTML='<div class="mini" style="margin-bottom:10px">💾 Modo local: as etapas ficam salvas só neste navegador.</div>';
+  else av.innerHTML='';}
+
+ /* filtro por responsável: só aparece se algum pedido tiver */
+ var rs=document.getElementById('pdResp'),nomes=[];
+ todos.forEach(function(o){pdResps(o).forEach(function(n){if(nomes.indexOf(n)<0)nomes.push(n);});});
+ var fResp=rs?rs.value:'';
+ if(rs){rs.style.display=nomes.length?'':'none';
+  rs.innerHTML='<option value="">Todos os responsáveis</option>'+nomes.sort().map(function(n){return '<option'+(n===fResp?' selected':'')+'>'+esc(n)+'</option>';}).join('');
+  if(nomes.indexOf(fResp)<0)fResp='';}
+ var qe=document.getElementById('pdBusca'),q=(qe?qe.value:'').toLowerCase().trim();
+ var vis=todos.filter(function(o){
+  if(fResp&&pdResps(o).indexOf(fResp)<0)return false;
+  if(q){var b=((o.cliente||'')+' '+(o.produto||'')+' '+(o.descr||'')+' '+(o.tipoEv||'')+' '+(o.cidade||'')).toLowerCase();if(b.indexOf(q)<0)return false;}
+  return true;});
+
+ var G={atras:[],hoje:[],amanha:[],semana:[],depois:[],arte:[]};
+ vis.forEach(function(o){G[pdGrupoDe(o,hoje,prox,fimSem)].push(o);});
+ var porData=function(a,b){var x=pdPostarAte(a),y=pdPostarAte(b);if(x!==y)return x<y?-1:1;
+  var ea=pdEv(a)||'9999',eb=pdEv(b)||'9999';if(ea!==eb)return ea<eb?-1:1;return a.id-b.id;};
+ Object.keys(G).forEach(function(k){G[k].sort(porData);});
+
+ var lblAmanha=(prox===amanha)?'Amanhã':'Próximo dia útil ('+pdDiaSem(prox)+')';
+ var k=[["Atrasados",G.atras.length,"t","🚨"],["Postar hoje",G.hoje.length,"g","📦"],
+        [prox===amanha?"Amanhã":"Próx. dia útil",G.amanha.length,"b","📅"],["Aguardando arte",G.arte.length,"","🎨"]];
+ document.getElementById('pdKpis').innerHTML=k.map(function(x){
+  return '<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div></div>';}).join('');
+
+ var grupos=[["atras","Atrasados","#b00020"],["hoje","Postar hoje","#c2693f"],["amanha",lblAmanha,"#d99a2b"],
+             ["semana","Esta semana","#3b82c4"],["depois","Depois","#6aa17a"],["arte","Aguardando arte","#8a94a6"]];
+ var h=grupos.filter(function(g){return G[g[0]].length;}).map(function(g){
+  var lista=G[g[0]],fechado=!!pdFechados[g[0]];
+  return '<div class="cu-grupo'+(fechado?' fechado':'')+'">'
+   +'<div class="cu-ghead" onclick="pdToggle(&#39;'+g[0]+'&#39;)"><span class="cu-caret">▼</span>'
+   +'<span class="cu-status" style="background:'+g[2]+';color:'+tTextoSobre(g[2])+'">'+esc(g[1])+'</span>'
+   +'<span class="cu-gcount">'+lista.length+'</span></div>'
+   +'<div class="pd-grid">'+lista.map(function(o){return pdCartao(o,hoje);}).join('')+'</div></div>';}).join('');
+ if(!h)h='<div class="pd-vazio">'+(q||fResp?'Nenhum pedido com esse filtro.':'Nenhum pedido para produzir agora. Pedido fechado ou pago aparece aqui sozinho. 👏')+'</div>';
+
+ /* postados nos últimos 7 dias: só para desfazer um toque errado */
+ var corte=pdSomaDias(hoje,-7);
+ var post=state.orders.filter(function(o){var p=String(o.postado_em||'').slice(0,10);return p&&p>=corte;})
+  .sort(function(a,b){return String(b.postado_em).localeCompare(String(a.postado_em));});
+ if(post.length){var fp=!!pdFechados.postados;
+  h+='<div class="cu-grupo'+(fp?' fechado':'')+'"><div class="cu-ghead" onclick="pdToggle(&#39;postados&#39;)"><span class="cu-caret">▼</span>'
+   +'<span class="cu-status" style="background:'+PROD_COR.Postado+';color:#fff">Postados (últimos 7 dias)</span>'
+   +'<span class="cu-gcount">'+post.length+'</span></div>'
+   +'<div class="pd-grid">'+post.map(pdCartaoPostado).join('')+'</div></div>';}
+ box.innerHTML=h;}
+
+/* ---------- mudar etapa ---------- */
+function pdSemColuna(){alert("Falta rodar o schema_producao.sql no Supabase. Até lá a etapa não salva.");}
+function pdGravar(o,acao){logAct(acao+' no pedido #'+o.id+' ('+(o.cliente||'')+')');save();syncOrder(o);
+ renderProducao();if(document.getElementById('calendario')&&document.getElementById('calendario').classList.contains('active'))renderCalendario();}
+function pdAplicar(o,et){
+ var hoje=calHojeISO();
+ if(et==="Aguardando arte")o.arte_aprovada_em=null;
+ else if(!pdArte(o))o.arte_aprovada_em=hoje;          // passou da arte: o dia de hoje vale como aprovação
+ if(et==="Postado"){o.postado_em=hoje;o.estagio="Entregue";}   // como o quadro faz hoje
+ else{
+  if(o.postado_em){o.postado_em=null;if(o.estagio==="Entregue")o.estagio="Em produção";}
+  if((et==="Produzindo"||et==="Pronto")&&DONE.indexOf(o.estagio)<0)o.estagio="Em produção";}
+ o.prod_etapa=et;}
+function pdIrPara(id,et){
+ if(!et)return;if(!pdPodeGravar()){pdSemColuna();return;}
+ var o=pdPedido(id);if(!o||PROD_ETAPAS.indexOf(et)<0||pdEtapa(o)===et&&et!=="Postado")return;
+ if(et==="Postado"&&!confirm('Marcar '+(o.cliente||'#'+id)+' como POSTADO hoje?\nO pedido sai da Produção e vai para "Entregue".'))return;
+ pdAplicar(o,et);pdGravar(o,'produção: marcou "'+et+'"');}
+function pdAvancar(id){var o=pdPedido(id);if(!o)return;var i=PROD_ETAPAS.indexOf(pdEtapa(o));pdIrPara(id,PROD_ETAPAS[Math.min(i+1,PROD_ETAPAS.length-1)]);}
+function pdMudarArte(id,val){
+ if(!pdPodeGravar()){pdSemColuna();renderProducao();return;}
+ var o=pdPedido(id);if(!o)return;
+ if(!val){o.arte_aprovada_em=null;o.prod_etapa="Aguardando arte";pdGravar(o,'produção: tirou a data da arte aprovada');return;}
+ o.arte_aprovada_em=val;if(pdEtapa(o)==="Aguardando arte")o.prod_etapa="Arte aprovada";
+ pdGravar(o,'produção: corrigiu a arte aprovada para '+dBR(val));}
+function pdDesfazerPostado(id){
+ if(!pdPodeGravar()){pdSemColuna();return;}
+ var o=pdPedido(id);if(!o)return;
+ o.postado_em=null;o.prod_etapa="Pronto";if(o.estagio==="Entregue")o.estagio="Em produção";
+ pdGravar(o,'produção: desfez a postagem (voltou para "Pronto")');}
+
+/* ---------- app no celular (PWA) ---------- */
+var _instEvt=null;
+function instEhApp(){try{return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}catch(e){return false;}}
+function instAbrir(){var b=document.getElementById('instAgora');if(b)b.style.display=_instEvt?'':'none';document.getElementById('instOverlay').classList.add('open');document.body.classList.remove('menu-open');}
+function instFechar(){document.getElementById('instOverlay').classList.remove('open');}
+function instAgora(){if(!_instEvt)return;try{_instEvt.prompt();_instEvt.userChoice.then(function(){_instEvt=null;instFechar();}).catch(function(){});}catch(e){}}
+/* o Chrome do Android avisa que dá para instalar; guardo o aviso para o botão "Instalar agora".
+   Sem preventDefault: a faixa de instalar do próprio Chrome continua aparecendo. */
+window.addEventListener('beforeinstallprompt',function(e){_instEvt=e;});
+window.addEventListener('appinstalled',function(){_instEvt=null;var b=document.getElementById('btnInstalar');if(b)b.style.display='none';});
+(function(){if(instEhApp()){var b=document.getElementById('btnInstalar');if(b)b.style.display='none';}})();
+/* sw.js sem cache: só registra em http(s) (no teste por blob ou arquivo local ele fica de fora) */
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
+ navigator.serviceWorker.register('sw.js').catch(function(e){console.info('sw.js nao registrou:',e&&e.message);});}
+/* link direto para uma aba: .../crm-atelie/#producao abre a Produção (serve para o aviso do Telegram) */
+var _abaEnderecoFeita=false;
+function abrirAbaDoEndereco(forcar){
+ if(_abaEnderecoFeita&&!forcar)return;_abaEnderecoFeita=true;
+ var v=(location.hash||'').replace('#','');if(!v)return;
+ var b=document.querySelector('#nav button[data-v="'+v.replace(/[^a-z]/g,'')+'"]');
+ if(b&&!b.classList.contains('active'))b.click();}
+window.addEventListener('hashchange',function(){if(typeof state!=="undefined"&&state)abrirAbaDoEndereco(true);});
+
 function openForm(id){currentId=id||null;
  fillSelect(f_canal,CANAIS);fillSelect(f_tipo,TIPOS);fillSelect(f_evento,EVENTOS);fillSelect(f_produto,PRODUTOS);fillSelect(f_estagio,STAGES);fillSelect(f_statuspag,PAGSTATUS);fillSelect(f_formapag,PAGFORMA);fillSelect(f_entrega,ENTREGA);
  const o=id?state.orders.find(x=>x.id===id):null,g=(k,d='')=>o?o[k]:d;
@@ -1357,7 +1681,7 @@ function openForm(id){currentId=id||null;
  f_produto.value=g('produto',PRODUTOS[0]);f_qtd.value=g('qtd',0);f_descr.value=g('descr');f_valor.value=o?o.valorUnit:state.precos[PRODUTOS[0]];f_estagio.value=g('estagio','Lead novo');f_statuspag.value=g('statusPag','');f_formapag.value=g('formaPag','');f_entrega.value=g('entrega','');f_custoent.value=g('custoEntrega',0);f_followup.value=g('followup');f_obs.value=g('obs');
  const _pl=document.getElementById('f_planilha');if(_pl)_pl.innerHTML=o?plInfo(o):'';
  calcModal();document.getElementById('overlay').classList.add('open');}
-function closeForm(){document.getElementById('overlay').classList.remove('open');currentId=null;}
+function closeForm(){document.getElementById('overlay').classList.remove('open');currentId=null;if(pdAtiva())renderProducao();}
 function onProdChange(){f_valor.value=state.precos[f_produto.value]??0;calcModal();}
 function calcModal(){const c=calc({qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,produto:f_produto.value,custoEntrega:+f_custoent.value||0});c_vt.textContent=BRL(c.vt);c_sinal.textContent=BRL(c.sinal);c_cu.textContent=BRL(c.cu);c_ct.textContent=BRL(c.ct);c_de.textContent=BRL(c.de);c_mg.textContent=BRL(c.mg);c_mp.textContent=PCT(c.mp);}
 function saveForm(){if(!f_cliente.value.trim()){alert('Informe o nome do cliente.');return;}
@@ -1413,7 +1737,7 @@ function exportarSelecionados(){if(!selSet.size){alert('Selecione pelo menos um 
 function excluirSelecionados(){if(!selSet.size){alert('Selecione pelo menos um.');return;}if(!confirm('Excluir '+selSet.size+' atendimento(s)? Nao da pra desfazer.'))return;Array.from(selSet).forEach(function(id){state.orders=state.orders.filter(function(x){return x.id!==id;});syncDelete(id);if(typeof logAct==='function')logAct('excluiu o atendimento #'+id);});selSet.clear();save();renderAtend();if(typeof renderPainel==='function')renderPainel();}
 function cadDelete(id){var o=(state.cadastros||[]).find(function(x){return x.id===id;});if(!confirm('Apagar este cadastro'+(o&&o.nome?' de '+o.nome:'')+'? Nao da pra desfazer.'))return;if(SHEET_URL)fetch(sbUrl("cadastros?id=eq."+id),{method:'DELETE',headers:sbHeaders()}).catch(function(e){});state.cadastros=(state.cadastros||[]).filter(function(x){return x.id!==id;});renderCadastros();}
 
-function renderAll(){renderPainel();renderAtend();renderClientes();renderProdutos();}
+function renderAll(){renderPainel();renderAtend();renderClientes();renderProdutos();renderProducao();}
 async function init(){
  try{
   if(SHEET_URL){const data=await apiGet();online=true;
@@ -1426,9 +1750,9 @@ async function init(){
  state.insumos=Object.assign({},defaultData().insumos,state.insumos);delete state.insumos.madeirinha;
  if(state.caixaBase==null)state.caixaBase=0;if(state.resetMarco==null)state.resetMarco="";
  if(!state.caixa)state.caixa=[];
- if(SHEET_URL){const cx=await cxFetch();if(cx!==null)state.caixa=cx;await cxDetectarExt();plSyncMostrar();}
+ if(SHEET_URL){const cx=await cxFetch();if(cx!==null)state.caixa=cx;await cxDetectarExt();await prodDetectarExt();plSyncMostrar();}
  state.seqC=state.caixa.reduce((m,o)=>Math.max(m,Number(o.id)||0),0)+1;
- save();initFilters();renderAll();setStatus();
+ save();initFilters();renderAll();setStatus();abrirAbaDoEndereco();
 }
 function reloadData(){init();}
 function renderCadastros(){var el=document.getElementById('cadList');if(!el)return;if(!SHEET_URL){el.innerHTML='<div class="mini" style="padding:16px">Entre na nuvem (faça login) para ver os cadastros.</div>';return;}el.innerHTML='<div class="mini" style="padding:16px;color:#888">Carregando...</div>';fetch(sbUrl("cadastros?select=*&order=id.desc"),{headers:sbHeaders()}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(rows){state.cadastros=rows;var nv=rows.filter(function(x){return (x.status||'novo')==='novo';}).length;var c=document.getElementById('cadCount');if(c)c.textContent=nv;if(!rows.length){el.innerHTML='<div class="mini" style="padding:22px;text-align:center;color:#999">Nenhum cadastro ainda. Quando um cliente preencher o formulário, aparece aqui.</div>';return;}el.innerHTML=rows.map(function(o){var imp=(o.status==='importado');return '<div style="border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;background:'+(imp?'var(--cream)':'var(--card)')+'">'+'<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">'+'<div><b style="color:var(--green-dk);font-size:15px">'+esc(o.nome||'(sem nome)')+'</b> <span class="mini" style="color:var(--muted)">'+esc(o.whats||'')+'</span></div>'+(imp?'<span class="mini" style="color:var(--green2);font-weight:800">✓ virou atendimento</span>':'<button class="btn" onclick="cadConverter('+o.id+')">➕ Virar atendimento</button>')+' <button class="btn ghost" style="color:var(--danger)" onclick="cadDelete('+o.id+')" title="Apagar cadastro">🗑</button>'+'</div><div class="mini" style="color:var(--ink);margin-top:8px;line-height:1.6">'+'📅 Evento: '+esc(o.data_evento||'-')+' · 📦 '+esc(o.produto||'-')+' · Qtd: '+esc(o.qtd||'-')+'<br>'+'✏️ '+esc(o.personalizacao||'-')+'<br>'+'🎨 '+esc(o.tema||'-')+'<br>'+'📍 '+esc(o.endereco||'-')+' · CEP '+esc(o.cep||'-')+(o.cpf?' · CPF '+esc(o.cpf):'')+'</div></div>';}).join('');}).catch(function(e){el.innerHTML='<div class="mini" style="padding:16px;color:var(--danger)">Não consegui carregar. '+esc(String(e.message||e))+'</div>';});}
