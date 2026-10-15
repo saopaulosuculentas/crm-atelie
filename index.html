@@ -886,6 +886,71 @@ button.ncard:active{transform:scale(.98);background:var(--sup-2)}
  .mcol{flex:1 1 0;min-width:30px}
  .panels{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
 }
+
+
+/* ===================== CAIXA e TABELA EDITÁVEL =====================
+   Tabela editável (Caixa, Clientes, Produtos, Mês a mês): superfície com borda que rola de lado DENTRO da
+   caixa; cabeçalho --sup-2; linhas de 48 px; células são campos sem borda de 16 px e 44 px de altura. */
+.cx-l2 .btn{flex:1 1 0;min-width:0;padding:0 10px}
+.cx-l2 .cx-mes{flex:none}
+.cx-l2 .pilula>span{height:44px;padding:0 14px;font-weight:600}
+.tab-caixa{background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{border-collapse:separate;border-spacing:0;font-size:16px;min-width:100%;white-space:nowrap}
+.tab th{position:sticky;top:0;z-index:1;background:var(--sup-2);color:var(--tx-2);font-size:13px;line-height:16px;font-weight:600;text-align:left;padding:0 8px;height:36px;border-bottom:1px solid var(--linha);white-space:nowrap}
+.tab th.num{text-align:right}
+.tab td{height:48px;padding:0 4px;border-bottom:1px solid var(--linha);white-space:nowrap;color:var(--tx);vertical-align:middle}
+.tab tbody tr:last-child td{border-bottom:0}
+.tab td.num,.tab td.cx-txt,.tab-ler td{padding:0 10px}
+.tab td.num{text-align:right}
+.tab input,.tab select{min-height:44px;border:1px solid transparent;border-radius:8px;background:transparent;font-size:16px;line-height:20px;padding:0 6px;color:inherit;
+ text-overflow:ellipsis;-webkit-appearance:none;appearance:none;outline:0;font-family:inherit}
+.tab select{cursor:pointer}
+.tab input:focus,.tab select:focus{border-color:var(--tx);background:var(--sup);box-shadow:var(--foco)}
+.tab input::placeholder{color:var(--tx-3);opacity:1}
+.tab .sobe{color:var(--sucesso);font-weight:600}
+.tab .desce{color:var(--perigo);font-weight:600}
+/* data como dd/mm com o seletor de data nativo transparente por cima */
+.cx-data{position:relative;display:inline-flex;align-items:center;min-height:44px;min-width:52px;padding:0 6px;border-radius:8px;cursor:pointer}
+.cx-data input{position:absolute;inset:0;width:100%;height:100%;min-height:0;opacity:0;cursor:pointer;padding:0;border:0}
+.cx-data:focus-within{box-shadow:var(--foco)}
+.cx-desc{width:150px}
+.cx-d{display:inline-block;max-width:140px;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+.tab td.v{text-align:right;font-weight:600;padding-left:8px}
+.cx-sinal{font-weight:600}
+.cx-val{width:92px;text-align:right;font-weight:600}
+.tab .ent,.tab .ent .cx-val,.tab .cx-tipo.ent{color:var(--sucesso)}
+.cx-cat{width:156px}
+.cx-tipo{width:96px;font-weight:600}
+.cx-conta{width:168px}
+.cx-ped{display:inline-flex;align-items:center;min-height:44px;min-width:44px;padding:0 6px;font-weight:600;text-decoration:none;color:var(--info)}
+.cx-nada{color:var(--tx-2);padding:0 6px}
+.cx-quem{color:var(--tx-2)}
+.cx-x{color:var(--tx-2)}
+.tab td.cx-vazio{text-align:center;color:var(--tx-2);padding:22px 12px;white-space:normal;height:auto}
+.tag-auto{display:inline-flex;align-items:center;height:22px;padding:0 7px;border-radius:6px;background:var(--sup-2);border:1px solid var(--linha);font-size:12px;font-weight:600;color:var(--tx-2);margin-left:4px;vertical-align:1px}
+.cx-dica{margin:8px 2px 0}
+.cx-sub{font-size:15px;line-height:20px;font-weight:600;margin:10px 2px 8px}
+.cx-base td{background:var(--sup-2)}
+.cx-atual td{font-weight:700;background:var(--sup-2)}
+.cx-ajustes{margin:8px 0 0}
+.cx-ajustes .prop input[type=date]{color-scheme:inherit}
+/* seção recolhida (details/summary): a linha inteira de 44 px abre e fecha */
+.dobra{margin-top:20px}
+.dobra>summary{list-style:none;display:flex;align-items:center;gap:8px;min-height:44px;padding:0 2px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dobra>summary::-webkit-details-marker{display:none}
+.dobra>summary .seta{color:var(--tx-2);transform:rotate(-90deg);transition:transform .15s}
+.dobra[open]>summary .seta{transform:none}
+.dobra>summary .t-secao{flex:1;min-width:0}
+.dobra-n{font-size:14px;line-height:18px;color:var(--tx-2);font-weight:500;white-space:nowrap}
+.dobra>summary:focus-visible{outline:2px solid var(--tx);outline-offset:2px;border-radius:8px}
+@media (prefers-reduced-motion:reduce){.dobra>summary .seta{transition:none}}
+@media (min-width:821px){
+ .cx-l2 .btn{flex:none;padding:0 16px}
+ .cx-cartoes{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .cx-desc{width:240px}
+ .cx-d{max-width:230px}
+ .tab tbody tr:hover td{background:var(--sup-2)}
+}
 </style>
 <script>
 /* Escuro e o PADRAO (pedido do Luan em 14/08/2026). Aplicado ANTES da pagina
@@ -1114,19 +1179,24 @@ button.ncard:active{transform:scale(.98);background:var(--sup-2)}
    </section>
   </section>
 
+  <!-- Caixa (visual v2): + Saída, + Entrada e o mês no topo; 4 cartões; tabela editável que rola de lado dentro
+       da caixa (Data, Descrição e Valor cabem a 375 px); Mais números, Mês a mês e Ajustes no fim. -->
   <section class="view" id="caixa">
-   <div class="folha">
-   <div class="toolbar">
-    <button class="btn" onclick="cxAdd('Saída')">＋ Saída</button>
-    <button class="btn ghost" onclick="cxAdd('Entrada')">＋ Entrada</button>
-    <select id="cxMes" onchange="renderCaixa()" aria-label="Mês"></select>
-    <span class="mini">Edite direto na tabela, como no Excel: salva sozinho. Recebimento de pedido e venda do site entram sozinhos.</span>
+   <div class="topo-l2 cx-l2">
+    <button type="button" class="btn btn-sec" onclick="cxAdd('Saída')"><svg class="i p" aria-hidden="true"><use href="#i-mais"/></svg>Saída</button>
+    <button type="button" class="btn btn-sec" onclick="cxAdd('Entrada')"><svg class="i p" aria-hidden="true"><use href="#i-mais"/></svg>Entrada</button>
+    <label class="pilula on cx-mes"><span><span id="cxMesTxt">Mês</span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg></span><select id="cxMes" onchange="renderCaixa()" aria-label="Mês"></select></label>
    </div>
-   <div id="cxAviso"></div>
-   <div class="kpis" id="cxKpis" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))"></div>
-   <div class="panel wide" id="cxSinaisWrap" style="margin-bottom:16px"><h3>💵 Sinais de 30% · dos pedidos em aberto</h3><div id="cxSinais"></div></div>
-   <div class="tablewrap sheet" id="cxSheet" style="max-height:46vh;margin-bottom:18px"></div>
-   <div class="panel wide"><h3>📅 Mês a mês: evolução do caixa</h3><div class="tablewrap" style="box-shadow:none;border:0;max-height:380px" id="cxMeses"></div></div>
+   <div class="folha">
+    <div id="cxAviso"></div>
+    <div class="ini-grade cx-cartoes" id="cxKpis"></div>
+    <h2 class="t-secao ini-sec" id="cxTit">Lançamentos</h2>
+    <div class="tab-caixa" id="cxSheet"></div>
+    <p class="t-sub cx-dica">Edite direto na tabela: salva sozinho. Recebimento de pedido e venda do site entram sozinhos.</p>
+    <details class="dobra" id="cxSinaisWrap"><summary><svg class="i p seta" aria-hidden="true"><use href="#i-baixo"/></svg><span class="t-secao">Mais números</span><span class="dobra-n" id="cxSinaisN"></span></summary><div id="cxSinais"></div></details>
+    <h2 class="t-secao ini-sec">Mês a mês</h2>
+    <div class="tab-caixa" id="cxMeses"></div>
+    <details class="dobra" id="cxAjustesWrap"><summary><svg class="i p seta" aria-hidden="true"><use href="#i-baixo"/></svg><span class="t-secao">Ajustes</span></summary><div id="cxAjustes"></div></details>
    </div>
   </section>
 
@@ -1448,7 +1518,7 @@ let CX_EXT=null,_finAvisou=false;
 function pickCx(o){const r={};CXCOLS.forEach(k=>{r[k]=(o&&o[k]!==undefined&&o[k]!==null)?o[k]:"";});if(CX_EXT===true){r.conta=(o&&o.conta)||null;r.pedido_id=(o&&o.pedido_id)?Number(o.pedido_id):null;r.origem=(o&&o.origem)||"manual";}return r;}
 async function cxFetch(){try{const r=await fetch(sbUrl("caixa?select=*&order=data.asc"),{headers:sbHeaders()});if(!r.ok)return null;const j=await r.json();j.forEach(o=>{o.id=Number(o.id);o.valor=Number(o.valor)||0;CXCOLS.forEach(k=>{if(o[k]===null||o[k]===undefined)o[k]="";});});return j;}catch(e){return null;}}
 function syncCx(o){if(!SHEET_URL)return;setSave("saving");fetch(sbUrl("caixa?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([pickCx(o)])}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);setSave("ok");}).catch(function(e){setSave("err");lastSaveErr=String((e&&e.message)||e);console.warn("cx",e);});}
-function syncCxDel(id){if(!SHEET_URL)return;setSave("saving");fetch(sbUrl("caixa?id=eq."+encodeURIComponent(id)),{method:"DELETE",headers:sbHeaders()}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);setSave("ok");}).catch(function(e){setSave("err");lastSaveErr=String((e&&e.message)||e);console.warn("cx",e);});}
+function syncCxDel(id){if(!SHEET_URL)return Promise.resolve();setSave("saving");return fetch(sbUrl("caixa?id=eq."+encodeURIComponent(id)),{method:"DELETE",headers:sbHeaders()}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);setSave("ok");}).catch(function(e){setSave("err");lastSaveErr=String((e&&e.message)||e);console.warn("cx",e);});}
 function userName(){try{return localStorage.getItem("crm_user_name")||"Equipe";}catch(e){return "Equipe";}}
 function setUserName(n){try{if(n)localStorage.setItem("crm_user_name",n);}catch(e){}}
 function logAct(acao){if(!SHEET_URL)return;const row={id:Date.now()*1000+Math.floor(Math.random()*999),ts:new Date().toISOString(),usuario:userName(),acao:String(acao).slice(0,300)};
@@ -1468,7 +1538,7 @@ async function renderAtividades(){const el=document.getElementById("actFeed");if
  el.innerHTML=acts.slice(0,n).map(a=>'<div class="ativ">'+avatar(a.usuario||"?")+'<div class="t"><b>'+esc(a.usuario)+'</b> '+esc(a.acao)+'<span class="q">'+esc(fmtTs(a.ts))+'</span></div></div>').join('')
   +(acts.length>5?'<button type="button" class="mais" onclick="actTudo=!actTudo;renderAtividades()">'+(actTudo?'Ver menos':'Ver tudo ('+acts.length+')')+'</button>':'');}
 function syncOrder(o){if(SHEET_URL)apiPost("upsert",o);}
-function syncDelete(id){if(SHEET_URL)apiPost("delete",{id});}
+function syncDelete(id){if(SHEET_URL)return apiPost("delete",{id});return Promise.resolve(true);}
 function syncConfig(){if(SHEET_URL)apiPost("config",{insumos:state.insumos,precos:state.precos,clientsMeta:state.clientsMeta,fixos:state.fixos,caixaBase:state.caixaBase||0,resetMarco:state.resetMarco||""});}
 function setStatus(){const el=document.getElementById("connStatus");if(el)el.textContent=SHEET_URL?(online?"☁ Conectado à nuvem":"⚠ Sem conexão (usando local)"):"💾 Local (1 navegador)";}
 
@@ -1883,7 +1953,7 @@ function updCell(id,key,val){const o=state.orders.find(x=>x.id===id);if(!o)retur
 function quickAdd(){const d={id:state.seq++,data:todayISO(),cliente:'',whats:'',cidade:'',canal:'WhatsApp direto',tipoCli:'Evento',tipoEv:'',dataEv:'',produto:PRODUTOS[1]||PRODUTOS[0],descr:'',qtd:30,valorUnit:state.precos[PRODUTOS[1]||PRODUTOS[0]]||0,estagio:'Lead novo',statusPag:'',formaPag:'',entrega:'',custoEntrega:0,followup:'',obs:''};
  state.orders.unshift(d);save();syncOrder(d);renderSheet();
  setTimeout(function(){const tr=document.getElementById('shr'+d.id);if(tr){const inp=tr.querySelectorAll('input')[1];if(inp)inp.focus();}},50);}
-function delRow(id){if(!confirm('Excluir o atendimento #'+id+'?'))return;logAct('excluiu o atendimento #'+id);state.orders=state.orders.filter(x=>x.id!==id);save();syncDelete(id);renderSheet();renderPainel&&renderPainel();}
+function delRow(id){if(!confirm('Excluir o atendimento #'+id+'?'))return;const i=state.orders.findIndex(x=>x.id===id),o=state.orders[i];logAct('excluiu o atendimento #'+id);state.orders=state.orders.filter(x=>x.id!==id);save();const pr=syncDelete(id);renderSheet();renderPainel&&renderPainel();pedDesfazer([[i,o]],[pr],'Atendimento excluído');}
 // Financeiro no CRM (27/09/2026): o Caixa e o livro-caixa da empresa. Custo tem as categorias do Enzo; recebimento
 // de pedido digitado entra sozinho (sinal e integral) com o numero do pedido; venda do site vem direto do pedido,
 // sem lancamento. Ate agosto/2026 vale o historico importado da planilha (por isso o site so conta de setembro em diante).
@@ -1984,57 +2054,92 @@ function renderFinBlocos(r,bk){const el=document.getElementById("finBlocos");if(
  el.innerHTML=h;const ec=document.getElementById("finCustos");if(ec)ec.innerHTML=ch;else el.insertAdjacentHTML("beforeend",ch);}
 const SAZONAL=[["02-16","Carnaval","Volta às aulas: lembrancinha escolar",false],["03-08","Dia da Mulher","Presente + oferta para empresas (RH)",false],["03-15","Dia do Consumidor","Grande data de e-commerce",false],["04-05","Páscoa","Pré-venda do Dia das Mães começa AGORA",false],["05-10","DIA DAS MÃES","PICO Nº1: investimento máximo, agenda trava",true],["06-12","Dia dos Namorados","Presente para casal",false],["07-26","Dia dos Avós","Presente afetivo + formaturas",false],["08-09","DIA DOS PAIS","Pico médio: personalizado masculino",true],["09-01","Setembro Amarelo","Empresas e clínicas compram lembrancinhas temáticas; prospectar B2B",false],["09-15","Dia do Cliente","Fidelização + primavera (alta de plantas)",false],["09-22","Primavera","Melhor época orgânica de plantas",false],["10-01","OUTUBRO ROSA","Kits temáticos p/ empresas, clínicas e salões: B2B de margem alta o mês inteiro",true],["10-12","Dia das Crianças","Lembrancinha escolar em lote",false],["10-15","Dia dos Professores","Escolas compram em LOTE: prospectar antes",false],["11-27","BLACK FRIDAY","PICO Nº2: kits + captação de lista",true],["12-25","NATAL","PICO Nº3: corporativo de fim de ano (margem alta)",true]];
 function mesLabel(m){const MN=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];const p=m.split("-");return MN[+p[1]-1]+"/"+p[0];}
-function cxAdd(tipo){tipo=tipo==="Entrada"?"Entrada":"Saída";const d={id:finNovoId(),data:todayISO(),tipo:tipo,categoria:tipo==="Entrada"?"Outra entrada":"Materiais",descr:"",valor:0,quem:userName(),conta:"",pedido_id:null,origem:"manual"};state.caixa.push(d);logAct("criou um lançamento no Caixa");save();syncCx(d);const sel=document.getElementById("cxMes");if(sel&&sel.value!=="tudo")sel.value=d.data.slice(0,7);renderCaixa();setTimeout(()=>{const tr=document.getElementById("cxr"+d.id);if(tr){const i=tr.querySelector("input[type=text]");if(i)i.focus();}},50);}
-function cxUpd(id,key,val){const o=state.caixa.find(x=>x.id===id);if(!o)return;if(key==="valor")val=parseFloat(String(val).replace(",","."))||0;o[key]=val;if(key==="tipo"){const l=val==="Entrada"?CX_ENTRADAS:CX_SAIDAS;if(!l.includes(o.categoria))o.categoria=val==="Entrada"?"Outra entrada":"Materiais";}logAct("editou um lançamento do Caixa ("+(o.descr||o.categoria)+")");save();syncCx(o);if(key==="data"||key==="tipo"||key==="valor")renderCaixa();}
-function cxDel(id){if(!confirm("Excluir este lançamento?"))return;logAct("excluiu um lançamento do Caixa");state.caixa=state.caixa.filter(x=>x.id!==id);save();syncCxDel(id);renderCaixa();}
-function cxSetBase(v){state.caixaBase=parseFloat(String(v).replace(",","."))||0;logAct("alterou o saldo inicial do Caixa para "+BRL(state.caixaBase));save();syncConfig();renderCaixa();}
+function cxAdd(tipo){tipo=tipo==="Entrada"?"Entrada":"Saída";const d={id:finNovoId(),data:todayISO(),tipo:tipo,categoria:tipo==="Entrada"?"Outra entrada":"Materiais",descr:"",valor:0,quem:userName(),conta:"",pedido_id:null,origem:"manual"};state.caixa.push(d);logAct("criou um lançamento no Caixa");save();syncCx(d);const sel=document.getElementById("cxMes");if(sel&&sel.value!=="tudo")sel.value=d.data.slice(0,7);renderCaixa();setTimeout(()=>{const tr=document.getElementById("cxr"+d.id);if(tr){const i=tr.querySelector("input.cx-desc");if(i)i.focus();}},50);}
+/* valor aceita "1.234,56", "1234,56" e "1234.56" (o campo agora é texto com teclado numérico) */
+function cxNum(v){let s=String(v==null?"":v).trim().replace(/[^\d,.\-]/g,"");if(s.indexOf(",")>=0)s=s.replace(/\./g,"").replace(",",".");return parseFloat(s)||0;}
+function cxUpd(id,key,val){const o=state.caixa.find(x=>x.id===id);if(!o)return;if(key==="valor")val=cxNum(val);o[key]=val;if(key==="tipo"){const l=val==="Entrada"?CX_ENTRADAS:CX_SAIDAS;if(!l.includes(o.categoria))o.categoria=val==="Entrada"?"Outra entrada":"Materiais";}logAct("editou um lançamento do Caixa ("+(o.descr||o.categoria)+")");save();syncCx(o);if(key==="data"||key==="tipo"||key==="valor")renderCaixa();}
+/* apagar pergunta como sempre e, depois, oferece Desfazer por 6 s (grava o lançamento de novo, mesmo id) */
+function cxDel(id){if(!confirm("Excluir este lançamento?"))return;const i=state.caixa.findIndex(x=>x.id===id);if(i<0)return;const o=state.caixa[i];
+ logAct("excluiu um lançamento do Caixa");state.caixa.splice(i,1);save();const pr=syncCxDel(id);renderCaixa();
+ mbAviso("Lançamento excluído","Desfazer",function(){if(state.caixa.some(x=>x.id===o.id))return;state.caixa.splice(Math.min(i,state.caixa.length),0,o);save();
+  Promise.resolve(pr).then(function(){syncCx(o);});logAct("desfez a exclusão de um lançamento do Caixa");renderCaixa();});}
+function cxSetBase(v){state.caixaBase=cxNum(v);logAct("alterou o saldo inicial do Caixa para "+BRL(state.caixaBase));save();syncConfig();renderCaixa();}
 function setMarco(v){state.resetMarco=v||"";logAct("definiu o marco de reset: "+(v||"(vazio)"));save();syncConfig();renderCaixa();}
-function cxSums(rows){let e=0,sa=0;rows.forEach(o=>{const v=Number(o.valor)||0;o.tipo==="Entrada"?e+=v:sa+=v;});return{e,s:sa,r:e-sa};}
+function cxSums(rows){let e=0,sa=0,ne=0,ns=0;rows.forEach(o=>{const v=Number(o.valor)||0;if(o.tipo==="Entrada"){e+=v;ne++;}else{sa+=v;ns++;}});return{e,s:sa,r:e-sa,ne,ns};}
+function cxMesCurto(m){return MES_CURTO[+m.slice(5,7)-1]+"/"+m.slice(2,4);}
+function cxValTxt(v){return (Number(v)||0).toFixed(2).replace(".",",");}
 function renderCaixa(){
  const cx=finLedger();const curM=todayISO().slice(0,7);
  const meses=[...new Set(cx.map(o=>(o.data||"").slice(0,7)).filter(Boolean))];if(!meses.includes(curM))meses.push(curM);meses.sort().reverse();
  const sel=document.getElementById("cxMes");const prev=sel.value;
- sel.innerHTML='<option value="tudo">📊 Todos os meses</option>'+meses.map(m=>'<option value="'+m+'">'+mesLabel(m)+'</option>').join('');
+ sel.innerHTML='<option value="tudo">Todos os meses</option>'+meses.map(m=>'<option value="'+m+'">'+mesLabel(m)+'</option>').join('');
  sel.value=(prev&&[...sel.options].some(o=>o.value===prev))?prev:curM;
- const mSel=sel.value;
- const rows=cx.filter(o=>mSel==="tudo"||(o.data||"").slice(0,7)===mSel).sort((a,b)=>(b.data||"").localeCompare(a.data||"")||b.id-a.id);
+ const mSel=sel.value,tudo=mSel==="tudo";
+ const mt=document.getElementById("cxMesTxt");if(mt)mt.textContent=tudo?"Todos os meses":cxMesCurto(mSel);
+ const tit=document.getElementById("cxTit");if(tit)tit.textContent=tudo?"Todos os lançamentos":"Lançamentos de "+mesLabel(mSel).split("/")[0];
+ const rows=cx.filter(o=>tudo||(o.data||"").slice(0,7)===mSel).sort((a,b)=>(b.data||"").localeCompare(a.data||"")||b.id-a.id);
  const K=cxSums(rows),T=cxSums(cx);
  const saldo=(state.caixaBase||0)+T.r;
  let dE="",dS="",dR="";
- if(mSel!=="tudo"){const pm=(()=>{const y=+mSel.slice(0,4),m=+mSel.slice(5,7);const d=new Date(Date.UTC(y,m-2,1));return d.toISOString().slice(0,7);})();
-  const P=cxSums(cx.filter(o=>(o.data||"").slice(0,7)===pm));
-  dE=delta(K.e,P.e);dS=delta(K.s,P.s);dR=delta(K.r,P.r);}
+ if(!tudo){const pm=(()=>{const y=+mSel.slice(0,4),m=+mSel.slice(5,7);const d=new Date(Date.UTC(y,m-2,1));return d.toISOString().slice(0,7);})();
+  const P=cxSums(cx.filter(o=>(o.data||"").slice(0,7)===pm)),vs=' <span class="vs">vs '+MES_CURTO[+pm.slice(5,7)-1]+'</span></div>';
+  const dv=(c,p,neu)=>{const d=delta(c,p,neu);return d?d.replace('</div>',vs):"";};
+  dE=dv(K.e,P.e);dS=dv(K.s,P.s,true);dR=dv(K.r,P.r);}
+ const qt=(n)=>'<span class="v">'+n+(n===1?' lançamento':' lançamentos')+'</span>';
+ /* 4 cartões (JEV): entradas, saídas, resultado e o saldo atual do caixa; o resto em "Mais números" */
  document.getElementById("cxKpis").innerHTML=
-  '<div class="kpi g"><div class="ic">🏁</div><div class="lbl">Saldo inicial (base do caixa)</div><div class="val" style="display:flex;align-items:center;gap:4px">R$ <input type="number" step="0.01" value="'+(state.caixaBase||0)+'" onchange="cxSetBase(this.value)" style="width:120px;border:1px dashed var(--line);border-radius:8px;padding:4px 8px;font-size:18px;font-weight:800;color:var(--green-dk);background:var(--card)"></div></div>'
-  +[["Entradas"+(mSel==="tudo"?"":" · "+mesLabel(mSel)),BRL(K.e),"","📥",dE],["Saídas"+(mSel==="tudo"?"":" · "+mesLabel(mSel)),BRL(K.s),"t","📤",dS],["Resultado"+(mSel==="tudo"?"":" do mês"),BRL(K.r),K.r>=0?"":"t","🧮",dR],["SALDO ATUAL (base + tudo)",BRL(saldo),saldo>=0?"g":"t","🏦",""]].map(x=>'<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div>'+(x[4]||"")+'</div>').join("");
- (function(){var sIn=0,s70=0,realizado=0,nAb=0,rMes=0,r3m=0,rMarco=0;var cm=todayISO().slice(0,7);var _d3=new Date();_d3.setUTCMonth(_d3.getUTCMonth()-2);var lim3=_d3.toISOString().slice(0,7);var marco=(state.resetMarco||"");(state.orders||[]).forEach(function(o){var c=calc(o);if(o.statusPag==="Sinal pago"){sIn+=c.sinal;s70+=c.saldo;nAb++;}else if(o.statusPag==="Pago"){realizado+=c.vt;var mk=(o.data||"").slice(0,7);if(mk===cm)rMes+=c.vt;if(mk>=lim3)r3m+=c.vt;if(marco&&(o.data||"")>=marco)rMarco+=c.vt;}});var totAb=sIn+s70;var elS=document.getElementById("cxSinais");if(elS){elS.innerHTML='<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:0 0 10px">'+'<div class="kpi g"><div class="ic">💵</div><div class="lbl">Sinais 30% já no caixa (pedidos em aberto)</div><div class="val">'+BRL(sIn)+'</div></div>'+'<div class="kpi t"><div class="ic">📥</div><div class="lbl">Falta entrar (70% desses pedidos)</div><div class="val">'+BRL(s70)+'</div></div>'+'<div class="kpi"><div class="ic">🧾</div><div class="lbl">Valor total desses pedidos (100%)</div><div class="val">'+BRL(totAb)+'</div></div>'+'<div class="kpi"><div class="ic">✅</div><div class="lbl">Já realizado · TOTAL (histórico todo)</div><div class="val">'+BRL(realizado)+'</div></div>'+'</div>'+'<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(165px,1fr));margin:0 0 8px">'+'<div class="kpi"><div class="ic">📅</div><div class="lbl">Realizado · este mês</div><div class="val">'+BRL(rMes)+'</div></div>'+'<div class="kpi"><div class="ic">📆</div><div class="lbl">Realizado · últimos 3 meses</div><div class="val">'+BRL(r3m)+'</div></div>'+'<div class="kpi '+(marco?'g':'')+'"><div class="ic">📌</div><div class="lbl">Realizado · desde o reset'+(marco?' ('+dBR(marco)+')':'')+'</div><div class="val">'+(marco?BRL(rMarco):'·')+'</div></div>'+'</div>'+'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px"><span class="mini" style="color:var(--muted)">📌 Marco do reset (início da fase atual):</span><input type="date" value="'+esc(marco)+'" onchange="setMarco(this.value)" aria-label="Marco do reset" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--sup);color:var(--tx)"><span class="mini" style="color:var(--muted)">separa o histórico antigo do atual</span></div>'+'<p class="mini" style="color:var(--muted);margin:0">São '+nAb+' pedido(s) em aberto. O sinal de 30% ('+BRL(sIn)+') já está no caixa, mas é de pedido que ainda não fechou. Quando entra o 70% e você finaliza, o pedido vira 100% realizado e sai desta lista. O TOTAL inclui todo o histórico (inclusive a fase antiga em que as finanças estavam misturadas); use o mês, os 3 meses ou o marco do reset pra ver só a fase atual.</p>';}})();
+  ncardH(tudo?"Entradas":"Entradas do mês",BRL(K.e),(dE||'')+qt(K.ne))
+  +ncardH(tudo?"Saídas":"Saídas do mês",BRL(K.s),(dS||'')+qt(K.ns))
+  +ncardH(tudo?"Resultado":"Resultado do mês",BRL(K.r),dR||"entradas menos saídas",{ncls:K.r<0?"perigo":""})
+  +ncardH("Saldo atual",BRL(saldo),"saldo inicial + tudo",{ncls:saldo<0?"perigo":""});
+ (function(){var sIn=0,s70=0,realizado=0,nAb=0,rMes=0,r3m=0,rMarco=0;var cm=todayISO().slice(0,7);var _d3=new Date();_d3.setUTCMonth(_d3.getUTCMonth()-2);var lim3=_d3.toISOString().slice(0,7);var marco=(state.resetMarco||"");
+  (state.orders||[]).forEach(function(o){var c=calc(o);if(o.statusPag==="Sinal pago"){sIn+=c.sinal;s70+=c.saldo;nAb++;}else if(o.statusPag==="Pago"){realizado+=c.vt;var mk=(o.data||"").slice(0,7);if(mk===cm)rMes+=c.vt;if(mk>=lim3)r3m+=c.vt;if(marco&&(o.data||"")>=marco)rMarco+=c.vt;}});
+  var totAb=sIn+s70,n=document.getElementById("cxSinaisN");if(n)n.textContent=BRL(sIn)+" em sinais";
+  var elS=document.getElementById("cxSinais");if(elS){elS.innerHTML='<h3 class="cx-sub">Sinais de 30% dos pedidos em aberto</h3><div class="ini-grade">'
+   +ncardH("Sinais em aberto",BRL(sIn),nAb+(nAb===1?" pedido":" pedidos")+" com sinal pago")
+   +ncardH("Falta entrar",BRL(s70),"70% desses pedidos")
+   +ncardH("Valor desses pedidos",BRL(totAb),"100% dos pedidos em aberto")
+   +ncardH("Realizado no total",BRL(realizado),"pedidos pagos, histórico todo")
+   +'</div><h3 class="cx-sub">Realizado (pedidos pagos)</h3><div class="ini-grade">'
+   +ncardH("Este mês",BRL(rMes),"pedidos pagos")
+   +ncardH("Últimos 3 meses",BRL(r3m),"pedidos pagos")
+   +ncardH("Desde o reset",marco?BRL(rMarco):"·",marco?"desde "+dBR(marco):"defina o marco em Ajustes")
+   +'</div><p class="t-sub cx-dica">O sinal de 30% já está no caixa, mas é de pedido que ainda não fechou. Quando entra o 70%, o pedido vira realizado e sai daqui. O total inclui o histórico antigo; use o mês, os 3 meses ou o reset para ver só a fase atual.</p>';}
+  var aj=document.getElementById("cxAjustes");if(aj)aj.innerHTML='<div class="props cx-ajustes">'
+   +'<label class="prop"><span class="rot">'+ic('carteira','i p')+'Saldo inicial</span><input type="text" inputmode="decimal" value="'+cxValTxt(state.caixaBase||0)+'" onchange="cxSetBase(this.value)" aria-label="Saldo inicial do caixa (R$)"></label>'
+   +'<label class="prop"><span class="rot">'+ic('cal','i p')+'Marco do reset</span><input type="date" value="'+esc(marco)+'" onchange="setMarco(this.value)" aria-label="Marco do reset"></label>'
+   +'</div><p class="t-sub cx-dica">O saldo inicial é a base do caixa. O marco do reset separa o histórico antigo (finanças misturadas) da fase atual.</p>';})();
  const opts=(lista,val)=>((lista.includes(val)||!val)?lista:[val].concat(lista)).map(c=>'<option'+(c===val?' selected':'')+'>'+esc(c)+'</option>').join('');
- const pedLink=o=>{if(!o.pedido_id)return'<span style="color:var(--muted)">·</span>';const pid=Number(o.pedido_id),n=pid>=FIN_ID_SITE?'site':'#'+pid;return (state.orders||[]).some(x=>Number(x.id)===pid)?'<a href="#" onclick="openForm('+pid+');return false">'+n+'</a>':n;};
- let h='<table><thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th><th>Valor (R$)</th><th>Conta</th><th>Pedido</th><th>Quem</th><th></th></tr></thead><tbody>';
- if(!rows.length)h+='<tr><td colspan="9" style="padding:22px;text-align:center;color:#999">Nenhum lançamento neste mês. Use "＋ Saída" ou "＋ Entrada".</td></tr>';
- rows.forEach(o=>{
-  if(o.virtual){h+='<tr><td class="ro" style="text-align:left">'+dBR(o.data)+'</td><td class="ro" style="text-align:left;color:#2e7d46;font-weight:700">Entrada</td><td class="ro" style="text-align:left">'+esc(o.categoria)+'</td><td class="ro" style="text-align:left">'+esc(o.descr)+' <span class="mini">(automático)</span></td><td class="ro">'+BRL(o.valor)+'</td><td class="ro" style="text-align:left">'+esc(o.conta)+'</td><td class="ro" style="text-align:left">'+pedLink(o)+'</td><td class="ro" style="text-align:left">site</td><td></td></tr>';return;}
+ const pedLink=o=>{if(!o.pedido_id)return'<span class="cx-nada">·</span>';const pid=Number(o.pedido_id),n=pid>=FIN_ID_SITE?'site':'#'+pid;return (state.orders||[]).some(x=>Number(x.id)===pid)?'<a href="#" class="cx-ped" onclick="openForm('+pid+');return false">'+n+'</a>':'<span class="cx-nada">'+n+'</span>';};
+ const ddmm=d=>d?esc(String(d).slice(8,10)+"/"+String(d).slice(5,7)):"·";
+ /* colunas na ordem que deixa o essencial a 375 px: Data, Descrição, Valor; o resto rola de lado dentro da caixa */
+ let h='<table class="tab"><thead><tr><th>Data</th><th>Descrição</th><th class="num">Valor (R$)</th><th>Categoria</th><th>Tipo</th><th>Conta</th><th>Pedido</th><th>Quem</th><th aria-label="Excluir"></th></tr></thead><tbody>';
+ if(!rows.length)h+='<tr><td colspan="9" class="cx-vazio">Nenhum lançamento neste mês. Use "+ Saída" ou "+ Entrada".</td></tr>';
+ rows.forEach(o=>{const ent=o.tipo==="Entrada",sv=ent?'+':'−';
+  if(o.virtual){h+='<tr class="ro"><td class="cx-txt">'+ddmm(o.data)+'</td><td class="cx-txt"><span class="cx-d" title="'+esc(o.descr)+'">'+esc(o.descr)+'</span></td><td class="v num ent cx-txt">'+sv+' '+cxValTxt(o.valor)+'</td><td class="cx-txt">'+esc(o.categoria)+'</td><td class="cx-txt ent">Entrada</td><td class="cx-txt">'+esc(o.conta)+'</td><td>'+pedLink(o)+'</td><td class="cx-txt cx-quem"><span class="tag-auto">automático</span></td><td></td></tr>';return;}
   h+='<tr id="cxr'+o.id+'">'
-  +'<td>'+'<input type="date" value="'+esc(o.data)+'" onchange="cxUpd('+o.id+',\'data\',this.value)">'+'</td>'
-  +'<td><select onchange="cxUpd('+o.id+',\'tipo\',this.value)" style="color:'+(o.tipo==="Entrada"?"#2e7d46":"#b00020")+';font-weight:700">'+["Saída","Entrada"].map(t=>'<option'+(t===o.tipo?' selected':'')+'>'+t+'</option>').join('')+'</select></td>'
-  +'<td><select onchange="cxUpd('+o.id+',\'categoria\',this.value)">'+opts(o.tipo==="Entrada"?CX_ENTRADAS:CX_SAIDAS,o.categoria)+'</select></td>'
-  +'<td><input type="text" value="'+esc(o.descr)+'" style="min-width:220px" onchange="cxUpd('+o.id+',\'descr\',this.value)"></td>'
-  +'<td><input type="number" step="0.01" value="'+(Number(o.valor)||0)+'" style="min-width:90px" onchange="cxUpd('+o.id+',\'valor\',this.value)"></td>'
-  +'<td>'+(CX_EXT===true?'<select onchange="cxUpd('+o.id+',\'conta\',this.value)"><option value="">escolher…</option>'+opts(CX_CONTAS,o.conta||"")+'</select>':'<span class="mini" style="color:var(--muted)">depois do SQL</span>')+'</td>'
-  +'<td class="ro" style="text-align:left">'+pedLink(o)+'</td>'
-  +'<td style="color:var(--muted);font-size:12px;white-space:nowrap">'+esc(o.quem||"")+'</td>'+'<td><button class="delx" onclick="cxDel('+o.id+')">🗑</button></td></tr>';});
+  +'<td><label class="cx-data"><span>'+ddmm(o.data)+'</span><input type="date" value="'+esc(o.data)+'" onclick="try{this.showPicker()}catch(e){}" onchange="cxUpd('+o.id+',\'data\',this.value)" aria-label="Data"></label></td>'
+  +'<td><input type="text" class="cx-desc" value="'+esc(o.descr)+'" placeholder="Descrição" aria-label="Descrição" onchange="cxUpd('+o.id+',\'descr\',this.value)"></td>'
+  +'<td class="v'+(ent?' ent':'')+'"><input type="text" inputmode="decimal" class="cx-val num" value="'+sv+' '+cxValTxt(o.valor)+'" aria-label="Valor em reais" onchange="cxUpd('+o.id+',\'valor\',this.value)"></td>'
+  +'<td><select class="cx-cat" aria-label="Categoria" onchange="cxUpd('+o.id+',\'categoria\',this.value)">'+opts(ent?CX_ENTRADAS:CX_SAIDAS,o.categoria)+'</select></td>'
+  +'<td><select class="cx-tipo'+(ent?' ent':'')+'" aria-label="Tipo" onchange="cxUpd('+o.id+',\'tipo\',this.value)">'+["Saída","Entrada"].map(t=>'<option'+(t===o.tipo?' selected':'')+'>'+t+'</option>').join('')+'</select></td>'
+  +'<td>'+(CX_EXT===true?'<select class="cx-conta" aria-label="Conta" onchange="cxUpd('+o.id+',\'conta\',this.value)"><option value="">escolher</option>'+opts(CX_CONTAS,o.conta||"")+'</select>':'<span class="cx-nada">depois do SQL</span>')+'</td>'
+  +'<td>'+pedLink(o)+'</td>'
+  +'<td class="cx-txt cx-quem">'+esc(o.quem||"")+'</td>'
+  +'<td><button type="button" class="btn-icone cx-x" onclick="cxDel('+o.id+')" aria-label="Excluir lançamento" title="Excluir">'+ic('x','i p')+'</button></td></tr>';});
  h+='</tbody></table>';document.getElementById("cxSheet").innerHTML=h;
  const av=document.getElementById("cxAviso");if(av)av.innerHTML=(SHEET_URL&&CX_EXT===false)?'<div class="note">Falta rodar no Supabase o SQL do financeiro (<b>crm_financeiro_rodar_no_supabase.sql</b>): ele cria a conta e a ligação com o pedido e traz o histórico da planilha. Até lá, o Caixa salva só data, tipo, categoria, descrição e valor.</div>':'';
  const byM={};cx.forEach(o=>{const m=(o.data||"").slice(0,7);if(!m)return;byM[m]=byM[m]||{e:0,s:0};const v=Number(o.valor)||0;o.tipo==="Entrada"?byM[m].e+=v:byM[m].s+=v;});
  const mk=Object.keys(byM).sort();let acc=state.caixaBase||0;
- let mh='<table><thead><tr><th>Mês</th><th class="num">Entradas</th><th class="num">Saídas</th><th class="num">Resultado</th><th class="num">vs mês anterior</th><th class="num">Saldo do caixa</th></tr></thead><tbody>';
- mh+='<tr style="background:var(--cream)"><td><b>🏁 Saldo inicial</b></td><td class="num">·</td><td class="num">·</td><td class="num">·</td><td class="num">·</td><td class="num"><b>'+BRL(state.caixaBase||0)+'</b></td></tr>';
- let prevR=null;
+ /* mês a mês: Mês, Resultado e Saldo cabem a 375 px; entradas, saídas e a variação rolam de lado */
+ let mh='<table class="tab tab-ler"><thead><tr><th>Mês</th><th class="num">Resultado</th><th class="num">Saldo do caixa</th><th class="num">Entradas</th><th class="num">Saídas</th><th class="num">vs mês anterior</th></tr></thead><tbody>';
+ mh+='<tr class="cx-base"><td>Saldo inicial</td><td class="num">·</td><td class="num"><b>'+BRL(state.caixaBase||0)+'</b></td><td class="num">·</td><td class="num">·</td><td class="num">·</td></tr>';
+ let prevR=null;const lin=[];
  mk.forEach(m=>{const r=byM[m].e-byM[m].s;acc+=r;
-  const cmp=prevR===null?"·":(r>=prevR?'<span style="color:var(--good);font-weight:700">▲ '+BRL(r-prevR)+'</span>':'<span style="color:var(--danger);font-weight:700">▼ '+BRL(r-prevR)+'</span>');
-  mh+='<tr'+(m===curM?' style="background:var(--hover);font-weight:700"':'')+'><td>'+mesLabel(m)+'</td><td class="num">'+BRL(byM[m].e)+'</td><td class="num">'+BRL(byM[m].s)+'</td><td class="num" style="color:'+(r>=0?"#2e7d46":"#b00020")+'">'+BRL(r)+'</td><td class="num">'+cmp+'</td><td class="num">'+BRL(acc)+'</td></tr>';
+  const cmp=prevR===null?"·":(r>=prevR?'<span class="sobe">▲ '+BRL(r-prevR)+'</span>':'<span class="desce">▼ '+BRL(r-prevR)+'</span>');
+  lin.push('<tr'+(m===curM?' class="cx-atual"':'')+'><td>'+mesLabel(m)+'</td><td class="num'+(r<0?' desce':'')+'">'+BRL(r)+'</td><td class="num">'+BRL(acc)+'</td><td class="num">'+BRL(byM[m].e)+'</td><td class="num">'+BRL(byM[m].s)+'</td><td class="num">'+cmp+'</td></tr>');
   prevR=r;});
- mh+='</tbody></table>';document.getElementById("cxMeses").innerHTML=mh;}
+ mh+=lin.join('')+'</tbody></table>';document.getElementById("cxMeses").innerHTML=mh;}
 // Pedidos da planilha "Pedidos Sucs" (script da planilha -> Supabase, 27/09/2026): pedido de WhatsApp vira pedido do
 // CRM (ids 500000001 a 599999999, a planilha manda neles); pedido do site e digitado so recebem status e producao.
 const PL_URL="https://docs.google.com/spreadsheets/d/1kGCIPN_YS6zxq33eTvA82-iTwYEd3CJkCPcWmTS0cmc/edit";
@@ -2584,7 +2689,13 @@ function pfIrEvento(){var e=document.getElementById('f_evento');if(!e)return;try
 function saveForm(){if(!f_cliente.value.trim()){alert('Informe o nome do cliente.');return;}
  const d={data:f_data.value,cliente:f_cliente.value.trim(),whats:f_whats.value.trim(),cidade:f_cidade.value.trim(),canal:f_canal.value,tipoCli:f_tipo.value,tipoEv:f_evento.value,dataEv:f_dataEv.value,produto:f_produto.value,descr:f_descr.value.trim(),qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,estagio:f_estagio.value,statusPag:f_statuspag.value,formaPag:f_formapag.value,entrega:f_entrega.value,custoEntrega:+f_custoent.value||0,followup:f_followup.value,obs:f_obs.value.trim()};
  let _sv,_antesPag=null;if(currentId){const _cur=state.orders.find(x=>x.id===currentId);_antesPag=_cur?_cur.statusPag:null;_sv=Object.assign(_cur,d);logAct('atualizou o atendimento #'+_sv.id+' ('+_sv.cliente+')');}else{d.id=state.seq++;_sv=d;state.orders.unshift(d);logAct('criou o atendimento #'+d.id+' ('+d.cliente+')');}save();syncOrder(_sv);finPagamento(_sv,_antesPag);closeForm();renderAtend();renderPainel();if(document.getElementById('calendario')&&document.getElementById('calendario').classList.contains('active'))renderCalendario();}
-function deleteCurrent(){if(currentId&&confirm('Excluir este atendimento?')){const _id=currentId;logAct('excluiu o atendimento #'+_id);state.orders=state.orders.filter(x=>x.id!==_id);save();syncDelete(_id);closeForm();renderAtend();renderPainel();}}
+function deleteCurrent(){if(currentId&&confirm('Excluir este atendimento?')){const _id=currentId;const i=state.orders.findIndex(x=>x.id===_id),o=state.orders[i];logAct('excluiu o atendimento #'+_id);state.orders=state.orders.filter(x=>x.id!==_id);save();const pr=syncDelete(_id);closeForm();renderAtend();renderPainel();pedDesfazer([[i,o]],[pr],'Atendimento excluído');}}
+/* apagar pergunta como sempre e, depois, oferece Desfazer por 6 s: volta o pedido para a lista e grava de novo
+   (mesmo id), só depois que a exclusão terminou no banco. Se o app fechar nesses 6 s, fica apagado. */
+function pedDesfazer(itens,prs,txt){itens=itens.filter(function(x){return x[1];});if(!itens.length)return;
+ mbAviso(txt,'Desfazer',function(){itens.slice().sort(function(a,b){return a[0]-b[0];}).forEach(function(x){if(state.orders.some(function(y){return y.id===x[1].id;}))return;state.orders.splice(Math.max(0,Math.min(x[0],state.orders.length)),0,x[1]);});save();
+  Promise.all(prs||[]).then(function(){itens.forEach(function(x){syncOrder(x[1]);});});
+  logAct('desfez a exclusão de '+(itens.length>1?itens.length+' atendimentos':'o atendimento #'+itens[0][1].id));renderAtend();if(typeof renderPainel==='function')renderPainel();});}
 document.getElementById('overlay').addEventListener('click',function(e){/* clicar fora nao fecha: evita perder o que foi digitado */});
 
 function aggregateClients(){const m={};state.orders.forEach(o=>{const k=o.cliente;if(!m[k])m[k]={cliente:k,pedidos:0,total:0,ultima:'',cidade:o.cidade,canal:o.canal};const c=calc(o);m[k].pedidos++;m[k].total+=c.vt;if(o.data>m[k].ultima)m[k].ultima=o.data;if(o.cidade)m[k].cidade=o.cidade;});return Object.values(m).sort((a,b)=>b.total-a.total);}
@@ -2631,7 +2742,7 @@ function selAll(ch){var rows=filtered();rows.forEach(function(o){if(ch)selSet.ad
 function limparSel(){selSet.clear();renderAtend();}
 function updateSelBar(){var b=document.getElementById('selBar');if(!b)return;if(viewMode!=='table'||selSet.size===0){b.style.display='none';return;}b.style.display='flex';var c=document.getElementById('selCount');if(c)c.textContent=selSet.size;}
 function exportarSelecionados(){if(!selSet.size){alert('Selecione pelo menos um atendimento (caixinha na primeira coluna).');return;}var cols=["id","data","cliente","whats","cidade","canal","tipoCli","tipoEv","dataEv","produto","descr","qtd","valorUnit","estagio","statusPag","formaPag","entrega","custoEntrega","followup","obs"];var sel=state.orders.filter(function(o){return selSet.has(o.id);});var lines=sel.map(function(o){var c=calc(o);var ext=Object.assign({},o,{valorTotal:c.vt,custoTotal:c.ct,margem:c.mg});return cols.concat(["valorTotal","custoTotal","margem"]).map(function(k){return '"'+String(ext[k]==null?'':ext[k]).replace(/"/g,'""')+'"';}).join(';');});dl(new Blob(['\ufeff'+[cols.join(';')+';valorTotal;custoTotal;margem'].concat(lines).join('\n')],{type:'text/csv'}),'atendimentos_selecionados_'+todayISO()+'.csv');}
-function excluirSelecionados(){if(!selSet.size){alert('Selecione pelo menos um.');return;}if(!confirm('Excluir '+selSet.size+' atendimento(s)? Nao da pra desfazer.'))return;Array.from(selSet).forEach(function(id){state.orders=state.orders.filter(function(x){return x.id!==id;});syncDelete(id);if(typeof logAct==='function')logAct('excluiu o atendimento #'+id);});selSet.clear();save();renderAtend();if(typeof renderPainel==='function')renderPainel();}
+function excluirSelecionados(){if(!selSet.size){alert('Selecione pelo menos um.');return;}if(!confirm('Excluir '+selSet.size+' atendimento(s)?'))return;var itens=[],prs=[];Array.from(selSet).forEach(function(id){var i=state.orders.findIndex(function(x){return x.id===id;});if(i>=0)itens.push([i,state.orders[i]]);state.orders=state.orders.filter(function(x){return x.id!==id;});prs.push(syncDelete(id));if(typeof logAct==='function')logAct('excluiu o atendimento #'+id);});selSet.clear();save();renderAtend();if(typeof renderPainel==='function')renderPainel();pedDesfazer(itens,prs,itens.length>1?itens.length+' atendimentos excluídos':'Atendimento excluído');}
 function cadDelete(id){var o=(state.cadastros||[]).find(function(x){return x.id===id;});if(!confirm('Apagar este cadastro'+(o&&o.nome?' de '+o.nome:'')+'? Nao da pra desfazer.'))return;if(SHEET_URL)fetch(sbUrl("cadastros?id=eq."+id),{method:'DELETE',headers:sbHeaders()}).catch(function(e){});state.cadastros=(state.cadastros||[]).filter(function(x){return x.id!==id;});renderCadastros();}
 
 function renderAll(){renderPainel();renderAtend();renderClientes();renderProdutos();renderProducao();menuContagens();}
