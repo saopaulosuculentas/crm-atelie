@@ -229,7 +229,6 @@ svg.i.pp{width:16px;height:16px}
 .grupo-nota{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;font-size:15px;line-height:20px;color:var(--perigo);background:var(--perigo-bg);border-bottom:1px solid var(--linha)}
 .grupo-nota.neutra{color:var(--tx-2);background:var(--sup-2)}
 .mais{width:100%;display:flex;align-items:center;justify-content:center;min-height:44px;font-size:15px;font-weight:600;color:var(--tx-2);border-top:1px solid var(--linha)}
-.grupo-vazio{padding:14px 12px;font-size:15px;color:var(--tx-2)}
 
 /* linha de 2 andares: ícone (2 linhas) | título | direita; a linha 2 ocupa título + direita */
 .linha{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:"ic tit dir" "ic sub sub";
@@ -757,10 +756,8 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;
  --c:#8a94a6;background:color-mix(in srgb,var(--c) 14%,transparent);color:color-mix(in srgb,var(--c) 80%,#000)}
 [data-tema="escuro"] .badge{background:color-mix(in srgb,var(--c) 30%,transparent);color:color-mix(in srgb,var(--c) 40%,#fff)}
-.row-actions button{font-size:15px;padding:3px 6px;border-radius:7px}
 .wa{color:var(--sucesso);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .wa.empty{color:var(--tx-2)}
-.overdue{color:var(--perigo);font-weight:600}
 .celledit{width:108px;border:1px solid var(--linha-forte);border-radius:7px;padding:5px 7px;font-size:14px;background:var(--sup);color:var(--tx)}
 /* Produtos */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
@@ -768,14 +765,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 .itable th{position:static;background:var(--sup-2);padding:9px}
 .itable td{padding:8px 9px;border-bottom:1px solid var(--linha);white-space:normal}
 .itable input{width:96px;padding:6px 8px;border:1px solid var(--linha-forte);border-radius:8px;font-size:14px;text-align:right;background:var(--sup);color:var(--tx)}
-/* janela antiga (Instalar no celular ainda usa .modal) */
-.modal{background:var(--sup);border-radius:var(--r3);width:780px;max-width:100%;box-shadow:var(--sombra-2);overflow:hidden}
-.modal .mhead{padding:16px 20px;border-bottom:1px solid var(--linha)}
-.modal .mhead h2{font-size:18px}
-.mbody{padding:16px 20px}
-.inst-passos{margin:0;padding-left:20px;line-height:1.6;font-size:16px;color:var(--tx)}
-.inst-bloco{border:1px solid var(--linha);border-radius:var(--r2);padding:12px 14px;margin-bottom:12px;background:var(--sup-2)}
-.inst-bloco h3{font-size:16px;font-weight:600;margin-bottom:6px}
 /* login */
 .login{position:fixed;inset:0;background:var(--folha);display:flex;align-items:center;justify-content:center;z-index:200;padding:calc(20px + var(--safe-t)) 16px calc(20px + var(--safe-b))}
 .login .box{background:var(--sup);border:1px solid var(--linha);border-radius:var(--r3);padding:28px 24px;width:400px;max-width:100%;text-align:center}
@@ -1279,8 +1268,7 @@ tbody tr:hover td.cli{background:var(--sup-2)}
     <label class="toq" id="chip_urg" title="Prioridade"><span class="chip" id="tUrgChip"><span id="urgFlag"></span><span id="tUrgTxt">Prioridade</span></span><select id="t_urg" onchange="tPintarChips()" aria-label="Prioridade"></select></label>
     <span id="tTagsVer" class="t-tags-ver"></span>
    </div>
-   <div class="props t-tags-prop"><div class="prop" id="chip_tags"><label class="rot" for="t_tags"><svg class="i p" aria-hidden="true"><use href="#i-etiqueta"/></svg>Etiquetas</label><textarea id="t_tags" rows="1" placeholder="Adicionar, separe por vírgula" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" oninput="this.value=this.value.replace(/
-/g,' ');pfCresce(this);tPintarChips()"></textarea></div></div>
+   <div class="props t-tags-prop"><div class="prop" id="chip_tags"><label class="rot" for="t_tags"><svg class="i p" aria-hidden="true"><use href="#i-etiqueta"/></svg>Etiquetas</label><textarea id="t_tags" rows="1" placeholder="Adicionar, separe por vírgula" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" oninput="this.value=this.value.replace(/\n/g,' ');pfCresce(this);tPintarChips()"></textarea></div></div>
 
    <h3 class="t-secao">Descrição</h3>
    <div class="props"><div class="prop prop-obs"><textarea id="t_descr" class="cu-descr" rows="3" placeholder="Adicione uma descrição, cole um link ou um print" aria-label="Descrição" onpaste="tColar(event)" oninput="pfCresce(this)"></textarea></div></div>
@@ -1883,7 +1871,7 @@ function plDaPlanilha(o){const n=Number(o&&o.id);return n>=FIN_ID_PLANILHA&&n<FI
 /* seção PLANILHA da ficha (pedido que existe na planilha Pedidos Sucs): selo, status num chip, arte/tag/vídeo
    e, quando o estágio do CRM diverge do status da planilha, uma linha âmbar dizendo qual vale */
 function plInfo(o){const p=o&&o.producao;if(!p)return'';const sn=v=>{v=String(v||'').trim();return /^sim$/i.test(v)?'sim':/^n[aã]o$/i.test(v)?'não':'sem marcação';};
- const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\(.*?\)/g,'').trim();
+ const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\(.*?\)/g,'').trim();
  const linha=(rot,val)=>'<div class="prop so-ler"><span class="rot">'+rot+'</span><span class="valor">'+val+'</span></div>';
  const doPl=plDaPlanilha(o),diverge=p.status&&o.estagio&&norm(p.status)!==norm(o.estagio);
  return '<h3 class="t-secao">Planilha Pedidos Sucs</h3><div class="props">'
