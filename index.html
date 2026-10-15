@@ -259,7 +259,7 @@ html.kb .toq:focus-within>.chip,html.kb .toq:focus-within>.chip-st,html.kb .cx-d
 .sub.aperta .fixo-d{flex:0 1 auto;min-width:0}
 .sub .pt.corta{flex:0 1000 auto}
 .sub .fixo{flex:none;white-space:nowrap}
-.sub .pg{margin-left:auto;padding-left:8px;flex:none}
+.sub .pg{margin-left:auto;padding-left:2px;flex:none}
 .linha .val{font-size:17px;line-height:22px;font-weight:600;white-space:nowrap}
 .sep{color:var(--tx-3)}
 .feita .tit{color:var(--tx-2);text-decoration:line-through;text-decoration-color:var(--tx-3)}
@@ -339,7 +339,7 @@ button.prog:active i{transform:scale(.88)}
 /* valor de lista e data como texto (quebra em até 2 linhas e data curta, revisão 2); o controle nativo fica
    transparente por cima: tocar abre o seletor do iPhone no lugar */
 .sel-txt,.data-txt{position:relative;display:block;min-width:0;min-height:44px;border-radius:8px;cursor:pointer}
-.sel-v,.data-v{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;padding:11px 0;font-size:17px;line-height:22px;color:var(--tx)}
+.sel-v,.data-v{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;margin:11px 0;padding:0;font-size:17px;line-height:22px;color:var(--tx)}
 .sel-v.vazio,.data-v.vazio{color:var(--tx-3)}
 .prop .sel-txt select,.prop .data-txt input,.data-txt input{position:absolute;inset:0;width:100%;height:100%;min-height:0;margin:0;padding:0;border:0;opacity:0;cursor:pointer;font-size:16px}
 .sel-txt:has(:focus),.data-txt:has(:focus){box-shadow:var(--foco)}
@@ -776,6 +776,7 @@ body:has(.overlay.open){overflow:hidden}
 .prop.compacta .valor{padding:7px 0;font-size:16px;line-height:22px}
 .prop.compacta .valor .chip{min-height:26px;padding:0 8px;font-size:13px}
 .prop.par{display:flex;flex-wrap:wrap;column-gap:16px;align-items:center;padding:7px 12px;font-size:16px;line-height:22px;color:var(--tx)}
+.prop.par>svg{color:var(--tx-3);margin-right:-8px}
 .prop.par .meia{white-space:nowrap}
 .prop.par .mr{color:var(--tx-2);font-size:15px}
 .pd-al{display:flex;align-items:flex-start;gap:6px;margin:6px 2px 0;font-size:15px;line-height:20px;color:var(--alerta);font-weight:600}
@@ -985,6 +986,10 @@ button.ncard:active{transform:scale(.98);background:var(--sup-2)}
 @media (max-width:399px){.ncard .r{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}}
 /* os 8 cartões de Faturamento e caixa em 4 colunas quando cabem (sem a última linha pela metade) */
 @media (min-width:1100px){.ini-grade.g4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+/* cabeçalho do dia no Calendário: abaixo de 1240 px sai a contagem (os cartões do dia já mostram) e abaixo de
+   1100 px sai o valor (fica no title e na lista do dia), para nada aparecer cortado */
+@media (max-width:1239px){.caldia .dtot .dq{display:none}}
+@media (max-width:1099px){.caldia .dtot{visibility:hidden}}
 .esq-grupo{margin-top:8px}
 
 
@@ -1195,8 +1200,10 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
  .pr-mg-mini{display:block}
  .pr-tab td.pr-preco{padding-top:4px}
 }
-/* 320 px: sem o "R$" cinza ao lado dos campos de Insumos e Custos fixos, para a última coluna caber */
-@media (max-width:359px){#insumosBox .pr-campo .pre{display:none}#insumosBox .pr-campo input{width:72px}}
+/* abaixo de 375 px: sem o "R$" cinza ao lado dos campos e o nome mais estreito, para a última coluna caber */
+@media (max-width:374px){.pr-campo .pre{display:none}.pr-campo input{width:70px}.tab td.pr-nome{min-width:96px}
+ .pr-tab td.num{padding:0 6px;font-size:15px}
+ .pr-mg-mini .mp{display:block}.pr-mg-mini .mps{display:none}}
 /* as duas tabelas lado a lado só quando cabem inteiras (abaixo disso a Margem cortava) */
 @media (min-width:1180px){.pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* Cadastros */
@@ -1208,13 +1215,11 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
 .cad-ev{flex:none;display:inline-flex;align-items:center;gap:4px;font-size:15px;color:var(--tx-2);font-weight:500}
 .cad-l2{margin:2px 0 0}
 .cad-det{margin:0 0 4px;font-size:14px;line-height:19px;overflow-wrap:anywhere}
-.cad-det-d>summary{list-style:none;display:inline-flex;align-items:center;gap:4px;min-height:44px;font-size:15px;font-weight:600;color:var(--tx-2);cursor:pointer}
-.cad-det-d>summary::-webkit-details-marker{display:none}
-.cad-det-d>summary .seta{transform:rotate(-90deg);transition:transform .15s}
-.cad-det-d[open]>summary .seta{transform:none}
-.cad-det-d>summary:focus-visible{outline:2px solid var(--tx);outline-offset:2px;border-radius:6px}
-.cad-det-d+.cad-acoes{margin-top:0}
-.cad-acoes{display:flex;align-items:center;gap:8px;margin-top:8px}
+.cad-ver{padding:0 10px;color:var(--tx-2);font-size:15px;gap:2px}
+.cad-ver .seta{transition:transform .15s}
+.cad-ver[aria-expanded="true"] .seta{transform:rotate(180deg)}
+.cad-acoes+.cad-det{margin:6px 0 4px}
+.cad-acoes{display:flex;flex-wrap:wrap;align-items:center;column-gap:8px;margin-top:8px}
 .cad-acoes .btn{flex:0 1 auto}
 .cad-ok{flex:1;display:inline-flex;align-items:center;gap:5px;font-size:15px;font-weight:600;color:var(--sucesso);min-height:44px}
 .cad-mais{margin-left:auto;color:var(--tx-2)}
@@ -2193,7 +2198,9 @@ function renderMensal(){const el=document.getElementById('chartMes');if(!el)retu
  const cur=new Date().toISOString().slice(0,7);
  el.innerHTML=ms.map(m=>{const v=sums[m]||0;const h=Math.max(v?3:0,Math.round(v/max*100));
   return '<div class="mcol'+(m===cur?' cur':'')+'" title="'+lbl(m)+': '+BRL(v)+'"><div class="mval">'+fmtK(v)+'</div><div class="mtrack"><div class="mfill" style="height:'+h+'%"></div></div><div class="mlbl">'+MES_CURTO[+m.slice(5,7)-1]+'</div></div>';}).join('');
- const fim=()=>{el.style.paddingLeft='';const S=el.scrollWidth-el.clientWidth;if(S>0){const col=el.firstElementChild,passo=col?col.getBoundingClientRect().width+6:42,sobra=(passo-(S%passo))%passo;if(sobra>0.5)el.style.paddingLeft=(2+sobra)+'px';}el.scrollLeft=el.scrollWidth;};fim();try{requestAnimationFrame(fim);}catch(e){}}
+ /* rolado até o fim, a primeira coluna visível fica inteira: sobra um respiro à direita do mês atual em vez de um
+    rótulo cortado à esquerda (revisão 2) */
+ const fim=()=>{el.style.paddingRight='';const S=el.scrollWidth-el.clientWidth;if(S>0){const col=el.firstElementChild,passo=col?col.getBoundingClientRect().width+6:42,sobra=(passo-((S-2)%passo))%passo;if(sobra>0.5)el.style.paddingRight=(2+sobra)+'px';}el.scrollLeft=el.scrollWidth;};fim();try{requestAnimationFrame(fim);}catch(e){}}
 /* listas do Início: nome em cima, valor à direita e a barra embaixo, na largura toda. cor(nome) pinta a barra */
 function chart(id,data,fmt,cor){const el=document.getElementById(id);if(!el)return;const max=Math.max(1,...data.map(d=>d[1]));
  el.innerHTML=data.length?data.map(d=>'<div class="bl"><div class="bl-top"><span class="nm" title="'+esc(d[0])+'">'+esc(d[0])+'</span><span class="num">'+fmt(d[1])+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(d[1]/max*100)+'%'+(cor?';--c:'+cor(d[0]):'')+'"></div></div></div>').join(''):'<p class="t-sub">Sem dados no período</p>';}
@@ -2812,8 +2819,9 @@ function calAbrirDia(dia){
  /* a lista fica abaixo da grade: rola só o necessário para ela aparecer */
  var pn=document.getElementById('calDia');if(calDiaSel&&pn&&pn.scrollIntoView)try{pn.scrollIntoView({block:'nearest',behavior:'smooth'});}catch(e){}}
 function calFecharDia(){folhaFechar('calDia');}
-/* valor abreviado que cabe no cabeçalho do dia (revisão 2, JEV: 59% e 72%): "R$ 847", "R$ 2,1 mil"; o exato fica no title e na lista do dia */
-function brlCurto(v){v=Number(v)||0;if(Math.abs(v)<1000)return 'R$ '+Math.round(v).toLocaleString('pt-BR');var k=v/1000;return 'R$ '+k.toLocaleString('pt-BR',{maximumFractionDigits:Math.abs(k)<10?1:0})+' mil';}
+/* valor abreviado que cabe no cabeçalho do dia (revisão 2, JEV: 59% e 72%): "R$ 847", "R$ 2,1k" (o mesmo "k" do
+   gráfico do Início); o exato fica no title e na lista do dia */
+function brlCurto(v){v=Number(v)||0;if(Math.abs(v)<1000)return 'R$ '+Math.round(v).toLocaleString('pt-BR');var k=v/1000;return 'R$ '+k.toLocaleString('pt-BR',{maximumFractionDigits:Math.abs(k)<10?1:0})+'k';}
 var calSemDataAberto=false;
 function calSemDataToggle(){calSemDataAberto=!calSemDataAberto;renderCalendario();}
 
@@ -2890,7 +2898,7 @@ function renderCalendario(){
   var rot=(+dia.slice(8))+' de '+mesLabel(dia.slice(0,7)).split('/')[0]+(list.length?', '+list.length+(list.length===1?' evento':' eventos'):'')+(pior==='late'?', com evento atrasado':'');
   return '<div class="'+cls+'" data-dia="'+dia+'" role="button" tabindex="0" aria-label="'+esc(rot)+'" onclick="calAbrirDia(&#39;'+dia+'&#39;)" onkeydown="if(event.key===&#39;Enter&#39;)calAbrirDia(&#39;'+dia+'&#39;)"'
    +' ondragover="event.preventDefault();this.classList.add(&#39;drag&#39;)" ondragleave="this.classList.remove(&#39;drag&#39;)" ondrop="calDrop(event,this)">'
-   +'<div class="dnum"><span class="d num">'+(+dia.slice(8))+'</span>'+(list.length?'<span class="dtot" title="'+list.length+(list.length===1?' evento · ':' eventos · ')+BRL(tot)+'">'+list.length+' · '+brlCurto(tot)+'</span>':'')+'</div>'
+   +'<div class="dnum"><span class="d num">'+(+dia.slice(8))+'</span>'+(list.length?'<span class="dtot" title="'+list.length+(list.length===1?' evento · ':' eventos · ')+BRL(tot)+'"><span class="dq">'+list.length+' · </span>'+brlCurto(tot)+'</span>':'')+'</div>'
    +'<div class="pontos">'+pontos+'</div>'
    +chips+(list.length>3?'<div class="calmais">+'+(list.length-3)+' mais</div>':'')
    +'</div>';}).join('');
@@ -3164,15 +3172,16 @@ function pdFolhaPintar(){
     no iPhone SE os 5 botões de etapa cabem na primeira tela. Só a Arte aprovada (campo) fica com 44 px. */
  var prop=function(icone,rot,valor){return '<div class="prop so-ler compacta"><span class="rot">'+ic(icone,'i p')+rot+'</span><span class="valor">'+valor+'</span></div>';};
  var meia=function(rot,valor){return '<span class="meia"><span class="mr">'+rot+'</span> '+valor+'</span>';};
- var postar=pa?'<span class="'+(o.postado_em?'':dataCls(pa,hoje))+'">'+esc(pdDiaSem(pa))+'</span>':'<span class="vazio">falta a arte</span>';
+ var postar=pa?'<span class="'+(o.postado_em?'':dataCls(pa,hoje))+'">'+esc(pdDiaSem(pa))+'</span>':'<span class="vazio">depois da arte</span>';
  var arteTxt=pdArte(o)?dataCurta(pdArte(o)):(pode&&!o.postado_em?'Adicionar':'·');
  f.innerHTML='<div class="alca" aria-hidden="true"></div>'
   +'<div class="folha-cab"><span></span><h3 id="pdFolhaTit">'+esc(o.cliente||'(sem nome)')+'</h3><button type="button" class="fechar-x" onclick="pdFolhaFechar()" aria-label="Fechar"><span>'+ic('x','i pp')+'</span></button></div>'
   +'<p class="t-sub pd-folha-sub">#'+o.id+(pdQtd(o)?' · '+pdQtd(o):'')+' · '+pdMeta(o)+'</p>'
   +'<div class="props">'
-  +prop('camadas','Etapa',pdEtapaTxt(et))
+  /* com a lista MUDAR ETAPA na folha, a etapa atual já aparece nela (negrito e check): a linha Etapa só fica na trava */
+  +(pago&&pdPodeGravar()?'':prop('camadas','Etapa',pdEtapaTxt(et)))
   +'<div class="prop"><label class="rot" for="pdArteData">'+ic('check','i p')+'Arte aprovada</label><span class="data-txt"><span class="data-v'+(pdArte(o)?'':' vazio')+'" aria-hidden="true">'+esc(arteTxt)+'</span><input type="date" id="pdArteData" value="'+esc(pdArte(o))+'" onclick="dataAbrir(this)" onchange="pdMudarArte('+o.id+',this.value)"'+(pode&&!o.postado_em?'':' disabled')+'></span></div>'
-  +'<div class="prop so-ler compacta par">'+meia('Postar até',postar)+(o.postado_em?meia('Postado',esc(dataCurta(String(o.postado_em).slice(0,10)))):meia('Chega',esc(pdDiaSem(pdChegaAte(o,hoje)))))+'</div>'
+  +'<div class="prop so-ler compacta par">'+ic('caixa','i p')+meia(pa?'Postar até':'Postar',postar)+(o.postado_em?meia('Postado',esc(dataCurta(String(o.postado_em).slice(0,10)))):meia('Chega',esc(pdDiaSem(pdChegaAte(o,hoje)))))+'</div>'
   +prop('presente','Evento',ev?esc((o.tipoEv?o.tipoEv+' ':'')+pdDiaSem(ev)):'<span class="vazio">sem data</span>')
   +prop('cifrao','Pagamento',pagChip(o,true))
   +'</div>'
@@ -3403,7 +3412,7 @@ function renderProdutos(){if(!state.fixos)state.fixos=defaultData().fixos;const 
  document.getElementById('insumosBox').innerHTML=h;
  /* no celular a Margem vai embaixo do preço ("R$ 2,78 · 64%"), atualizando enquanto digita: ficam 3 colunas que
     cabem a 320 px (revisão 2, JEV: 95% e 93%); no computador continua a coluna Margem */
- const mgTxt=(pr,cu)=>BRL(pr-cu)+' · '+PCT(pr?(pr-cu)/pr:0);
+ const mgTxt=(pr,cu)=>'<span>'+BRL(pr-cu)+'</span><span class="mp"><span class="mps"> · </span>'+PCT(pr?(pr-cu)/pr:0)+'</span>';
  let p='<div class="tab-caixa"><table class="tab pr-tab"><thead><tr><th>Produto</th><th class="num">Custo</th><th>Preço</th><th class="num pr-mg-col">Margem</th></tr></thead><tbody>';
  PRODUTOS.forEach(nm=>{const cu=custoProduto(nm),pr=state.precos[nm]||0,mg=pr-cu;
   p+='<tr>'+nome(nm,'')+'<td class="num">'+BRL(cu)+'</td><td class="pr-preco">'+campo('data-preco',nm,pr,'0.01',true,'Preço de '+nm)+'<small class="pr-mg-mini'+(mg<0?' desce':'')+'" data-cu="'+cu+'">'+mgTxt(pr,cu)+'</small></td><td class="num pr-mg-col'+(mg<0?' desce':'')+'">'+BRL(mg)+'<span class="pr-pct">'+PCT(pr?mg/pr:0)+'</span></td></tr>';});
@@ -3411,7 +3420,7 @@ function renderProdutos(){if(!state.fixos)state.fixos=defaultData().fixos;const 
  document.querySelectorAll('[data-ins]').forEach(el=>el.addEventListener('change',()=>{state.insumos[el.dataset.ins]=+el.value||0;logCfg();save();syncConfig();renderProdutos();}));
  document.querySelectorAll('[data-fixo]').forEach(el=>el.addEventListener('change',()=>{state.fixos[el.dataset.fixo]=+el.value||0;logCfg();save();syncConfig();renderProdutos();renderPainel();}));
  document.querySelectorAll('[data-preco]').forEach(el=>el.addEventListener('change',()=>{state.precos[el.dataset.preco]=+el.value||0;logCfg();save();syncConfig();renderProdutos();}));
- document.querySelectorAll('[data-preco]').forEach(el=>el.addEventListener('input',()=>{const m=el.closest('td').querySelector('.pr-mg-mini');if(!m)return;const cu=Number(m.dataset.cu)||0,pr=parseFloat(String(el.value).replace(',','.'))||0;m.textContent=mgTxt(pr,cu);m.classList.toggle('desce',pr-cu<0);}));}
+ document.querySelectorAll('[data-preco]').forEach(el=>el.addEventListener('input',()=>{const m=el.closest('td').querySelector('.pr-mg-mini');if(!m)return;const cu=Number(m.dataset.cu)||0,pr=parseFloat(String(el.value).replace(',','.'))||0;m.innerHTML=mgTxt(pr,cu);m.classList.toggle('desce',pr-cu<0);}));}
 function exportJSON(){dl(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),'crm_atelie_backup_'+todayISO()+'.json');}
 function importJSON(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{state=JSON.parse(r.result);save();initFilters();renderAll();alert('Backup importado com sucesso.');}catch(e){alert('Arquivo inválido.');}};r.readAsText(f);inp.value='';}
 function exportCSV(){const cols=["id","data","cliente","whats","cidade","canal","tipoCli","tipoEv","dataEv","produto","descr","qtd","valorUnit","estagio","statusPag","formaPag","entrega","custoEntrega","followup","obs"];
@@ -3468,15 +3477,17 @@ function cadToggleNovos(){cadNovosFechado=!cadNovosFechado;renderCadastros();}
 function cadItem(o){var imp=(o.status==='importado');
  var nq=function(t){return '<span class="nq">'+t+'</span>';};
  var l2=[o.whats?nq(esc(cadFone(o.whats))):'',esc(o.produto||''),o.qtd?nq(esc(o.qtd)+' un'):''].filter(Boolean);
- /* personalização, tema, endereço, CEP e CPF ficam recolhidos em "Ver detalhes" (revisão 2, JEV: 57% e 66%): a lista
+ /* personalização, tema, endereço, CEP e CPF ficam recolhidos atrás de "Detalhes" (revisão 2, JEV: 57% e 66%): a lista
     mostra o que decide (produto, quantidade, data) e o dado pessoal só aparece quando alguém abre */
  var det=[o.personalizacao?'Personalização: '+esc(o.personalizacao):'',o.tema?'Tema: '+esc(o.tema):'',o.endereco?esc(o.endereco):'',o.cep?nq('CEP '+esc(o.cep)):'',o.cpf?nq('CPF '+esc(o.cpf)):''].filter(Boolean);
  return '<div class="cad-item">'
   +'<div class="cad-l1"><b class="cad-nome">'+esc(o.nome||'(sem nome)')+'</b>'+(o.data_evento?'<span class="cad-ev">'+ic('cal','i pp')+esc(cadData(o.data_evento))+'</span>':'')+'</div>'
   +(l2.length?'<p class="t-sub cad-l2">'+l2.join(' <span class="sep">·</span> ')+'</p>':'')
-  +(det.length?'<details class="cad-det-d"><summary>'+ic('baixo','i pp seta')+'Ver detalhes</summary><p class="t-sub cad-det">'+det.join(' <span class="sep">·</span> ')+'</p></details>':'')
   +'<div class="cad-acoes">'+(imp?'<span class="cad-ok">'+ic('check','i pp')+'Virou atendimento</span>':'<button type="button" class="btn btn-sec" onclick="cadConverter('+o.id+')">'+ic('mais','i p')+'Virar atendimento</button>')
-  +'<button type="button" class="btn-icone cad-mais" onclick="cadMenu('+o.id+')" aria-label="Mais ações de '+esc(o.nome||'cadastro')+'">'+ic('pontos')+'</button></div></div>';}
+  +(det.length?'<button type="button" class="btn btn-fant cad-ver" aria-expanded="false" aria-controls="cadDet'+o.id+'" onclick="cadVer(this)">Detalhes'+ic('baixo','i pp seta')+'</button>':'')
+  +'<button type="button" class="btn-icone cad-mais" onclick="cadMenu('+o.id+')" aria-label="Mais ações de '+esc(o.nome||'cadastro')+'">'+ic('pontos')+'</button></div>'
+  +(det.length?'<p class="t-sub cad-det" id="cadDet'+o.id+'" hidden>'+det.join(' <span class="sep">·</span> ')+'</p>':'')+'</div>';}
+function cadVer(b){var d=document.getElementById(b.getAttribute('aria-controls'));if(!d)return;var on=d.hidden;d.hidden=!on;b.setAttribute('aria-expanded',on?'true':'false');}
 function renderCadastros(){var el=document.getElementById('cadList');if(!el)return;
  if(!SHEET_URL){el.innerHTML='<div class="vazio-bloco"><b>Só com a nuvem</b><p>Entre com e-mail e senha para ver os cadastros do formulário.</p></div>';return;}
  if(!(state.cadastros||[]).length)el.innerHTML='<div class="grupo" aria-label="Carregando">'+'<div class="esq esq-linha"></div>'.repeat(3)+'</div>';
