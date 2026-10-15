@@ -2256,7 +2256,7 @@ function subCorta(box){if(!box||!box.getClientRects().length)return;var some=[];
  box.querySelectorAll('.sub .corta').forEach(function(e){if(e.scrollWidth>e.clientWidth+1&&e.clientWidth<48)some.push(e);});
  some.forEach(function(e){e.style.display='none';var p=e.previousElementSibling;if(p&&p.classList.contains('sep'))p.style.display='none';});
  /* sem o tipo e ainda sem caber: a data passa a encolher com reticências */
- var aperta=[];box.querySelectorAll('.sub').forEach(function(s){if(s.querySelector('.fixo-d')&&s.scrollWidth>s.clientWidth+1)aperta.push(s);});
+ var aperta=[];box.querySelectorAll('.sub').forEach(function(s){if(s.querySelector('.fixo-d')&&s.scrollWidth>s.clientWidth)aperta.push(s);});
  aperta.forEach(function(s){s.classList.add('aperta');});}
 /* ===== Atendimentos em grupos por ação (visual v2) =====
    O primeiro que valer: Follow-up vencido (aberto e follow-up antes de hoje), Evento em 7 dias,
