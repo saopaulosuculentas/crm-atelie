@@ -157,7 +157,7 @@ svg.i.pp{width:16px;height:16px}
 .salvo.ok i{background:var(--sucesso)}
 .salvo.salvando i{background:var(--alerta)}
 .salvo.erro i{background:var(--perigo)}
-.salvo .txt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.salvo .txt{display:none}
 .btn.mb-acao{display:none}
 .btn.mb-acao.on{display:inline-flex}
 #btnTemaTop,#sub{display:none}
@@ -415,7 +415,7 @@ body:has(.overlay.open){overflow:hidden}
  .topbar{padding:16px 28px 0}
  .tbrow{height:44px;gap:12px}
  .hamb{display:none}
- .salvo .txt{position:static;width:auto;height:auto;overflow:visible;clip:auto}
+ .salvo .txt{display:inline}
  .faixa-erro{margin:8px -28px 0;padding-left:28px}
  .topo-l2{padding:12px 28px 0}
  .busca{max-width:420px;flex:0 1 420px}
@@ -448,6 +448,79 @@ body:has(.overlay.open){overflow:hidden}
 .inst-bloco h3{font-size:16px;font-weight:600;margin-bottom:6px}
 .inst-passos{margin:0;padding-left:20px;line-height:1.55;font-size:16px;color:var(--tx)}
 @media (min-width:821px){.overlay.open>.folha-baixo{animation:none}}
+
+
+/* ===================== TAREFAS (Lista, Quadro, Equipe) =====================
+   Lista agrupada por etapa como no ClickUp: chip cheio que gruda, círculo de progresso que
+   conclui (tConcluir, com Desfazer), título até 2 linhas, avatares à direita e a linha 2 com
+   prazo, bandeira, etiquetas com ponto, anexos e comentários. */
+.t-barra .pilulas{gap:6px;overflow-x:auto;scrollbar-width:none}
+.t-barra .pilulas::-webkit-scrollbar{display:none}
+.t-barra .pilula>span{padding:0 11px}
+.t-barra .pilula .av+*{margin-left:0}
+.t-barra .pilula.com-av>span{padding-left:5px}
+.t-resumo-linha{display:flex;align-items:center;gap:8px;margin:2px 2px 0;min-height:44px}
+.t-resumo-linha #tResumo{flex:1;min-width:0}
+.t-resumo-linha #tResumo b{color:var(--perigo);font-weight:600}
+.ordem-pil{position:relative;display:inline-flex;align-items:center;gap:4px;min-height:44px;font-size:15px;color:var(--tx-2);white-space:nowrap;cursor:pointer}
+.ordem-pil select{position:absolute;inset:0;opacity:0;font-size:16px;width:100%;cursor:pointer}
+.ordem-pil b{color:var(--tx);font-weight:600}
+.cu-lista .grupo.over,.cu-lista .cu-grupo.over{outline:2px dashed var(--tx-3);outline-offset:-2px}
+.cu-row.drag{opacity:.4}
+.cu-row .sub{flex-wrap:wrap;row-gap:4px}
+.cu-row .dir{align-self:start}
+.cu-row .t-due,.cu-row .t-prio,.t-cols{display:none}
+.cu-row .sub .meta svg.i{color:var(--tx-3)}
+.cu-row.feita .sub .dt-atras,.cu-row.feita .sub .dt-hoje{color:var(--tx-2);font-weight:400}
+.cu-novo{display:flex;gap:8px;align-items:center;padding:8px 12px 8px 48px;border-top:1px solid var(--linha)}
+.cu-novo input{flex:1;min-width:0}
+.cu-novo .dica{margin:0;flex:none}
+.t-vazio{padding:14px 12px 14px 48px;font-size:15px;color:var(--tx-2)}
+/* Quadro e Equipe: no celular uma coluna por tela (85% da largura, a próxima espiando) com encaixe */
+.tboard{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 0 12px;margin:0 -16px;padding-left:16px;padding-right:16px;scroll-padding-left:16px}
+.tcol{flex:0 0 85%;scroll-snap-align:start;background:var(--sup-2);border:1px solid var(--linha);border-radius:var(--r2);padding:8px;min-height:140px}
+.tcol.over{background:var(--campo);border-color:var(--tx-3)}
+.tcol h4{display:flex;align-items:center;gap:8px;min-height:36px;margin:0 2px 6px;font-size:15px;font-weight:700}
+.tcol h4 .hd{display:inline-flex;align-items:center;gap:7px;min-width:0;flex:1}
+.tcol h4 .hd>span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tcol h4 .cnt{font-size:14px;font-weight:600;color:var(--tx-2);white-space:nowrap}
+.tcol h4 .cnt b{color:var(--perigo);font-weight:600}
+.tdot{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
+.tcard{background:var(--sup);border:1px solid var(--linha);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.tcard:active{background:var(--sup-2)}
+.tcard.drag{opacity:.4}
+.tcard .tt{font-size:16px;line-height:21px;font-weight:600;color:var(--tx);margin-bottom:6px;overflow-wrap:anywhere}
+.tcard.done .tt{color:var(--tx-2);text-decoration:line-through;text-decoration-color:var(--tx-3)}
+.tcard .tmeta{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:14px;color:var(--tx-2)}
+.tcard .tmeta svg.i{color:var(--tx-3)}
+.tcard .tmeta .t-etapa{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--tx)}
+.tempty{font-size:14px;color:var(--tx-2);text-align:center;padding:16px 6px;border:1px dashed var(--linha-forte);border-radius:10px}
+
+@media (min-width:701px){
+ .t-barra{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+ .t-barra .seg{width:300px;margin:0}
+ .t-barra .pilulas{margin:0}
+ /* lista com colunas no computador: Nome | Responsável | Data de vencimento | Prioridade */
+ .t-cols{display:grid;grid-template-columns:44px minmax(0,1fr) 130px 150px 120px;column-gap:8px;align-items:center;height:32px;padding:0 12px 0 4px;font-size:13px;font-weight:600;color:var(--tx-2);border-bottom:1px solid var(--linha)}
+ .cu-row{grid-template-columns:44px minmax(0,1fr) 130px 150px 120px;grid-template-areas:"ic tit dir due prio" "ic sub sub sub sub";column-gap:8px;min-height:48px;padding:2px 12px 2px 4px;align-items:start}
+ .cu-row>.prog{margin-top:0;align-self:start}
+ .cu-row .tit{white-space:nowrap;display:block;font-size:15px;line-height:22px;padding-top:11px}
+ .cu-row .tit.duas{display:block;-webkit-line-clamp:unset}
+ .cu-row .dir{justify-content:flex-start;padding-left:0;padding-top:10px}
+ .cu-row .t-due,.cu-row .t-prio{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--tx-2);white-space:nowrap;padding-top:10px;align-self:start}
+ .cu-row .t-due:empty::before{content:"·";color:var(--tx-3)}
+ .cu-row .t-due.dt-atras{color:var(--perigo);font-weight:600}
+ .cu-row .t-due.dt-hoje{color:var(--alerta);font-weight:600}
+ .cu-row .sub{font-size:14px;margin-top:0}
+ .cu-row .sub:empty{display:none}
+ .cu-row .sub .m-so{display:none}
+ .cu-row:hover{background:var(--sup-2)}
+ .cu-novo{padding-left:48px}
+ .tboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;overflow:visible;margin:0;padding:0;align-items:start}
+ .tboard.tboard-3{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .tcol{min-width:0}
+ .tcard:hover{border-color:var(--linha-forte)}
+}
 
 
 /* ===================== ABAS QUE AINDA USAM AS PEÇAS ANTIGAS =====================
@@ -626,96 +699,15 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 .mfoot{padding:15px 24px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px}
 .kcard{border-radius:13px;transition:transform .13s ease,box-shadow .13s ease}
 .kcard:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.10)}
-.cu-views{display:flex;gap:2px;border-bottom:1px solid var(--line);margin:0 0 14px}
-.cu-views button{background:transparent;border:0;box-shadow:none;cursor:pointer;
- padding:9px 14px;font-size:13px;font-weight:600;color:var(--muted);
- border-bottom:2px solid transparent;margin-bottom:-1px;display:inline-flex;align-items:center;gap:6px}
-.cu-views button:hover{color:var(--ink)}
-.cu-views button.on{color:var(--green-dk);border-bottom-color:var(--green-dk);font-weight:800}
-.cu-resumo{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.cu-card{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
- border-radius:11px;padding:10px 15px;min-width:186px}
-.cu-card .ic{width:26px;height:26px;border-radius:7px;display:inline-flex;align-items:center;
- justify-content:center;font-size:14px;flex:0 0 auto}
-.cu-card b{display:block;font-size:12.5px;color:var(--ink);line-height:1.2}
-.cu-card span{display:block;font-size:11.5px;color:var(--muted);margin-top:2px}
-.cu-lista{display:block}
-.cu-grupo{margin-bottom:20px}
 .cu-ghead{display:flex;align-items:center;gap:8px;padding:4px 2px 7px;cursor:pointer;user-select:none}
 .cu-caret{font-size:10px;color:var(--muted);width:12px;transition:transform .13s;display:inline-block}
-.cu-grupo.fechado .cu-caret{transform:rotate(-90deg)}
-.cu-grupo.fechado .cu-cols,.cu-grupo.fechado .cu-row,.cu-grupo.fechado .cu-addrow{display:none}
 .cu-status{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
  padding:3px 10px;border-radius:6px;color:#fff;white-space:nowrap}
 .cu-gcount{font-size:12px;font-weight:700;color:var(--muted)}
-.cu-gadd{margin-left:auto;font-size:12px;font-weight:700;color:var(--muted);background:transparent;
- border:0;box-shadow:none;cursor:pointer;padding:3px 8px;border-radius:7px}
-.cu-gadd:hover{background:var(--moss);color:var(--green-dk)}
-.cu-cols,.cu-row{display:grid;grid-template-columns:minmax(0,1fr) 108px 132px 108px;
- gap:10px;align-items:center;padding:0 10px}
-.cu-cols{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:none;
- padding-bottom:5px;border-bottom:1px solid var(--line)}
-.cu-row{min-height:38px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .1s}
-.cu-row:hover{background:var(--cream)}
-.cu-row.drag{opacity:.4}
-.cu-row.alvo{box-shadow:inset 0 2px 0 var(--green2)}
-.cu-nome{display:flex;align-items:center;gap:8px;min-width:0}
-.cu-dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto;border:2px solid currentColor;background:transparent}
-.cu-dot.cheio{background:currentColor}
-.cu-tt{font-size:13px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
-.cu-row.feito .cu-tt{text-decoration:line-through;opacity:.5}
-.cu-marcas{display:inline-flex;gap:6px;font-size:10.5px;color:var(--muted);flex:0 0 auto;font-weight:700}
-.cu-tags{display:inline-flex;gap:4px;flex:0 0 auto}
-.cu-tag{font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;white-space:nowrap}
-.cu-avs{display:flex}
-.cu-av{width:22px;height:22px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:800;
- display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
-.cu-av.vazio{background:transparent;border:1px dashed var(--line);color:var(--muted)}
 .cu-pessoa{border:1px solid var(--line);background:transparent;color:var(--muted);
  border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;cursor:pointer;
  margin-right:4px;line-height:1.6}
 .cu-pessoa.on{font-weight:800}
-.cu-due{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
-.cu-due.late{color:#e5484d;font-weight:700}
-.cu-due.hoje{color:#f76808;font-weight:700}
-.cu-due.vazio{color:var(--line)}
-.cu-prio{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;white-space:nowrap}
-.cu-flag{font-size:11px;line-height:1}
-.cu-addrow{display:flex;align-items:center;gap:7px;padding:8px 10px;font-size:12.5px;font-weight:600;
- color:var(--muted);cursor:pointer;background:transparent;border:0;box-shadow:none;width:100%;text-align:left}
-.cu-addrow:hover{color:var(--green-dk)}
-.cu-novo{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;
- padding:5px 10px;border-bottom:1px solid var(--line)}
-.cu-novo input{padding:7px 10px;border:1px solid var(--green2);border-radius:8px;font-size:13px;
- font-family:inherit;background:var(--card);color:var(--ink);width:100%}
-.cu-vazio{font-size:12px;color:var(--muted);padding:11px 10px}
-.tboard{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start}
-.tcol{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:10px;min-height:140px;transition:background .12s,border-color .12s}
-.tcol.over{background:var(--moss);border-color:var(--green2)}
-.tcol h4{margin:0 0 10px;font-size:13px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:6px}
-.tcol h4 .cnt{background:var(--card);border:1px solid var(--line);border-radius:20px;font-size:11px;padding:1px 8px;color:var(--muted);font-weight:700}
-.tcol h4 .hd{display:inline-flex;align-items:center;gap:7px;min-width:0}
-.tcard{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--sage);border-radius:11px;padding:10px 11px;margin-bottom:9px;cursor:grab;box-shadow:0 2px 6px rgba(28,67,39,.05);transition:box-shadow .12s,transform .12s}
-.tcard:hover{box-shadow:0 5px 14px rgba(28,67,39,.13);transform:translateY(-1px)}
-.tcard:active{cursor:grabbing}
-.tcard.drag{opacity:.4}
-.tcard .tt{font-size:13px;font-weight:700;color:var(--ink);line-height:1.35;margin-bottom:7px;word-break:break-word}
-.tcard .tmeta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
-.tpill{font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:.02em;display:inline-flex;align-items:center;gap:4px}
-.twho{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center}
-.tdue{font-size:10px;font-weight:700;background:#f0f0ea;color:var(--muted);padding:2px 8px;border-radius:20px}
-.tdue.hoje{background:#fdf1dc;color:#9a6a17}
-.tdue.late{background:#fbe4e2;color:var(--danger)}
-.tcard.done .tt{text-decoration:line-through;opacity:.55}
-.tempty{font-size:11px;color:var(--muted);text-align:center;padding:14px 4px;border:1px dashed var(--line);border-radius:10px}
-.tetapa{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;border:1px solid transparent;white-space:nowrap}
-.tdot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle;flex:0 0 auto}
-.tcol h4 .hd .tdot{width:9px;height:9px;margin:0}
-.tbadge{font-size:10px;font-weight:700;background:#f0f0ea;color:var(--muted);padding:2px 7px;border-radius:20px}
-.tboard-3{grid-template-columns:repeat(3,1fr)}
-.tcol-p{background:var(--card);border:1px solid var(--line)}
-.tcol-p h4{padding-bottom:9px;border-bottom:1px solid var(--line)}
-.tav{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;margin-right:7px;flex:0 0 auto}
 .cu-modal{background:var(--card);border-radius:14px;width:760px;max-width:100%;
  box-shadow:0 30px 70px rgba(0,0,0,.4);overflow:hidden;display:flex;flex-direction:column;max-height:92vh}
 .cu-top{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex:0 0 auto}
@@ -733,7 +725,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 .cu-titulo{width:100%;border:0;outline:0;background:transparent;color:var(--ink);
  font-size:23px;font-weight:800;font-family:inherit;padding:2px 0 10px;line-height:1.25}
 .cu-titulo::placeholder{color:var(--muted);font-weight:600}
-.cu-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
 .cu-chip{display:inline-flex;align-items:center;gap:6px;border:1px dashed var(--line);border-radius:8px;
  padding:5px 10px;font-size:12px;font-weight:600;color:var(--muted);background:transparent;cursor:pointer}
 .cu-chip:hover{border-color:var(--green2);color:var(--green-dk)}
@@ -788,24 +779,10 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 [data-tema="escuro"] .field input::placeholder,[data-tema="escuro"] .field textarea::placeholder{color:#6f7d72}
 [data-tema="escuro"] .kcol h4 .cnt{background:#141c17;color:var(--muted);border-color:var(--line)}
 [data-tema="escuro"] .modal{background:var(--card);color:var(--ink)}
-[data-tema="escuro"] .tcol{background:#151d18;border-color:var(--line)}
-[data-tema="escuro"] .tcol.over{background:#22352a;border-color:var(--green2)}
-[data-tema="escuro"] .tcard{box-shadow:0 2px 6px rgba(0,0,0,.3)}
-[data-tema="escuro"] .tcard:hover{box-shadow:0 5px 14px rgba(0,0,0,.45)}
-[data-tema="escuro"] .tdue{background:#243029;color:var(--muted)}
-[data-tema="escuro"] .tdue.hoje{background:#3a2f14;color:#e0b56a}
-[data-tema="escuro"] .tdue.late{background:#3d1e1b;color:#f08a80}
-[data-tema="escuro"] .tbadge{background:#243029;color:var(--muted)}
-[data-tema="escuro"] .cu-row:hover{background:#20291f}
-[data-tema="escuro"] .cu-gadd:hover{background:#243029}
 [data-tema="escuro"] .cu-descr:focus{background:#151d18}
-[data-tema="escuro"] .cu-novo input,[data-tema="escuro"] .cu-titulo{background:transparent;color:var(--ink)}
-[data-tema="escuro"] .cu-due.late{color:#ff7b7b}
-[data-tema="escuro"] .cu-due.hoje{color:#ffa057}
 [data-tema="escuro"] .tanexo .nm{color:var(--ink)}
 [data-tema="escuro"] .tanexo.lk .nm{color:var(--green-dk)}
 .pd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:11px;margin:2px 0 6px}
-.cu-grupo.fechado .pd-grid{display:none}
 .pd-card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--green);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;min-width:0}
 .pd-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
 .pd-cli{font-size:15px;font-weight:800;color:var(--ink);cursor:pointer;line-height:1.25;word-break:break-word;background:none;border:0;padding:0;text-align:left;font-family:inherit}
@@ -832,8 +809,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
  padding:5px 10px;border-radius:999px;white-space:nowrap;background:var(--c);color:#fff}
 .pag-chip.claro{color:#1f2a22}
 .pd-trava{font-size:12.5px;font-weight:700;color:var(--danger);line-height:1.35}
-.cu-chk{display:inline-flex;align-items:center;justify-content:center;background:none;border:0;box-shadow:none;
- padding:0;margin:0;flex:0 0 auto;pointer-events:none;color:inherit}
 [data-tema="escuro"] .modal .mhead{background:#1c4327}
 [data-tema="escuro"] .pag-chip.claro{color:#1f2a22}
 @media(max-width:820px){
@@ -844,68 +819,16 @@ tbody tr:hover td.cli{background:var(--sup-2)}
  .pd-avancar{font-size:15.5px}
  .pd-cli{font-size:16px}
 }
-@media(max-width:900px){
- .tboard{grid-template-columns:repeat(2,1fr)}
- .tboard-3{grid-template-columns:repeat(2,1fr)}
- .cu-cols{display:none}
- .cu-row{grid-template-columns:minmax(0,1fr) auto;row-gap:4px}
- .cu-row .cu-due,.cu-row .cu-prio{justify-self:end}
-}
 @media(max-width:560px){
- .tboard,.tboard-3{grid-template-columns:1fr}
- .cu-views{overflow-x:auto}
  .cu-titulo{font-size:19px}
 }
 @media (max-width:700px){
  .pc-so{display:none}
  .kcol{min-width:80vw;width:80vw;scroll-snap-align:start}
  .kanban{scroll-snap-type:x mandatory}
- .cu-views{flex-wrap:wrap;border-bottom:0;gap:10px;margin:0 0 12px;overflow:visible}
- .cu-seg{display:flex;width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
- .cu-seg button{flex:1 1 0;justify-content:center;border-bottom:0!important;margin:0;border-radius:9px;min-height:40px;font-size:14.5px;padding:8px 6px;line-height:1}
- .cu-seg button.on{background:var(--green);color:#fff}
- .cu-acoes{margin-left:0!important;width:100%;flex-wrap:nowrap!important;overflow-x:auto;padding:0!important;gap:8px!important;scrollbar-width:none}
- .cu-acoes::-webkit-scrollbar{display:none}
- .cu-acoes>*{flex:0 0 auto}
- .cu-acoes select,.cu-acoes .btn{min-height:40px;font-size:14.5px!important;padding:8px 14px!important}
- .cu-acoes .btn.ghost{border:1px solid var(--line)!important;background:var(--card)!important;color:var(--ink)!important}
- .cu-resumo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
- .cu-card{min-width:0;padding:10px 10px 9px;border-radius:12px;display:block}
- .cu-card .ic,.cu-card>div:not(.cu-mob){display:none}
- .cu-card .cu-mob{display:block}
- .cu-mob strong{display:block;font-size:24px;font-weight:800;line-height:1.1;color:var(--ink)}
- .cu-mob em{display:block;font-style:normal;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;line-height:1.25}
- .cu-grupo{margin-bottom:14px}
  .cu-ghead{position:sticky;top:var(--mb-top);z-index:6;background:var(--bg);min-height:44px;padding:8px 2px 8px;margin:0}
  .cu-status{font-size:12px;padding:4px 10px}
  .cu-gcount{font-size:13px}
- .cu-gadd{font-size:13.5px;padding:8px 10px;min-height:36px}
- .cu-cols{display:none}
- .cu-row{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:4px;row-gap:3px;align-items:start;
-  padding:2px 4px 11px 0;min-height:56px}
- .cu-row:hover{background:transparent}
- .cu-nome{display:contents}
- .cu-chk{pointer-events:auto;cursor:pointer;grid-column:1;grid-row:1/span 2;width:44px;height:44px;align-self:start;
-  -webkit-tap-highlight-color:transparent;tap-highlight-color:transparent}
- .cu-chk .cu-dot{width:22px;height:22px;border-width:2px;display:inline-flex;align-items:center;justify-content:center}
- .cu-chk .cu-dot.cheio:after{content:"✓";color:#fff;font-size:13px;font-weight:900;font-style:normal;line-height:1}
- .cu-chk:active .cu-dot{transform:scale(.88)}
- .cu-tt{grid-column:2;grid-row:1;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
-  overflow:hidden;font-size:15.5px;line-height:1.3;font-weight:600;padding-top:11px;word-break:break-word}
- .cu-row .cu-marcas,.cu-row .cu-tags,.cu-row>.cu-avs,.cu-row>.cu-due,.cu-row>.cu-prio{display:none}
- .cu-chips-m{display:flex;grid-column:2;grid-row:2;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
- .mc{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;line-height:1;padding:5px 8px;
-  border-radius:7px;background:var(--pill);color:var(--muted);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
- .mc.late{background:#fbe4e2;color:#c0271f}
- .mc.hoje{background:#fdf1dc;color:#9a6a17}
- .mc .cu-flag{font-size:12px}
- .mc-avs{display:inline-flex;padding-left:6px}
- .mc-avs .cu-av{width:24px;height:24px;margin-left:-6px;border:2px solid var(--bg);font-size:10.5px}
- .cu-addrow{min-height:44px;font-size:14.5px;padding:10px 4px}
- .cu-novo{padding:6px 4px}
- .cu-novo>span{display:none}
- .cu-vazio{font-size:14px}
- .tcard .tt{font-size:15px}
  .pc-lista{display:flex;flex-direction:column;gap:10px}
  .pc-card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--green);border-radius:14px;
   padding:12px 14px;display:flex;flex-direction:column;gap:5px;cursor:pointer;box-shadow:var(--shadow);
@@ -942,7 +865,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
  .cu-statussel{font-size:12.5px;padding:9px 28px 9px 12px}
  .cu-body{padding:14px var(--mb-r) 18px var(--mb-l);-webkit-overflow-scrolling:touch}
  .cu-titulo{font-size:20px!important}
- .cu-chips{gap:8px}
  .cu-chip{min-height:42px;font-size:14px;padding:6px 12px}
  .cu-chip select,.cu-chip input{max-width:none}
  .cu-pessoa{font-size:14px;padding:6px 12px;margin:2px 4px 2px 0}
@@ -951,12 +873,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
  .tcom .txt{font-size:14.5px}
  .cu-foot{padding:10px var(--mb-r) calc(10px + env(safe-area-inset-bottom)) var(--mb-l)}
  .cu-foot .btn{min-height:46px;font-size:15.5px!important;padding:10px 16px!important}
- .tcard .tmeta>span{font-size:12px;padding:3px 9px}
- .tcol h4{font-size:14px}
- [data-tema="escuro"] .mc.late{background:#3d1e1b;color:#ff8a80}
- [data-tema="escuro"] .mc.hoje{background:#3a2f14;color:#e0b56a}
- [data-tema="escuro"] .cu-row:hover{background:transparent}
- [data-tema="escuro"] .cu-acoes .btn.ghost{background:var(--card)!important}
 }
 </style>
 <script>
@@ -1208,24 +1124,25 @@ tbody tr:hover td.cli{background:var(--sup-2)}
   </section>
 
   <section class="view" id="tarefas">
-   <div class="folha">
-   <!-- barra de visoes no formato do ClickUp: abas embaixo, nao botoes soltos -->
-   <!-- .cu-seg e display:contents no computador (abas como sempre) e vira controle
-        segmentado de largura total no celular; .cu-acoes vira uma linha que rola -->
-   <div class="cu-views">
-    <div class="cu-seg">
-    <button id="tv_lista"  class="on" onclick="tSetView('lista')"  title="Tudo agrupado por etapa, numa lista só">☰ Lista</button>
-    <button id="tv_quadro" onclick="tSetView('quadro')" title="Colunas para arrastar">▦ Quadro</button>
-    <button id="tv_equipe" onclick="tSetView('equipe')" title="Uma coluna para cada sócio">👥 Equipe</button>
-    </div>
-    <div class="cu-acoes" style="margin-left:auto;display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding-bottom:6px">
-     <select id="tFiltro" onchange="renderTarefas()" aria-label="Filtrar por responsável" style="padding:6px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;background:var(--card);color:var(--ink)"><option value="">Todos</option></select>
-     <button class="btn ghost" style="padding:6px 11px;font-size:12.5px" onclick="tarefasCarregar()">🔄 Atualizar</button>
-     <button class="btn ghost" style="padding:6px 11px;font-size:12.5px" onclick="tSalvarTudo()" title="Empurra todas as tarefas pra nuvem agora">💾 Salvar</button>
-    </div>
+   <div class="topo-l2">
+    <label class="busca"><svg class="i p" aria-hidden="true"><use href="#i-busca"/></svg><input type="search" id="tBusca" placeholder="Buscar tarefa" aria-label="Buscar tarefa" autocomplete="off" oninput="renderTarefas()"></label>
    </div>
-   <div id="tResumo" class="cu-resumo"></div>
-   <div id="tBoard" class="cu-lista"></div>
+   <div class="folha">
+    <!-- Lista, Quadro e Equipe (tSetView); pílulas de pessoa escrevem no #tFiltro, que continua sendo a fonte do filtro -->
+    <div class="t-barra">
+     <div class="seg" role="tablist" aria-label="Visão das tarefas">
+      <button type="button" id="tv_lista" class="on" onclick="tSetView('lista')">Lista</button>
+      <button type="button" id="tv_quadro" onclick="tSetView('quadro')">Quadro</button>
+      <button type="button" id="tv_equipe" onclick="tSetView('equipe')">Equipe</button>
+     </div>
+     <div class="pilulas" id="tPessoas" role="group" aria-label="Filtrar por responsável"></div>
+     <select id="tFiltro" onchange="renderTarefas()" aria-label="Filtrar por responsável" style="display:none"><option value="">Todos</option></select>
+    </div>
+    <div class="t-resumo-linha"><div id="tResumo" class="t-sub"></div>
+     <label class="ordem-pil" title="Ordem dentro de cada etapa"><span>Ordem: <b id="tOrdemTxt">prazo</b></span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg>
+      <select id="tOrdem" onchange="tSetOrdem(this.value)" aria-label="Ordem dentro de cada etapa"><option value="prazo">por prazo (atrasadas primeiro)</option><option value="manual">manual (arrastar)</option></select></label>
+    </div>
+    <div id="tBoard" class="cu-lista"></div>
    </div>
   </section>
 
@@ -2393,7 +2310,7 @@ async function init(){
  state.seqC=state.caixa.reduce((m,o)=>Math.max(m,Number(o.id)||0),0)+1;
  save();initFilters();renderAll();setStatus();abrirAbaDoEndereco();
  /* contagens do menu: tarefas e cadastros novos carregam já na abertura (só leitura) */
- if(!document.getElementById('tarefas').classList.contains('active'))tarefasCarregar();
+ tarefasCarregar();
  cadContar();
 }
 var _cadNovos=0;
@@ -2407,7 +2324,7 @@ var lastSaveErr="";
    faixa de largura total embaixo do topo (com Tentar de novo), em vez de espremer o título. */
 function setSave(st){var e=document.getElementById("saveStat");if(!e)return;
  var cls=st==="saving"?"salvando":st==="ok"?"ok":"erro",txt=st==="saving"?"Salvando":st==="ok"?"Salvo":"Não salvou";
- [e,document.getElementById("saveStatMenu")].forEach(function(x){if(!x)return;x.classList.remove("ok","salvando","erro");x.classList.add(cls);x.title=txt;});
+ [e,document.getElementById("saveStatMenu")].forEach(function(x){if(!x)return;x.classList.remove("ok","salvando","erro");x.classList.add(cls);x.title=txt;x.setAttribute("aria-label",txt);});
  var t=e.querySelector(".txt");if(t)t.textContent=txt;
  var f=document.getElementById("faixaErro");if(f){if(st==="ok")f.classList.remove("on");else if(st!=="saving")f.classList.add("on");}}
 async function salvarTudo(){if(!SHEET_URL){alert("Você está em modo local (sem nuvem). Faça login para salvar para a equipe.");return;}setSave("saving");var ok=true,msg="";try{var os=(state.orders||[]).map(pickCols);for(var i=0;i<os.length;i+=200){var r=await fetch(sbUrl("pedidos?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify(os.slice(i,i+200))});if(!r.ok){ok=false;msg="pedidos -> HTTP "+r.status+" "+(await r.text()).slice(0,160);break;}}if(ok){var rc=await fetch(sbUrl("config?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([{id:1,dados:{insumos:state.insumos,precos:state.precos,clientsMeta:state.clientsMeta,fixos:state.fixos,caixaBase:state.caixaBase||0,resetMarco:state.resetMarco||""}}])});if(!rc.ok){ok=false;msg="config (saldo/precos) -> HTTP "+rc.status+" "+(await rc.text()).slice(0,160);}}if(ok&&(state.caixa||[]).length){var cs=state.caixa.map(pickCx);for(var j=0;j<cs.length;j+=200){var rr=await fetch(sbUrl("caixa?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify(cs.slice(j,j+200))});if(!rr.ok){ok=false;msg="caixa -> HTTP "+rr.status+" "+(await rr.text()).slice(0,160);break;}}}}catch(e){ok=false;msg=String((e&&e.message)||e);}if(ok){setSave("ok");alert("Tudo salvo na nuvem com sucesso ✓");}else{setSave("err");alert("NAO consegui salvar. Motivo:\n\n"+msg+"\n\nProvavel causa: a tabela config/caixa nao existe ou esta bloqueada no Supabase. Rode o SQL schema_completo_supabase.sql e tente de novo.");}}
@@ -2562,30 +2479,25 @@ function tEntre(a,b){
  return (a+b)/2;
 }
 
-/* data como o ClickUp escreve: relativa perto de hoje, curta quando longe */
+/* data como o ClickUp escreve (visual v2: dataCurta, "há 3 dias" no lugar de "3 dias atrás");
+   cls: hoje, late ou "" (futuro sem cor) */
 function tDataRel(iso){
  if(!iso)return {txt:"",cls:"vazio"};
  var hoje=todayISO();
- var d=new Date(iso+"T12:00:00"), h=new Date(hoje+"T12:00:00");
- var dias=Math.round((d-h)/86400000);
- if(dias===0)  return {txt:"Hoje",   cls:"hoje"};
- if(dias===-1) return {txt:"Ontem",  cls:"late"};
- if(dias===1)  return {txt:"Amanhã", cls:""};
- if(dias<-1)   return {txt:(-dias)+" dias atrás", cls:"late"};
- if(dias<7)    return {txt:"em "+dias+" dias", cls:""};
- return {txt:iso.split('-').reverse().slice(0,2).join('/'), cls:""};
+ var dias=Math.round((new Date(iso+"T12:00:00")-new Date(hoje+"T12:00:00"))/86400000);
+ return {txt:dataCurta(iso,hoje),cls:dias===0?"hoje":(dias<0?"late":"")};
 }
 
 async function tarefasCarregar(){
  if(!SHEET_URL){tarefas=tLocalLoad();renderTarefas();return;}
  var el=document.getElementById('tBoard');
- if(el&&!tarefas.length)el.innerHTML='<div class="cu-vazio">Carregando...</div>';
+ if(el&&!tarefas.length)el.innerHTML='<div class="grupo" aria-label="Carregando">'+'<div class="esq esq-linha"></div>'.repeat(4)+'</div>';
  try{
   var r=await sbFetch("tarefas?select=*&order=pos.asc");
   if(!r.ok)throw new Error('HTTP '+r.status);
   tarefas=await r.json();
  }catch(e){
-  if(el)el.innerHTML='<div class="cu-vazio" style="color:var(--danger)">Nao consegui carregar as tarefas. '+esc(String(e.message||e))+'<br>Se a tabela ainda nao existe, rode o SQL da tabela <b>tarefas</b> no Supabase.</div>';
+  if(el)el.innerHTML='<div class="vazio-bloco"><b>Não consegui carregar as tarefas</b><p>'+esc(String(e.message||e))+'. Se a tabela ainda não existe, rode o SQL da tabela tarefas no Supabase.</p><button type="button" class="btn btn-sec" onclick="tarefasCarregar()">Tentar de novo</button></div>';
   return;
  }
  await tChecarColunas();
@@ -2616,10 +2528,26 @@ async function tSync(row){
 }
 
 function tFiltroAtual(){var f=document.getElementById('tFiltro');return f?f.value:"";}
+/* pílulas de pessoa (Todos, Luan, Felipe, Enzo) escrevem no #tFiltro escondido */
+function tFiltrar(p){var f=document.getElementById('tFiltro');if(f)f.value=p||"";renderTarefas();}
+function tPessoasRender(){var el=document.getElementById('tPessoas');if(!el)return;var f=tFiltroAtual();
+ el.innerHTML=[""].concat(T_EQUIPE).map(function(p){var on=(f===p);
+  return '<button type="button" class="pilula'+(p?' com-av':'')+(on?' on':'')+'" aria-pressed="'+on+'" onclick="tFiltrar(\''+esc(p)+'\')"><span>'+(p?avatar(p):'')+esc(p||'Todos')+'</span></button>';}).join('');}
+/* ordem dentro da etapa: por prazo (atrasadas primeiro, sem prazo no fim) ou a manual (arrastar) */
+var tOrdem=(function(){try{return localStorage.getItem("crm_tordem")==="manual"?"manual":"prazo";}catch(e){return "prazo";}})();
+function tSetOrdem(v){tOrdem=v==="manual"?"manual":"prazo";try{localStorage.setItem("crm_tordem",tOrdem);}catch(e){}renderTarefas();}
+function tOrdenar(lista,et){
+ var pos=function(a,b){return (a.pos||0)-(b.pos||0);};
+ if(tOrdem==="manual")return lista.sort(pos);
+ if(et==="Feito")return lista.sort(function(a,b){return String(b.concluido_em||"").localeCompare(String(a.concluido_em||""))||pos(a,b);});
+ return lista.sort(function(a,b){var x=a.prazo||"9999",y=b.prazo||"9999";return x<y?-1:x>y?1:pos(a,b);});}
+function tBuscaAtual(){var b=document.getElementById('tBusca');return b?String(b.value||"").trim().toLowerCase():"";}
+function tCasaBusca(t,q){if(!q)return true;return ((t.titulo||"")+" "+(t.descricao||"")+" "+tTagsDe(t).join(" ")).toLowerCase().indexOf(q)>=0;}
 
 /* ---------- as tres visoes, como as abas do ClickUp ---------- */
 var tView=(function(){try{var v=localStorage.getItem("crm_tview");return (v==='quadro'||v==='equipe')?v:'lista';}catch(e){return 'lista';}})();
-var tFechados={};
+var tFechados={"Feito":true};   // Feito começa recolhido
+var tLim={};                    // "Ver mais" por etapa
 function tSetView(v){
  tView=v;
  try{localStorage.setItem("crm_tview",v);}catch(e){}
@@ -2629,6 +2557,7 @@ function tSetView(v){
  renderTarefas();
 }
 function tToggleGrupo(et){tFechados[et]=!tFechados[et];renderTarefas();}
+function tMais(et){tLim[et]=(tLim[et]||25)+25;renderTarefas();}
 
 function renderTarefas(){
  var el=document.getElementById('tBoard');if(!el)return;
@@ -2636,111 +2565,91 @@ function renderTarefas(){
  var f=document.getElementById('tFiltro');
  if(f&&f.options.length<=1){T_EQUIPE.forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;f.appendChild(o);});}
  ['lista','quadro','equipe'].forEach(function(k){
-  var b=document.getElementById('tv_'+k);if(b)b.classList.toggle('on',k===tView);
+  var b=document.getElementById('tv_'+k);if(b){b.classList.toggle('on',k===tView);b.setAttribute('aria-selected',k===tView?'true':'false');}
  });
- var filtro=tFiltroAtual();
- var vis=tarefas.filter(function(t){return !filtro||tTemResp(t,filtro);});
+ tPessoasRender();
+ var o=document.getElementById('tOrdem'),ot=document.getElementById('tOrdemTxt');if(o)o.value=tOrdem;if(ot)ot.textContent=tOrdem==="manual"?"manual":"prazo";
+ var filtro=tFiltroAtual(),q=tBuscaAtual();
+ var vis=tarefas.filter(function(t){return (!filtro||tTemResp(t,filtro))&&tCasaBusca(t,q);});
  tRenderResumo(vis);menuContagens();
+ if(q&&!vis.length){el.className='cu-lista';el.innerHTML='<div class="vazio-bloco"><b>Nada encontrado para “'+esc(q)+'”</b><p>Procuro no título, na descrição e nas etiquetas.</p><button type="button" class="btn btn-sec" onclick="tLimparBusca()">Limpar busca</button></div>';return;}
  if(tView==='lista'){el.className='cu-lista';el.innerHTML=tListaGrupos(vis);}
  else if(tView==='equipe'){el.className='tboard tboard-3';el.innerHTML=tColsPessoa(vis);}
  else {el.className='tboard';el.innerHTML=tColsEtapa(vis);}
 }
+function tLimparBusca(){var b=document.getElementById('tBusca');if(b)b.value="";tFiltrar("");}
 
-/* os tres cartoes do topo, como a faixa de resumo do ClickUp */
+/* resumo numa linha: "55 em aberto · 15 atrasadas" */
 function tRenderResumo(vis){
  var el=document.getElementById('tResumo');if(!el)return;
  var abertas=vis.filter(function(t){return (t.etapa||T_ETAPAS[0])!=="Feito";});
- var comDono=vis.filter(function(t){return !!t.responsavel;}).length;
- var pct=vis.length?Math.round(comDono*100/vis.length):0;
  var atras=abertas.filter(function(t){return t.prazo&&t.prazo<todayISO();}).length;
- /* .cu-mob: no celular o cartão vira só número grande + rótulo curto */
- function card(cor,ic,titulo,sub,num,rot,corNum){
-  return '<div class="cu-card"><span class="ic" style="background:'+cor+'22;color:'+cor+'">'+ic+'</span>'
-   +'<div><b>'+titulo+'</b><span>'+sub+'</span></div>'
-   +'<div class="cu-mob"><strong'+(corNum?' style="color:'+corNum+'"':'')+'>'+num+'</strong><em>'+rot+'</em></div></div>';
- }
- el.innerHTML =
-   card("#008844","✓","Lista de pendências",vis.length+(vis.length===1?" tarefa":" tarefas")+" · "+abertas.length+" em aberto",
-        abertas.length,"em aberto de "+vis.length,"")
-  +card("#3e63dd","👤","Atribuído",pct+"% com responsável",pct+"%","com responsável","")
-  +card(atras?"#f50000":"#8d8d8d",atras?"⚠":"✓","Prazo",atras?(atras+(atras===1?" atrasada":" atrasadas")):"nada atrasado",
-        atras,atras===1?"atrasada":"atrasadas",atras?"var(--danger)":"");
+ el.innerHTML=abertas.length+' em aberto'+(atras?' <span class="sep">·</span> <b>'+atras+(atras===1?' atrasada':' atrasadas')+'</b>':'');
 }
+
+/* ícone de progresso da etapa (o círculo que conclui) */
+var T_PROG={"A fazer":["zero","--t-afazer",0],"Fazendo":["meio","--t-fazendo",.5],"Aguardando":["meio","--t-aguardando",.75],"Feito":["ok","--t-feito",1]};
+function tProgUi(et){return T_PROG[et]||T_PROG["A fazer"];}
 
 /* ---------- LISTA agrupada por etapa (a visao principal) ---------- */
 function tListaGrupos(vis){
  return T_ETAPAS.map(function(et){
-  var lista=vis.filter(function(t){return (t.etapa||T_ETAPAS[0])===et;})
-               .sort(function(a,b){return (a.pos||0)-(b.pos||0);});
-  var c=tCorEtapa(et), fechado=!!tFechados[et];
-  var linhas=lista.map(function(t){return tLinha(t,et);}).join('')
-   ||'<div class="cu-vazio">Nenhuma tarefa aqui. Solte uma, ou use o “＋ Adicionar Tarefa”.</div>';
-  return '<div class="cu-grupo'+(fechado?' fechado':'')+'" data-etapa="'+esc(et)+'"'
+  var lista=tOrdenar(vis.filter(function(t){return (t.etapa||T_ETAPAS[0])===et;}),et);
+  var c=tCorEtapa(et), fechado=!!tFechados[et], lim=tLim[et]||25;
+  var add='<button type="button" class="btn-icone" onclick="tNovaInline(\''+esc(et)+'\')" aria-label="Nova tarefa em '+esc(et)+'">'+ic('mais','i p')+'</button>';
+  var cab=grupoCab(et,c,lista.length,fechado,"tToggleGrupo(\'"+esc(et)+"\')",null,add);
+  if(fechado)return cab+'<div id="novo_'+tSlug(et)+'"></div>';
+  var linhas=lista.slice(0,lim).map(function(t){return tLinha(t,et);}).join('')
+   ||'<div class="t-vazio">Nenhuma tarefa aqui. Toque em + para criar.</div>';
+  return cab
+   +'<div class="grupo cu-grupo" data-etapa="'+esc(et)+'"'
    +' ondragover="tOverLista(event,this)" ondragleave="tLeaveLista(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
-   +'<div class="cu-ghead" onclick="tToggleGrupo(\''+esc(et)+'\')">'
-     +'<span class="cu-caret">▼</span>'
-     +'<span class="cu-status" style="background:'+c+';color:'+tTextoSobre(c)+'">'+esc(et)+'</span>'
-     +'<span class="cu-gcount">'+lista.length+'</span>'
-     +'<button type="button" class="cu-gadd" onclick="event.stopPropagation();tNovaInline(\''+esc(et)+'\')">＋ Adicionar</button>'
-   +'</div>'
-   +'<div class="cu-cols"><span>Nome</span><span>Responsável</span><span>Data de vencimento</span><span>Prioridade</span></div>'
+   +'<div class="t-cols"><span></span><span>Nome</span><span>Responsável</span><span>Data de vencimento</span><span>Prioridade</span></div>'
    +linhas
    +'<div id="novo_'+tSlug(et)+'"></div>'
-   +'<button type="button" class="cu-addrow" onclick="tNovaInline(\''+esc(et)+'\')">＋ Adicionar Tarefa</button>'
+   +(lista.length>lim?'<button type="button" class="mais" onclick="tMais(\''+esc(et)+'\')">Ver mais '+(lista.length-lim)+'</button>':'')
    +'</div>';
  }).join('');
 }
 
 function tSlug(s){return String(s).replace(/[^a-zA-Z0-9]/g,"_");}
 
+/* linha da tarefa: círculo que conclui | título até 2 linhas | avatares; linha 2 com prazo,
+   bandeira, etiquetas, anexos e comentários. No computador o mesmo HTML vira colunas. */
 function tLinha(t,et){
- var feito=(et==="Feito"), c=tCorEtapa(et), urg=t.urgencia||'media';
+ var feito=(et==="Feito"), urg=t.urgencia||'media', pu=tProgUi(et);
  var d=tDataRel(t.prazo);
  var nAnex=(t.anexos&&t.anexos.length)||0, nCom=tComCount[t.id]||0;
- var tags=tTagsDe(t);
- var marcas='';
- if((t.descricao||'').trim())marcas+='<span title="tem descrição">📄</span>';
- if(nAnex)marcas+='<span title="'+nAnex+' anexo(s)">📎'+nAnex+'</span>';
- if(nCom)marcas+='<span title="'+nCom+' comentário(s)">💬'+nCom+'</span>';
- return '<div class="cu-row'+(feito?' feito':'')+'" draggable="true" data-id="'+t.id+'"'
+ var tags=tTagsDe(t), rs=tResps(t);
+ var dcls=feito?'':(d.cls==='late'?'dt-atras':d.cls==='hoje'?'dt-hoje':'');
+ return '<div class="linha cu-row'+(feito?' feita feito':'')+'" draggable="true" data-id="'+t.id+'" role="button" tabindex="0"'
   +' ondragstart="tDragStart(event,'+t.id+')" ondragend="tDragEnd(this)"'
   +' ondragover="tOverLista(event,this.parentNode)"'
   +' ondrop="event.stopPropagation();tDrop(event,\''+esc(et)+'\','+t.id+')"'
-  +' onclick="tAbrir('+t.id+')">'
-  +'<span class="cu-nome">'
-    /* no celular o círculo é o botão de concluir (alvo de 44 px); no computador
-       o CSS deixa o clique passar e a linha abre a tarefa, como sempre */
-    +'<button type="button" class="cu-chk" tabindex="-1" onclick="event.stopPropagation();tConcluir('+t.id+')"'
-    +' aria-label="'+(feito?'Reabrir a tarefa':'Concluir a tarefa')+'">'
-    +'<i class="cu-dot'+(feito?' cheio':'')+'" style="color:'+c+'"></i></button>'
-    +'<span class="cu-tt">'+esc(t.titulo||'(sem título)')+'</span>'
-    +(marcas?'<span class="cu-marcas">'+marcas+'</span>':'')
-    +(tags.length?'<span class="cu-tags">'+tags.slice(0,3).map(function(g){
-        var tc=tCorTag(g);
-        return '<span class="cu-tag" style="background:'+tc+'22;color:'+tc+'">'+esc(g)+'</span>';}).join('')+'</span>':'')
-  +'</span>'
-  +'<span class="cu-avs">'+(tResps(t).length
-     ?tResps(t).map(function(p){return '<i class="cu-av" style="background:'+tCorPessoa(p)+'" title="'+esc(p)+'">'+esc(tIniciais(p))+'</i>';}).join('')
-     :'<i class="cu-av vazio" title="sem responsável">+</i>')+'</span>'
-  +'<span class="cu-due '+(feito?'':d.cls)+'">'+(d.txt?esc(d.txt):'·')+'</span>'
-  +'<span class="cu-prio">'+tBandeira(urg)+esc(tUrgLbl(urg))+'</span>'
+  +' onclick="tAbrir('+t.id+')" onkeydown="if(event.key===\'Enter\')tAbrir('+t.id+')">'
+  /* o círculo é o botão de concluir (alvo de 44 px), com Desfazer no aviso */
+  +'<button type="button" class="prog cu-chk'+(pu[0]==="zero"?' zero':pu[0]==="ok"?' ok':'')+'" style="--c:var('+pu[1]+');--p:'+pu[2]+'"'
+  +' onclick="event.stopPropagation();tConcluir('+t.id+')" aria-label="'+(feito?'Reabrir a tarefa':'Concluir a tarefa')+'"><i></i></button>'
+  +'<div class="tit duas">'+esc(t.titulo||'(sem título)')+'</div>'
+  +'<div class="dir">'+(rs.length?'<span class="avs">'+rs.slice(0,3).map(avatar).join('')+'</span>':'')+'</div>'
+  +'<div class="t-due '+dcls+'">'+(d.txt?esc(d.txt):'')+'</div>'
+  +'<div class="t-prio">'+bandeiraSvg(urg)+esc(tUrgLbl(urg))+'</div>'
   +tChipsCel(t,feito,d,urg,tags,nAnex,nCom)
   +'</div>';
 }
-/* linha 2 da tarefa no celular: chips pequenos, alinhados à esquerda e quebrando
-   linha. Prazo (vermelho se passou), prioridade (Normal é o padrão e não ocupa
-   espaço), etiquetas, responsáveis em bolinhas sobrepostas, anexo e comentário. */
+/* linha 2 da tarefa: prazo (laranja hoje, vermelho atrasado, futuro sem cor), bandeira (Normal
+   não aparece), etiquetas com ponto na cor, anexos e comentários. Prazo e bandeira são .m-so:
+   no computador eles já têm coluna própria. */
 function tChipsCel(t,feito,d,urg,tags,nAnex,nCom){
  var h='';
- if(d.txt)h+='<span class="mc'+(feito||d.cls==='vazio'?'':(d.cls?' '+d.cls:''))+'">📅 '+esc(d.txt)+'</span>';
- if(urg!=='media')h+='<span class="mc">'+tBandeira(urg)+esc(tUrgLbl(urg))+'</span>';
- tags.slice(0,3).forEach(function(g){var tc=tCorTag(g);h+='<span class="mc" style="background:'+tc+'22;color:'+tc+'">'+esc(g)+'</span>';});
- if(tags.length>3)h+='<span class="mc">+'+(tags.length-3)+'</span>';
- var rs=tResps(t);
- if(rs.length)h+='<span class="mc-avs">'+rs.map(function(p){return '<i class="cu-av" style="background:'+tCorPessoa(p)+'" title="'+esc(p)+'">'+esc(tIniciais(p))+'</i>';}).join('')+'</span>';
- if(nAnex)h+='<span class="mc" title="'+nAnex+' anexo(s)">📎 '+nAnex+'</span>';
- if(nCom)h+='<span class="mc" title="'+nCom+' comentário(s)">💬 '+nCom+'</span>';
- return '<span class="cu-chips-m">'+h+'</span>';
+ var dcls=feito?'':(d.cls==='late'?' dt-atras':d.cls==='hoje'?' dt-hoje':'');
+ if(d.txt)h+='<span class="meta m-so'+dcls+'">'+esc(d.txt)+'</span>';
+ if(urg!=='media')h+='<span class="meta m-so">'+bandeiraSvg(urg)+esc(tUrgLbl(urg))+'</span>';
+ tags.slice(0,2).forEach(function(g){h+='<span class="tag" style="--c:'+tCorTag(g)+'">'+esc(g)+'</span>';});
+ if(tags.length>2)h+='<span class="meta">+'+(tags.length-2)+'</span>';
+ if(nAnex)h+='<span class="meta" title="'+nAnex+' anexo(s)">'+ic('clipe','i pp')+nAnex+'</span>';
+ if(nCom)h+='<span class="meta" title="'+nCom+' comentário(s)">'+ic('coment','i pp')+nCom+'</span>';
+ return '<div class="sub">'+h+'</div>';
 }
 
 /* concluir pelo círculo (celular). Leva a tarefa para o fim de "Feito" e mostra
@@ -2757,7 +2666,7 @@ function tConcluir(id){
  renderTarefas();setSave("saving");
  var nome=(t.titulo||'').slice(0,60);
  tSync(tPick(t)).then(function(ok){if(ok&&typeof logAct==='function')logAct((para==="Feito"?'concluiu':'reabriu')+' a tarefa "'+nome+'"');});
- mbAviso(para==="Feito"?'✓ Tarefa concluída':'Tarefa reaberta em '+para,'Desfazer',function(){
+ mbAviso(para==="Feito"?'Tarefa concluída':'Tarefa reaberta em '+para,'Desfazer',function(){
   t.etapa=de;t.pos=posDe;t.concluido_em=concDe;t._antes=antesDe;renderTarefas();setSave("saving");
   tSync(tPick(t)).then(function(ok){if(ok&&typeof logAct==='function')logAct('desfez: a tarefa "'+nome+'" voltou para '+de);});});
 }
@@ -2765,11 +2674,13 @@ function tConcluir(id){
 /* criar tarefa na propria linha, sem abrir modal - e o jeito do ClickUp e
    e o que faz diferenca quando voce esta despejando 10 tarefas seguidas */
 function tNovaInline(et){
+ if(tView!=='lista')tSetView('lista');
+ if(tFechados[et]){tFechados[et]=false;renderTarefas();}   /* etapa recolhida abre antes */
  var box=document.getElementById('novo_'+tSlug(et));if(!box)return;
  if(box.querySelector('input')){box.querySelector('input').focus();return;}
- box.innerHTML='<div class="cu-novo"><input type="text" enterkeyhint="done" placeholder="Nome da tarefa e Enter" '
+ box.innerHTML='<div class="cu-novo"><input type="text" class="campo" enterkeyhint="done" aria-label="Nome da nova tarefa" placeholder="Nome da tarefa e Enter" '
   +'onkeydown="tNovaInlineTecla(event,\''+esc(et)+'\')" onblur="tNovaInlineFecha(this,\''+esc(et)+'\')">'
-  +'<span style="font-size:11px;color:var(--muted)">Enter salva · Esc cancela</span></div>';
+  +'</div>';
  box.querySelector('input').focus();
 }
 function tNovaInlineFecha(inp,et){
@@ -2795,16 +2706,17 @@ async function tNovaInlineTecla(ev,et){
  if(ok&&typeof logAct==='function')logAct('criou a tarefa "'+titulo.slice(0,60)+'"');
 }
 
-/* ---------- QUADRO (kanban) ---------- */
+/* ---------- QUADRO (kanban) ----------
+   No celular uma coluna por tela (85% da largura, encaixe); mudar etapa = abrir a tarefa.
+   No computador continua o arrastar. */
 function tColsEtapa(vis){
  return T_ETAPAS.map(function(et){
-  var lista=vis.filter(function(t){return (t.etapa||T_ETAPAS[0])===et;})
-               .sort(function(a,b){return (a.pos||0)-(b.pos||0);});
+  var lista=tOrdenar(vis.filter(function(t){return (t.etapa||T_ETAPAS[0])===et;}),et);
   var cards=lista.map(function(t){return tCard(t,et==="Feito",false);}).join('')
-    ||'<div class="tempty">Solte uma tarefa aqui</div>';
+    ||'<div class="tempty">Nenhuma tarefa aqui</div>';
   var c=tCorEtapa(et);
-  return '<div class="tcol" style="border-top:3px solid '+c+'" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
-   +'<h4><span class="hd"><i class="tdot" style="background:'+c+'"></i><span style="color:'+c+'">'+esc(et)+'</span></span>'
+  return '<div class="tcol" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
+   +'<h4><span class="hd">'+chipGrupo(et,c)+'</span>'
    +'<span class="cnt">'+lista.length+'</span></h4>'+cards+'</div>';
  }).join('');
 }
@@ -2828,11 +2740,10 @@ function tColsPessoa(vis){
   var atrasadas=lista.filter(function(t){return t.prazo&&t.prazo<todayISO()&&(t.etapa||T_ETAPAS[0])!=="Feito";}).length;
   var cards=lista.map(function(t){return tCard(t,(t.etapa||T_ETAPAS[0])==="Feito",true);}).join('')
     ||'<div class="tempty">Solte aqui para passar para '+(p?esc(p):'ninguém')+'</div>';
-  var cor=tCorPessoa(p);
   return '<div class="tcol tcol-p" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDropPessoa(event,\''+esc(p)+'\')">'
-   +'<h4><span class="hd"><span class="tav" style="background:'+cor+'">'+esc(tIniciais(p||'?'))+'</span>'
-   +'<span style="color:var(--ink)">'+esc(p||'Sem responsável')+'</span></span>'
-   +'<span class="cnt">'+abertas+(atrasadas?' · <b style="color:var(--danger)">'+atrasadas+' atrasada'+(atrasadas>1?'s':'')+'</b>':'')+'</span></h4>'
+   +'<h4><span class="hd">'+(p?avatar(p):'<i class="av vazio" aria-hidden="true">?</i>')
+   +'<span>'+esc(p||'Sem responsável')+'</span></span>'
+   +'<span class="cnt">'+abertas+(atrasadas?' <span class="sep">·</span> <b>'+atrasadas+' atrasada'+(atrasadas>1?'s':'')+'</b>':'')+'</span></h4>'
    +cards+'</div>';
  }).join('');
 }
@@ -2855,26 +2766,27 @@ async function tDropPessoa(ev,pessoa){
 function tCard(t,feito,mostrarEtapa){
  var d=tDataRel(t.prazo);
  var urg=t.urgencia||'media';
- var etapa=t.etapa||T_ETAPAS[0], ce=tCorEtapa(etapa);
+ var etapa=t.etapa||T_ETAPAS[0];
  var nAnex=(t.anexos&&t.anexos.length)||0,nCom=tComCount[t.id]||0;
+ var dcls=feito?'':(d.cls==='late'?' dt-atras':d.cls==='hoje'?' dt-hoje':'');
  /* na visao por pessoa o cartao mostra a ETAPA (o responsavel ja e a coluna);
     na visao por etapa mostra o RESPONSAVEL. Nunca os dois - vira poluicao. */
  var arrasta=(tView==='equipe')
    ? ' ondragover="tOver(event,this.parentNode)"'
    : ' ondragover="tOver(event,this.parentNode)" ondrop="tDrop(event,\''+esc(etapa)+'\','+t.id+')"';
- return '<div class="tcard'+(feito?' done':'')+'" draggable="true" data-id="'+t.id+'"'
+ var rs=tResps(t);
+ return '<div class="tcard'+(feito?' done':'')+'" draggable="true" data-id="'+t.id+'" role="button" tabindex="0"'
   +' ondragstart="tDragStart(event,'+t.id+')" ondragend="tDragEnd(this)"'
   +arrasta
-  +' onclick="tAbrir('+t.id+')" style="border-left-color:'+tCor(urg)+'">'
+  +' onclick="tAbrir('+t.id+')" onkeydown="if(event.key===\'Enter\')tAbrir('+t.id+')">'
   +'<div class="tt">'+esc(t.titulo||'(sem título)')+'</div>'
   +'<div class="tmeta">'
-  +'<span class="tpill" style="background:'+tCor(urg)+'22;color:'+(urg==='baixa'?'var(--muted)':tCor(urg))+'">'+tBandeira(urg)+tUrgLbl(urg)+'</span>'
-  +(mostrarEtapa
-     ? '<span class="tetapa" style="background:'+ce+'22;color:'+ce+';border-color:'+ce+'55"><i class="tdot" style="background:'+ce+'"></i>'+esc(etapa)+'</span>'
-     : (tResps(t).length?tResps(t).map(function(p){return '<span class="twho" style="background:'+tCorPessoa(p)+'22;color:'+tCorPessoa(p)+'"><i class="tdot" style="background:'+tCorPessoa(p)+'"></i>'+esc(p)+'</span>';}).join(''):''))
-  +(d.txt?'<span class="tdue'+(feito?'':(d.cls==='vazio'?'':' '+d.cls))+'">📅 '+esc(d.txt)+'</span>':'')
-  +(nAnex?'<span class="tbadge">📎 '+nAnex+'</span>':'')
-  +(nCom?'<span class="tbadge">💬 '+nCom+'</span>':'')
+  +(mostrarEtapa?'<span class="t-etapa"><i class="tdot" style="background:'+tCorEtapa(etapa)+'"></i>'+esc(etapa)+'</span>'
+     :(rs.length?'<span class="avs">'+rs.slice(0,3).map(avatar).join('')+'</span>':''))
+  +(d.txt?'<span class="meta'+dcls+'">'+esc(d.txt)+'</span>':'')
+  +(urg!=='media'?'<span class="meta">'+bandeiraSvg(urg)+esc(tUrgLbl(urg))+'</span>':'')
+  +(nAnex?'<span class="meta">'+ic('clipe','i pp')+nAnex+'</span>':'')
+  +(nCom?'<span class="meta">'+ic('coment','i pp')+nCom+'</span>':'')
   +'</div></div>';
 }
 
