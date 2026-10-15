@@ -1334,7 +1334,7 @@ const EVENTOS=["","Casamento","Bodas","Chá de bebê","Chá revelação","Aniver
 const PAGSTATUS=["","Pago","Sinal pago","Pendente","Estornado"];
 const PAGFORMA=["","Pix","Cartão","Dinheiro","Link de pagamento","Boleto"];
 const ENTREGA=["","BlaBlaCar","Uber","Motoboy (Lucas)","Correios","Transportadora","Retirada","Mandar link","A combinar"];
-const PRODUTOS=["Suculenta + Rótulo Personalizado","Suculenta + Rótulo Pronto","Cachepô de Juta","Suculenta + Tag (simples)","Kit/Terrário","Personalizado (outro)"];
+const PRODUTOS=["Suculenta + Rótulo Personalizado","Suculenta + Rótulo Pronto","Suculenta + Rótulo + Tag","Cachepô de Juta","Suculenta + Tag (simples)","Kit/Terrário","Personalizado (outro)"];
 /* visual v2: as cores de estágio são as do token --e-* do tema claro (Perdido deixou de ser vermelho) */
 const STAGE_COLORS={"Lead novo":"#6b7280","Em conversa":"#2563a8","Orçamento enviado":"#a16207","Negociação":"#b4532a","Fechado (ganho)":"#16774a","Em produção":"#0f766e","Entregue":"#1f5132","Pós-venda":"#3f7a52","Perdido":"#6b6b66"};
 const PAY_COLORS={"Pago":"#16774a","Sinal pago":"#a84d0a","Pendente":"#c42b22","Estornado":"#6b6b66"};
@@ -1420,6 +1420,7 @@ function palitoUnit(){return (state.insumos.palitoPacote||0)/500;}
 function fixUnit(){return (state.insumos.cola||0)+palitoUnit();}
 function custoProduto(n){const i=state.insumos,p=pedraUnit(),fx=fixUnit();switch(n){
  case "Suculenta + Rótulo Personalizado":case "Suculenta + Rótulo Pronto":case "Personalizado (outro)":return i.planta+i.rotulo+p+fx;
+ case "Suculenta + Rótulo + Tag":return i.planta+2*i.rotulo+p+fx; // rótulo e tag: duas peças impressas (JEV 15/10)
  case "Cachepô de Juta":return i.planta+p+i.cachepo+i.rotulo+fx;
  case "Suculenta + Tag (simples)":return i.planta+i.rotulo+fx;
  case "Kit/Terrário":return i.planta+p;default:return 0;}}
@@ -1778,13 +1779,50 @@ function finPagamento(o,antes){
  else if(novo==="Pago"){const falta=c.vt-total;if(falta>0.009)lanca("Pagamento integral",falta,total>0?"Restante":"Pagamento");}
  else if(novo!=="Sinal pago"&&novo!=="Pago"&&total>0)finAviso("Este pedido tem "+BRL(total)+" de recebimento no Caixa. Se o dinheiro voltou, lance uma saída ou apague o lançamento no Caixa.");
  save();if(document.getElementById("caixa")&&document.getElementById("caixa").classList.contains("active"))renderCaixa();}
+/* ===== CUSTOS AUTOMÁTICOS NO PAINEL (15/10/2026) =====
+   A partir de CUSTO_INICIO, e só depois que o SQL de custos rodou (CUSTO_EXT, mesmo padrão do CX_EXT):
+   - Anúncio = gasto real por dia do Meta e do Google (visão gasto_anuncios_dia, que o n8n A14 alimenta).
+     As recargas lançadas no Caixa como "Anúncio" continuam valendo para o saldo de caixa, não para o Painel.
+   - Plantas e materiais = qtd x custoProduto (só insumos) dos pedidos cuja receita está no Painel: venda do site
+     paga e pedido com recebimento no Caixa ligado a ele, na data do primeiro recebimento (JEV 15/10: 64% e
+     sinal pago conta o custo inteiro, 86%). Compras de "Suculentas" e "Materiais" no Caixa ficam só no saldo.
+   Antes de CUSTO_INICIO, e enquanto o SQL não roda, o Painel soma o Caixa como sempre. */
+var CUSTO_EXT=null,ADS_DIA=[];
+const CUSTO_INICIO="2026-09-01",CAT_PLANTAS="Plantas e materiais (pedidos)",CUSTO_CAT_CAIXA=["Anúncio","Suculentas","Materiais"];
+async function custoDetectarExt(){try{let rows=[];
+ for(let off=0,volta=0;volta<50;volta++){const r=await fetch(sbUrl("gasto_anuncios_dia?select=data,plataforma,gasto,atualizado_em&order=data.asc&limit=1000&offset="+off),{headers:sbHeaders()});
+  if(!r.ok){CUSTO_EXT=(r.status===404||r.status===400)?false:null;return;}
+  const pg=await r.json();if(!pg.length)break;rows=rows.concat(pg);off+=pg.length;if(pg.length<1000)break;}
+ ADS_DIA=rows.map(x=>({data:String(x.data).slice(0,10),plataforma:x.plataforma,gasto:Number(x.gasto)||0}));CUSTO_EXT=true;}catch(e){CUSTO_EXT=null;}}
+function custoPedidos(){const rec={};(state.caixa||[]).forEach(x=>{const pid=Number(x.pedido_id);if(!pid||x.tipo!=="Entrada"||!x.data)return;if(!rec[pid]||x.data<rec[pid])rec[pid]=x.data;});
+ const out=[];(state.orders||[]).forEach(o=>{if(o.estagio==="Perdido")return;const id=Number(o.id);let d="";
+  if(id>=FIN_ID_SITE){if(o.statusPag!=="Pago")return;d=o.data||"";}else{d=rec[id]||"";}
+  if(!d||d<CUSTO_INICIO)return;const c=calc(o);out.push({o,data:d,valor:c.ct,semCusto:!(c.ct>0)});});return out;}
+function custoLinhas(){const L=ADS_DIA.filter(x=>x.data>=CUSTO_INICIO&&x.gasto).map(x=>({data:x.data,tipo:"Saída",categoria:"Anúncio",valor:x.gasto,plataforma:x.plataforma,virtual:true,origem:"anuncio"}));
+ custoPedidos().forEach(p=>L.push({data:p.data,tipo:"Saída",categoria:CAT_PLANTAS,valor:p.valor,pedido_id:Number(p.o.id),semCusto:p.semCusto,virtual:true,origem:"plantas"}));return L;}
+// o que o Painel soma: o Caixa + vendas do site, trocando de CUSTO_INICIO em diante anúncio, suculentas e materiais pelo automático
+function finLedgerPainel(){const L=finLedger();if(CUSTO_EXT!==true)return L;
+ return L.filter(x=>!(x.tipo!=="Entrada"&&!x.virtual&&(x.data||"")>=CUSTO_INICIO&&CUSTO_CAT_CAIXA.includes(x.categoria))).concat(custoLinhas());}
+function custoNoPeriodo(r){const d1=r?r.d1:"0000-00-00",d2=r?r.d2:"9999-12-31",dentro=x=>x.data>=d1&&x.data<=d2;
+ const ads={meta:0,google:0},ult={meta:"",google:""};ADS_DIA.forEach(x=>{if(x.gasto&&x.data>(ult[x.plataforma]||""))ult[x.plataforma]=x.data;if(x.data>=CUSTO_INICIO&&dentro(x))ads[x.plataforma]=(ads[x.plataforma]||0)+x.gasto;});
+ const ps=custoPedidos().filter(dentro);const comRec=new Set(ps.map(p=>Number(p.o.id)));
+ const fora=(state.orders||[]).filter(o=>Number(o.id)<FIN_ID_SITE&&o.estagio!=="Perdido"&&PAG_OK.includes(o.statusPag)&&(o.data||"")>=CUSTO_INICIO&&o.data>=d1&&o.data<=d2&&!comRec.has(Number(o.id)));
+ return {ads,ult,pedidos:ps.length,semCusto:ps.filter(p=>p.semCusto).length,fora:fora.length,foraValor:fora.reduce((s,o)=>s+calc(o).vt,0),antes:!!r&&r.d2<CUSTO_INICIO};}
+function custoSubAnuncio(r){if(CUSTO_EXT!==true)return "recargas lançadas, até ligar o gasto real do Meta e do Google";const k=custoNoPeriodo(r);if(k.antes)return "recargas lançadas (antes de 09/2026)";
+ const ate=p=>k.ult[p]?" até "+dBR(k.ult[p]):" (sem dado ainda)";return "gasto real · Meta "+BRL(k.ads.meta)+ate("meta")+" · Google "+BRL(k.ads.google)+ate("google");}
+function custoSubPlantas(r){if(CUSTO_EXT!==true)return "depois do SQL de custos";const k=custoNoPeriodo(r);if(k.antes)return "a partir de 09/2026";
+ return k.pedidos+" pedidos"+(k.semCusto?' · <b style="color:#b00020">'+k.semCusto+" sem produto/qtd (custo zero)</b>":"");}
+function custoAviso(r){if(!SHEET_URL)return "";
+ if(CUSTO_EXT===false)return '<div class="note custo-aviso">Falta rodar o SQL de custos (<b>crm_custos_automaticos_rodar_no_supabase.sql</b>). Até lá o anúncio vem das recargas do Caixa e as plantas, das compras lançadas.</div>';
+ if(CUSTO_EXT!==true)return "";const k=custoNoPeriodo(r);if(k.antes||!k.fora)return "";
+ return '<div class="note custo-aviso">'+k.fora+' pedido'+(k.fora>1?'s':'')+' de WhatsApp pago'+(k.fora>1?'s':'')+' no período ('+BRL(k.foraValor)+') sem recebimento no Caixa: fica'+(k.fora>1?'m':'')+' fora do faturamento e do custo de plantas até alguém lançar o recebimento ligado ao pedido.</div>';}
 // Indicadores do Enzo no topo do Painel: verde = faturamento e caixa, vermelho = custos. Saem do Caixa
 // (lancamentos + venda do site) no periodo escolhido; crescimento compara com o periodo anterior.
 function finResumo(rows){const r={sinal:0,integral:0,outras:0,saidas:0,cat:{}};rows.forEach(x=>{const v=Number(x.valor)||0;if(x.tipo==="Entrada"){if(x.categoria==="Sinal 30%")r.sinal+=v;else if(x.categoria==="Pagamento integral")r.integral+=v;else r.outras+=v;}else{r.saidas+=v;const c=x.categoria||"Outros";r.cat[c]=(r.cat[c]||0)+v;}});r.bruto=r.sinal+r.integral;r.liquido=r.bruto-r.saidas;return r;}
 function finCresc(cur,prev){if(prev==null)return{txt:"sem comparação",cls:""};if(!prev)return cur?{txt:"novo",cls:"up"}:{txt:"0%",cls:""};const d=(cur-prev)/Math.abs(prev);return{txt:(d>=0?"▲ ":"▼ ")+Math.abs(d*100).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%",cls:d>=0?"up":"down"};}
 function renderFinBlocos(r,bk){const el=document.getElementById("finBlocos");if(!el)return;
- const L=finLedger(),dentro=(x,a,b)=>x.data&&x.data>=a&&x.data<=b;
- const A=finResumo(r?L.filter(x=>dentro(x,r.d1,r.d2)):L),P=r?finResumo(L.filter(x=>dentro(x,r.p1,r.p2))):null;
+ const L=finLedger(),LP=finLedgerPainel(),dentro=(x,a,b)=>x.data&&x.data>=a&&x.data<=b;
+ const A=finResumo(r?LP.filter(x=>dentro(x,r.d1,r.d2)):LP),P=r?finResumo(LP.filter(x=>dentro(x,r.p1,r.p2))):null;
  const fim=r?r.d2:"9999-12-31";let caixa=Number(state.caixaBase)||0;L.forEach(x=>{if(x.data&&x.data<=fim)caixa+=(x.tipo==="Entrada"?1:-1)*(Number(x.valor)||0);});
  const ped=(state.orders||[]).filter(o=>["Fechado (ganho)","Em produção","Entregue","Pós-venda"].includes(o.estagio)&&(!r||inRange(o,bk||"data",r.d1,r.d2)));const vtp=ped.reduce((s,o)=>s+calc(o).vt,0);
  const cb=finCresc(A.bruto,P?P.bruto:null),cl=finCresc(A.liquido,P?P.liquido:null);
@@ -1802,12 +1840,12 @@ function renderFinBlocos(r,bk){const el=document.getElementById("finBlocos");if(
   +card("fv","Ticket médio",BRL(ped.length?vtp/ped.length:0),"pedidos fechados no CRM")
   +card("fv","Número de pedidos",ped.length,"fechados no CRM")
   +'</div></div>';
- const CUSTOS=[["Materiais","Custo de materiais"],["Frete","Custo de frete"],["Anúncio","Custo de anúncio"],["Suculentas","Custo de suculentas"],["Ambiente","Custo de ambiente"],["Funcionários","Custo de funcionários"],["Impostos","Impostos"],["Software e assinaturas","Software e assinaturas"],["Pró-labore","Pró-labore"]];
+ const CUSTOS=[["Materiais","Custo de materiais"],["Frete","Custo de frete"],["Anúncio","Custo de anúncio"],["Suculentas","Custo de suculentas"],[CAT_PLANTAS,"Custo de plantas e materiais (calculado dos pedidos)"],["Ambiente","Custo de ambiente"],["Funcionários","Custo de funcionários"],["Impostos","Impostos"],["Software e assinaturas","Software e assinaturas"],["Pró-labore","Pró-labore"]];
  const var_=c=>{if(!P)return"";const f=finCresc(A.cat[c]||0,P.cat[c]||0);return f.txt==="0%"||f.txt==="sem comparação"?"":f.txt+" vs período anterior";};
  h+='<div class="fin-bloco fin-r"><h3 class="fin-tit">🔴 Custos · '+BRL(A.saidas)+'</h3>'
-  +(A.saidas?'':'<div class="note">Nenhum custo lançado neste período. Lance no Caixa (＋ Saída) para o líquido ficar certo.</div>')
+  +(A.saidas?'':'<div class="note">Nenhum custo lançado neste período. Lance no Caixa (＋ Saída) para o líquido ficar certo.</div>')+custoAviso(r)
   +'<div class="kpis">'
-  +CUSTOS.map(([c,l])=>card("fr",l,BRL(A.cat[c]||0),c==="Anúncio"?"recargas lançadas, até ligar o gasto real do Meta e do Google":var_(c))).join('')
+  +CUSTOS.map(([c,l])=>card("fr",l,BRL(A.cat[c]||0),c==="Anúncio"?custoSubAnuncio(r):c===CAT_PLANTAS?custoSubPlantas(r):var_(c))).join('')
   +Object.keys(A.cat).filter(c=>!CUSTOS.some(x=>x[0]===c)&&A.cat[c]).map(c=>card("fr",esc(c),BRL(A.cat[c]),c==="Histórico sem detalhe"?"total do mês na planilha antiga, sem separar por categoria":var_(c))).join('')
   +'</div></div>';
  el.innerHTML=h;}
@@ -2476,7 +2514,7 @@ async function init(){
  state.insumos=Object.assign({},defaultData().insumos,state.insumos);delete state.insumos.madeirinha;
  if(state.caixaBase==null)state.caixaBase=0;if(state.resetMarco==null)state.resetMarco="";
  if(!state.caixa)state.caixa=[];
- if(SHEET_URL){const cx=await cxFetch();if(cx!==null)state.caixa=cx;await cxDetectarExt();await prodDetectarExt();plSyncMostrar();}
+ if(SHEET_URL){const cx=await cxFetch();if(cx!==null)state.caixa=cx;await cxDetectarExt();await prodDetectarExt();await custoDetectarExt();plSyncMostrar();}
  state.seqC=state.caixa.reduce((m,o)=>Math.max(m,Number(o.id)||0),0)+1;
  save();initFilters();renderAll();setStatus();abrirAbaDoEndereco();
  /* contagens do menu: tarefas e cadastros novos carregam já na abertura (só leitura) */
