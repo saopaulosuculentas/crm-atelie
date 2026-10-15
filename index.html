@@ -707,7 +707,7 @@ body:has(.overlay.open){overflow:hidden}
 /* ===================== PEÇAS ANTIGAS QUE AINDA VALEM =====================
    A tabela genérica (a Planilha de Atendimentos usa table/th/td e .tablewrap) e a faixa de aviso .note.
    Tudo o mais foi refeito nas partes da etapa 2 (inicio, caixa, cal, outras). */
-.note{background:var(--alerta-bg);border:0;border-radius:var(--r2);padding:10px 14px;font-size:15px;line-height:1.4;color:var(--tx);margin-bottom:14px}
+.note{background:var(--alerta-bg);border:0;border-radius:var(--r2);padding:10px 14px;font-size:15px;line-height:1.4;color:var(--tx);margin-bottom:14px;overflow-wrap:anywhere}
 .tablewrap{background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);overflow:auto;max-height:71vh;-webkit-overflow-scrolling:touch}
 table{border-collapse:separate;border-spacing:0;width:100%;font-size:14px;white-space:nowrap}
 th{position:sticky;top:0;background:var(--sup-2);color:var(--tx-2);font-weight:600;font-size:13px;padding:10px;text-align:left;z-index:3;border-bottom:1px solid var(--linha)}
@@ -798,6 +798,7 @@ button.ncard:active{transform:scale(.98);background:var(--sup-2)}
  .mcol{flex:1 1 0;min-width:30px}
  .panels{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
 }
+.esq-grupo{margin-top:8px}
 
 
 /* ===================== CAIXA e TABELA EDITÁVEL =====================
@@ -900,6 +901,12 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
 #calSemData{margin-top:12px}
 .linha-chk{display:flex;align-items:center;gap:10px;min-height:44px;margin-top:10px;font-size:17px;color:var(--tx);cursor:pointer}
 .linha-chk input{width:22px;height:22px;margin:0;accent-color:var(--acento);flex:none}
+@media (max-width:380px){
+ .cal-l2{gap:4px}
+ .cal-l2 .btn{padding:0 10px}
+ .cal-mes{gap:0}
+ .cal-mes b{font-size:17px}
+}
 @media (min-width:821px){
  .cal-l2 .cal-mes{flex:0 1 auto}
  .cal-mes b{min-width:190px}
@@ -941,7 +948,7 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
 .cli-tags{width:150px}
 .cli-ativo{color:var(--tx-2)}
 .cli-rec{font-weight:600}
-@media (min-width:821px){.tab tbody tr:hover td.cli{background:var(--sup-2)}}
+@media (min-width:821px){.tab tbody tr:hover td.cli{background:var(--sup-2)}.tab .cli{max-width:240px}}
 /* Produtos e Custos */
 .pgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 16px}
 .pgrid .ini-sec{margin-top:14px}
@@ -1203,7 +1210,7 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
     </div>
     <p class="resumo-lista" id="atResumoLista"></p>
     <div id="selBar" class="sel-barra" style="display:none"><b><span id="selCount">0</span> selecionado(s)</b><button type="button" class="btn btn-sec" onclick="exportarSelecionados()">Exportar para planilha</button><button type="button" class="btn btn-perigo" onclick="excluirSelecionados()">Excluir selecionados</button><button type="button" class="btn btn-fant" onclick="limparSel()">Limpar</button></div>
-    <div id="tableView" class="tablewrap"></div>
+    <div id="tableView" class="tablewrap"><div class="grupo esq-grupo" aria-label="Carregando"><div class="esq esq-linha"></div><div class="esq esq-linha"></div><div class="esq esq-linha"></div><div class="esq esq-linha"></div><div class="esq esq-linha"></div></div></div>
     <div id="sheetView" class="tablewrap sheet" style="display:none"></div>
     <div id="kanbanView" class="kanban" style="display:none"></div>
    </div>
@@ -1364,7 +1371,7 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
    <div class="folha">
     <div id="pdAviso"></div>
     <div class="grade2" id="pdKpis"></div>
-    <div id="pdLista" class="cu-lista"></div>
+    <div id="pdLista" class="cu-lista"><div class="grupo esq-grupo" aria-label="Carregando"><div class="esq esq-linha"></div><div class="esq esq-linha"></div><div class="esq esq-linha"></div><div class="esq esq-linha"></div><div class="esq esq-linha"></div></div></div>
    </div>
    <div class="veu" id="pdFolhaVeu" onclick="pdFolhaFechar()"></div>
    <section class="folha-baixo pd-folha" id="pdFolha" role="dialog" aria-modal="true" aria-labelledby="pdFolhaTit"></section>
