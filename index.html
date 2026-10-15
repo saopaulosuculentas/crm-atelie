@@ -812,9 +812,14 @@ tbody tr:hover{background:#f0f5ec}
  .cu-foot{padding:10px var(--mb-r) calc(10px + env(safe-area-inset-bottom)) var(--mb-l)}
  .cu-foot .btn{min-height:46px;font-size:15.5px!important;padding:10px 16px!important}
  .tcomnovo .btn{min-height:40px}
+ .tcomnovo textarea{min-height:44px;line-height:1.35}
+ .tcard .tmeta>span{font-size:12px;padding:3px 9px}
+ .tcol h4{font-size:14px}
  .login{padding:calc(20px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom))}
 }
-/* tema escuro das peças novas */
+/* tema escuro das peças novas. O cabeçalho do modal usava var(--green-dk), que no
+   escuro é verde-claro: o título branco ficava quase sem contraste. */
+[data-tema="escuro"] .modal .mhead{background:#1c4327}
 [data-tema="escuro"] .pag-chip.claro{color:#1f2a22}
 @media (max-width:700px){
  [data-tema="escuro"] .mc.late{background:#3d1e1b;color:#ff8a80}
