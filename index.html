@@ -139,7 +139,7 @@ svg.i.pp{width:16px;height:16px}
 .nbadge{min-width:24px;height:24px;border-radius:12px;padding:0 7px;background:var(--st-vermelho);color:#fff;font-size:13px;font-weight:700;line-height:24px;text-align:center;flex:none}
 .ncinza{font-size:15px;color:var(--tx-2);font-weight:500}
 .seg-tema{display:flex;background:var(--campo);border-radius:10px;padding:3px;gap:3px}
-.seg-tema button{min-width:64px;min-height:38px;border-radius:8px;font-size:14px;font-weight:600;color:var(--tx-2)}
+.seg-tema button{min-width:64px;min-height:44px;border-radius:8px;font-size:15px;font-weight:600;color:var(--tx-2)}
 .seg-tema button.on{background:var(--sup);color:var(--tx);box-shadow:var(--sombra-1)}
 :root[data-tema="escuro"] .seg-tema button.on{background:#3a3a3a}
 .versao{font-size:13px;color:var(--tx-2);text-align:center;margin:16px 0 0;line-height:18px}
@@ -710,7 +710,7 @@ body:has(.overlay.open){overflow:hidden}
    tabela antiga. Mesmas classes de antes, agora só com tokens (seguem o tema sozinhas). */
 .mini{font-size:13px;color:var(--tx-2);line-height:1.4}
 .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
-.toolbar input[type=text],.toolbar input[type=date],.toolbar select{min-height:40px;padding:8px 12px;border:1px solid var(--linha-forte);border-radius:10px;font-size:15px;background:var(--sup);color:var(--tx)}
+.toolbar input[type=text],.toolbar input[type=date],.toolbar select{min-height:44px;padding:8px 12px;border:1px solid var(--linha-forte);border-radius:10px;font-size:16px;background:var(--sup);color:var(--tx)}
 .toolbar input[type=text]{min-width:230px}
 .chk{display:inline-flex;align-items:center;gap:6px;font-size:15px;color:var(--tx-2);background:var(--sup);border:1px solid var(--linha-forte);padding:8px 11px;border-radius:10px;min-height:40px}
 .btn.terra{background:var(--acento);color:var(--acento-tx)}
@@ -808,7 +808,8 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 .callista .item{display:flex;gap:9px;align-items:center;flex-wrap:wrap;background:var(--sup);border:1px solid var(--linha);border-left:4px solid var(--sucesso);border-radius:11px;padding:9px 11px;margin-bottom:7px;cursor:pointer;font-size:15px}
 .callista .item .val{margin-left:auto;font-weight:700;color:var(--tx);font-size:15px;white-space:nowrap}
 @media (max-width:820px){
- .calgrid{gap:4px}
+ .calgrid{gap:2px}
+ #calendario .panel.wide{padding:12px 8px}
  .caldia,.caldia.fora{min-height:56px;padding:5px 4px;border-radius:9px}
  .calchip,.calmais,.caldia .dtot{display:none}
  .caldia .pontos{display:flex}
@@ -839,6 +840,8 @@ tbody tr:hover td.cli{background:var(--sup-2)}
  th{position:static}
  #clientesView td.cli,#clientesView th.cli{position:sticky;left:0;max-width:150px;min-width:120px;white-space:normal;word-break:break-word}
  .callista .item{padding:11px 12px;gap:7px}
+ /* campo com menos de 16 px faz o iPhone dar zoom ao tocar */
+ .celledit,.itable input,#cxSinais input,#cxKpis input{font-size:16px;min-height:44px}
 }
 </style>
 <script>
@@ -990,14 +993,14 @@ tbody tr:hover td.cli{background:var(--sup-2)}
   <section class="view active" id="painel">
    <div class="folha">
    <div class="toolbar" style="margin-bottom:14px">
-    <select id="pPeriodo" onchange="renderPainel()" style="padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:13px;font-weight:600">
+    <select id="pPeriodo" onchange="renderPainel()" aria-label="Período">
      <option value="tudo">📊 Tudo (desde o início)</option>
      <option value="mes" selected>📅 Este mês</option>
      <option value="mes-1">📅 Mês passado</option>
      <option value="30d">📅 Últimos 30 dias</option>
      <option value="90d">📅 Últimos 90 dias</option>
     </select>
-    <select id="pBase" onchange="renderPainel()" style="padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:13px">
+    <select id="pBase" onchange="renderPainel()" aria-label="Base da data">
      <option value="data">por data do pedido</option>
      <option value="dataEv">por data do evento</option>
     </select>
@@ -1064,7 +1067,7 @@ tbody tr:hover td.cli{background:var(--sup-2)}
    <div class="toolbar">
     <button class="btn" onclick="cxAdd('Saída')">＋ Saída</button>
     <button class="btn ghost" onclick="cxAdd('Entrada')">＋ Entrada</button>
-    <select id="cxMes" onchange="renderCaixa()" style="padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:13px;font-weight:600"></select>
+    <select id="cxMes" onchange="renderCaixa()" aria-label="Mês"></select>
     <span class="mini">Edite direto na tabela, como no Excel: salva sozinho. Recebimento de pedido e venda do site entram sozinhos.</span>
    </div>
    <div id="cxAviso"></div>
@@ -1845,7 +1848,7 @@ function renderCaixa(){
  document.getElementById("cxKpis").innerHTML=
   '<div class="kpi g"><div class="ic">🏁</div><div class="lbl">Saldo inicial (base do caixa)</div><div class="val" style="display:flex;align-items:center;gap:4px">R$ <input type="number" step="0.01" value="'+(state.caixaBase||0)+'" onchange="cxSetBase(this.value)" style="width:120px;border:1px dashed var(--line);border-radius:8px;padding:4px 8px;font-size:18px;font-weight:800;color:var(--green-dk);background:var(--card)"></div></div>'
   +[["Entradas"+(mSel==="tudo"?"":" · "+mesLabel(mSel)),BRL(K.e),"","📥",dE],["Saídas"+(mSel==="tudo"?"":" · "+mesLabel(mSel)),BRL(K.s),"t","📤",dS],["Resultado"+(mSel==="tudo"?"":" do mês"),BRL(K.r),K.r>=0?"":"t","🧮",dR],["SALDO ATUAL (base + tudo)",BRL(saldo),saldo>=0?"g":"t","🏦",""]].map(x=>'<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div>'+(x[4]||"")+'</div>').join("");
- (function(){var sIn=0,s70=0,realizado=0,nAb=0,rMes=0,r3m=0,rMarco=0;var cm=todayISO().slice(0,7);var _d3=new Date();_d3.setUTCMonth(_d3.getUTCMonth()-2);var lim3=_d3.toISOString().slice(0,7);var marco=(state.resetMarco||"");(state.orders||[]).forEach(function(o){var c=calc(o);if(o.statusPag==="Sinal pago"){sIn+=c.sinal;s70+=c.saldo;nAb++;}else if(o.statusPag==="Pago"){realizado+=c.vt;var mk=(o.data||"").slice(0,7);if(mk===cm)rMes+=c.vt;if(mk>=lim3)r3m+=c.vt;if(marco&&(o.data||"")>=marco)rMarco+=c.vt;}});var totAb=sIn+s70;var elS=document.getElementById("cxSinais");if(elS){elS.innerHTML='<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:0 0 10px">'+'<div class="kpi g"><div class="ic">💵</div><div class="lbl">Sinais 30% já no caixa (pedidos em aberto)</div><div class="val">'+BRL(sIn)+'</div></div>'+'<div class="kpi t"><div class="ic">📥</div><div class="lbl">Falta entrar (70% desses pedidos)</div><div class="val">'+BRL(s70)+'</div></div>'+'<div class="kpi"><div class="ic">🧾</div><div class="lbl">Valor total desses pedidos (100%)</div><div class="val">'+BRL(totAb)+'</div></div>'+'<div class="kpi"><div class="ic">✅</div><div class="lbl">Já realizado · TOTAL (histórico todo)</div><div class="val">'+BRL(realizado)+'</div></div>'+'</div>'+'<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(165px,1fr));margin:0 0 8px">'+'<div class="kpi"><div class="ic">📅</div><div class="lbl">Realizado · este mês</div><div class="val">'+BRL(rMes)+'</div></div>'+'<div class="kpi"><div class="ic">📆</div><div class="lbl">Realizado · últimos 3 meses</div><div class="val">'+BRL(r3m)+'</div></div>'+'<div class="kpi '+(marco?'g':'')+'"><div class="ic">📌</div><div class="lbl">Realizado · desde o reset'+(marco?' ('+dBR(marco)+')':'')+'</div><div class="val">'+(marco?BRL(rMarco):'·')+'</div></div>'+'</div>'+'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px"><span class="mini" style="color:var(--muted)">📌 Marco do reset (início da fase atual):</span><input type="date" value="'+esc(marco)+'" onchange="setMarco(this.value)" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:13px"><span class="mini" style="color:var(--muted)">separa o histórico antigo do atual</span></div>'+'<p class="mini" style="color:var(--muted);margin:0">São '+nAb+' pedido(s) em aberto. O sinal de 30% ('+BRL(sIn)+') já está no caixa, mas é de pedido que ainda não fechou. Quando entra o 70% e você finaliza, o pedido vira 100% realizado e sai desta lista. O TOTAL inclui todo o histórico (inclusive a fase antiga em que as finanças estavam misturadas); use o mês, os 3 meses ou o marco do reset pra ver só a fase atual.</p>';}})();
+ (function(){var sIn=0,s70=0,realizado=0,nAb=0,rMes=0,r3m=0,rMarco=0;var cm=todayISO().slice(0,7);var _d3=new Date();_d3.setUTCMonth(_d3.getUTCMonth()-2);var lim3=_d3.toISOString().slice(0,7);var marco=(state.resetMarco||"");(state.orders||[]).forEach(function(o){var c=calc(o);if(o.statusPag==="Sinal pago"){sIn+=c.sinal;s70+=c.saldo;nAb++;}else if(o.statusPag==="Pago"){realizado+=c.vt;var mk=(o.data||"").slice(0,7);if(mk===cm)rMes+=c.vt;if(mk>=lim3)r3m+=c.vt;if(marco&&(o.data||"")>=marco)rMarco+=c.vt;}});var totAb=sIn+s70;var elS=document.getElementById("cxSinais");if(elS){elS.innerHTML='<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:0 0 10px">'+'<div class="kpi g"><div class="ic">💵</div><div class="lbl">Sinais 30% já no caixa (pedidos em aberto)</div><div class="val">'+BRL(sIn)+'</div></div>'+'<div class="kpi t"><div class="ic">📥</div><div class="lbl">Falta entrar (70% desses pedidos)</div><div class="val">'+BRL(s70)+'</div></div>'+'<div class="kpi"><div class="ic">🧾</div><div class="lbl">Valor total desses pedidos (100%)</div><div class="val">'+BRL(totAb)+'</div></div>'+'<div class="kpi"><div class="ic">✅</div><div class="lbl">Já realizado · TOTAL (histórico todo)</div><div class="val">'+BRL(realizado)+'</div></div>'+'</div>'+'<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(165px,1fr));margin:0 0 8px">'+'<div class="kpi"><div class="ic">📅</div><div class="lbl">Realizado · este mês</div><div class="val">'+BRL(rMes)+'</div></div>'+'<div class="kpi"><div class="ic">📆</div><div class="lbl">Realizado · últimos 3 meses</div><div class="val">'+BRL(r3m)+'</div></div>'+'<div class="kpi '+(marco?'g':'')+'"><div class="ic">📌</div><div class="lbl">Realizado · desde o reset'+(marco?' ('+dBR(marco)+')':'')+'</div><div class="val">'+(marco?BRL(rMarco):'·')+'</div></div>'+'</div>'+'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px"><span class="mini" style="color:var(--muted)">📌 Marco do reset (início da fase atual):</span><input type="date" value="'+esc(marco)+'" onchange="setMarco(this.value)" aria-label="Marco do reset" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--sup);color:var(--tx)"><span class="mini" style="color:var(--muted)">separa o histórico antigo do atual</span></div>'+'<p class="mini" style="color:var(--muted);margin:0">São '+nAb+' pedido(s) em aberto. O sinal de 30% ('+BRL(sIn)+') já está no caixa, mas é de pedido que ainda não fechou. Quando entra o 70% e você finaliza, o pedido vira 100% realizado e sai desta lista. O TOTAL inclui todo o histórico (inclusive a fase antiga em que as finanças estavam misturadas); use o mês, os 3 meses ou o marco do reset pra ver só a fase atual.</p>';}})();
  const opts=(lista,val)=>((lista.includes(val)||!val)?lista:[val].concat(lista)).map(c=>'<option'+(c===val?' selected':'')+'>'+esc(c)+'</option>').join('');
  const pedLink=o=>{if(!o.pedido_id)return'<span style="color:var(--muted)">·</span>';const pid=Number(o.pedido_id),n=pid>=FIN_ID_SITE?'site':'#'+pid;return (state.orders||[]).some(x=>Number(x.id)===pid)?'<a href="#" onclick="openForm('+pid+');return false">'+n+'</a>':n;};
  let h='<table><thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th><th>Valor (R$)</th><th>Conta</th><th>Pedido</th><th>Quem</th><th></th></tr></thead><tbody>';
