@@ -1079,7 +1079,7 @@ button.ncard:active{transform:scale(.98);background:var(--sup-2)}
  .cx-cartoes{grid-template-columns:repeat(4,minmax(0,1fr))}
  /* computador: Descrição é a coluna que cresce; Categoria e Conta com largura fixa menor */
  .tab-caixa>.tab:not(.tab-ler){width:100%}
- .tab td.cx-dtd{width:30%;min-width:200px}
+ .tab td.cx-dtd{width:30%;min-width:186px}
  .cx-desc,.cx-desc-txt{width:100%}
  .cx-d{max-width:none}
  /* Categoria e Conta com 132 px e Tipo com 88 px: o X de excluir cabe a 1280 (revisão 2) */
@@ -1947,7 +1947,8 @@ function mbAvisoLugar(){var el=document.getElementById('mbAviso');if(!el)return;
   .filter(function(x){return x.getClientRects().length;});if(!obs.length)return;
  /* na vertical, o bottom do CSS (sem o deslocamento da animação de entrada); na horizontal o retângulo, que já tem o -50% do computador */
  var h=window.innerHeight,a=el.getBoundingClientRect(),fundo=h-(parseFloat(getComputedStyle(el).bottom)||0),alto=el.offsetHeight,topo=Infinity;
- obs.forEach(function(x){var r=x.getBoundingClientRect();if(r.right<=a.left||r.left>=a.right)return;topo=Math.min(topo,r.top);});
+ /* só conta o que fica no caminho do aviso (a janela no meio do computador que termina acima dele não conta) */
+ obs.forEach(function(x){var r=x.getBoundingClientRect();if(r.right<=a.left||r.left>=a.right||r.bottom<=fundo-alto-4)return;topo=Math.min(topo,r.top);});
  if(topo===Infinity||topo>=fundo)return;
  var b=h-topo+8;if(topo-8-alto<56){el.style.bottom='auto';el.style.top='calc(var(--safe-t) + 8px)';return;}
  el.style.bottom=b+'px';}
