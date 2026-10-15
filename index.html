@@ -241,6 +241,11 @@ svg.i.pp{width:16px;height:16px}
 .linha .dir{grid-area:dir;text-align:right;padding-top:1px;padding-left:8px;display:flex;align-items:center;gap:6px}
 .linha .sub{grid-area:sub;display:flex;align-items:center;gap:6px;margin-top:2px;font-size:15px;line-height:20px;color:var(--tx-2);min-width:0}
 .sub .corta{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* partes da linha 2 (Atendimentos): a data fica, o tipo encolhe primeiro */
+.sub .pt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sub .pt svg.i{vertical-align:-3px;margin-right:3px}
+.sub .fixo-d{flex:0 .001 auto}
+.sub .pt.corta{flex:0 1000 auto}
 .sub .fixo{flex:none;white-space:nowrap}
 .sub .pg{margin-left:auto;padding-left:8px;flex:none}
 .linha .val{font-size:17px;line-height:22px;font-weight:600;white-space:nowrap}
@@ -338,9 +343,28 @@ button.prog:active i{transform:scale(.88)}
 .fechar-x{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center}
 .fechar-x span{width:30px;height:30px;border-radius:50%;background:var(--campo);display:inline-flex;align-items:center;justify-content:center;color:var(--tx-2)}
 .folha-baixo .rotulo:first-of-type{margin-top:6px}
-.folha-baixo .linha2col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+/* De e Até: as duas colunas encolhem juntas (o campo de data tem largura mínima própria de 171 px) */
+.folha-baixo .linha2col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.folha-baixo .linha2col>*{min-width:0}
+.folha-baixo input[type=date]{width:100%;min-width:0}
 .folha-resumo{font-size:15px;line-height:20px;color:var(--tx-2);margin:14px 2px 0}
 .folha-resumo a{font-weight:600;display:inline-flex;align-items:center;min-height:44px}
+.folha-resumo .folha-link{display:flex;gap:6px;text-decoration:none;width:max-content}
+/* select com a seta própria (as folhas de Filtros), igual aos campos do resto */
+.sel-campo{position:relative}
+.sel-campo select{-webkit-appearance:none;appearance:none;padding-right:40px;text-overflow:ellipsis}
+.sel-campo svg{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--tx-2)}
+/* interruptor das opções liga/desliga (JEV revisão 1, rodada 2: 98% e 97%); a linha inteira é o alvo */
+.interr{display:flex;align-items:center;gap:12px;min-height:52px;margin:6px 0 0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.interr-t{flex:1;min-width:0;font-size:17px;line-height:22px;color:var(--tx)}
+.interr-t small{display:block;font-size:14px;line-height:18px;color:var(--tx-2)}
+.interr input{-webkit-appearance:none;appearance:none;position:relative;flex:none;width:51px;height:31px;margin:0;border-radius:999px;background:var(--campo);border:1px solid var(--tx-3);cursor:pointer;transition:background .15s ease}
+.interr input::before{content:"";position:absolute;top:2px;left:2px;width:25px;height:25px;border-radius:50%;background:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,.28);transition:transform .15s cubic-bezier(.2,0,0,1)}
+.interr input:checked{background:var(--acento);border-color:var(--acento)}
+.interr input:checked::before{transform:translateX(20px);background:var(--acento-tx)}
+:root[data-tema="escuro"] .interr input::before{background:#a9a9a3}
+:root[data-tema="escuro"] .interr input:checked::before{background:var(--acento-tx)}
+.interr input:focus-visible{outline:2px solid var(--tx);outline-offset:2px}
 
 /* aviso com Desfazer (mbAviso): embaixo, fundo invertido */
 .mb-aviso{position:fixed;left:12px;right:12px;bottom:calc(12px + var(--safe-b));z-index:300;background:#1d1d1b;color:#fff;border-radius:var(--r2);box-shadow:var(--sombra-2);
@@ -381,7 +405,7 @@ body:has(.overlay.open){overflow:hidden}
 .cadeado-ic{color:var(--tx-2)}
 
 /* ===================== COMPUTADOR (mesmos tokens e peças) ===================== */
-@media (min-width:821px){
+@media (min-width:821px) and (hover:hover),(min-width:821px) and (min-height:501px){
  :root{--cab-top:60px}
  body{display:flex;min-height:100vh}
  .side{width:248px;flex:none;position:sticky;top:0;height:100vh;overflow:auto;background:var(--bg-topo);padding:14px 12px 16px;display:flex;flex-direction:column;border-right:1px solid var(--linha)}
@@ -430,7 +454,7 @@ body:has(.overlay.open){overflow:hidden}
  .folha-baixo .alca{display:none}
 }
 /* celular e tablet: menu em tela cheia */
-@media (max-width:820px){
+@media (max-width:820px),(hover:none) and (pointer:coarse) and (max-height:500px){
  .side{display:none;position:fixed;inset:0;z-index:120;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--safe-t) + 4px) max(16px,var(--safe-r)) calc(24px + var(--safe-b)) max(16px,var(--safe-l))}
  body.menu-open .side{display:block;animation:menuEntra .2s cubic-bezier(.2,0,0,1)}
  body.menu-open{overflow:hidden}
@@ -446,7 +470,7 @@ body:has(.overlay.open){overflow:hidden}
 .inst-bloco{border:1px solid var(--linha);border-radius:var(--r2);padding:12px 14px;margin-bottom:12px;background:var(--sup-2)}
 .inst-bloco h3{font-size:16px;font-weight:600;margin-bottom:6px}
 .inst-passos{margin:0;padding-left:20px;line-height:1.55;font-size:16px;color:var(--tx)}
-@media (min-width:821px){.overlay.open>.folha-baixo.inst{animation:none}}
+@media (min-width:821px) and (hover:hover),(min-width:821px) and (min-height:501px){.overlay.open>.folha-baixo.inst{animation:none}}
 
 
 /* ===================== TAREFAS (Lista, Quadro, Equipe) =====================
@@ -495,7 +519,7 @@ body:has(.overlay.open){overflow:hidden}
 .tcard .tmeta .t-etapa{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--tx)}
 .tempty{font-size:14px;color:var(--tx-2);text-align:center;padding:16px 6px;border:1px dashed var(--linha-forte);border-radius:10px}
 
-@media (min-width:701px){
+@media (min-width:701px) and (hover:hover),(min-width:701px) and (min-height:501px){
  .t-barra{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
  .t-barra .seg{width:300px;margin:0}
  .t-barra .pilulas{margin:0}
@@ -531,17 +555,19 @@ body:has(.overlay.open){overflow:hidden}
 #atResumoLista{order:9}
 .at-barra .pilulas{overflow-x:auto;scrollbar-width:none}
 .at-barra .pilulas::-webkit-scrollbar{display:none}
-.at-barra .pilula>span{max-width:170px}
+.at-barra .pilula>span{max-width:170px;padding:0 10px}
+/* linha de pílulas que rola de lado: degradê na borda direita quando há mais (pilCorte) */
+.pilulas.corta{-webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);mask-image:linear-gradient(90deg,#000 82%,transparent)}
 #atendimentos .tablewrap{background:none;border:0;border-radius:0;overflow:visible;max-height:none}
 .sel-barra{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 8px;padding:6px 6px 6px 14px;background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);font-size:15px}
 .sel-barra b{flex:1;min-width:0}
 .linha .val{font-variant-numeric:tabular-nums}
 /* computador: lista com colunas (Cliente, Estágio, Pagamento, Valor, Evento, Follow-up) */
-.cols{display:grid;grid-template-columns:36px 44px minmax(120px,2fr) minmax(100px,1.1fr) minmax(90px,1fr) 100px minmax(0,1.5fr) 88px;align-items:center;column-gap:8px}
+.cols{display:grid;grid-template-columns:44px 44px minmax(150px,2fr) 150px 112px 104px minmax(120px,1.4fr) 88px;align-items:center;column-gap:8px}
 .cols-cab{font-size:13px;font-weight:600;color:var(--tx-2);height:36px;padding:0 12px 0 0;border-bottom:1px solid var(--linha)}
 .cols-cab .c.v{text-align:right}
 .lc{position:relative;min-height:48px;padding:0 12px 0 0;font-size:15px;cursor:pointer}
-.lc+.lc::before{content:"";position:absolute;left:80px;right:0;top:0;height:1px;background:var(--linha)}
+.lc+.lc::before{content:"";position:absolute;left:96px;right:0;top:0;height:1px;background:var(--linha)}
 .lc:hover{background:var(--sup-2)}
 .lc .prog{margin-top:0}
 .lc .nome{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -549,7 +575,8 @@ body:has(.overlay.open){overflow:hidden}
 .lc .c.v{text-align:right;color:var(--tx);font-weight:600}
 .lc .c.est{color:var(--c);font-weight:600}
 .lc .c.dt-atras{color:var(--perigo)}.lc .c.dt-hoje{color:var(--alerta)}
-.lc-sel{display:flex;align-items:center;justify-content:center;width:36px;height:44px;cursor:pointer}
+.lc-sel{display:flex;align-items:center;justify-content:center;width:44px;height:44px;cursor:pointer}
+.lc .nome:focus-visible{outline:2px solid var(--tx);outline-offset:2px;border-radius:4px}
 .lc-sel input{width:18px;height:18px;margin:0;accent-color:var(--acento);cursor:pointer}
 /* Kanban: no celular uma coluna por tela (85%, a próxima espiando, com encaixe) */
 .kanban{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 16px 12px;margin:0 -16px;scroll-padding-left:16px;align-items:flex-start}
@@ -570,7 +597,7 @@ body:has(.overlay.open){overflow:hidden}
 /* Planilha (e a tabela do Caixa): rola de lado dentro da caixa, cabeçalho cinza, células de 44 px */
 .tablewrap.sheet{background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);overflow:auto;-webkit-overflow-scrolling:touch}
 #atendimentos .tablewrap.sheet{overflow:auto;border:1px solid var(--linha);border-radius:var(--r2);background:var(--sup);max-height:none}
-.sheet table{min-width:1700px;font-size:15px}
+.sheet table{width:max-content;min-width:100%;font-size:15px}
 .sheet th{background:var(--sup-2);color:var(--tx-2);font-size:13px;font-weight:600;height:36px}
 .sheet td{padding:2px 3px;height:48px}
 .sheet td.ro{padding:0 9px;color:var(--tx-2);font-size:14px;white-space:nowrap;text-align:right}
@@ -581,12 +608,26 @@ body:has(.overlay.open){overflow:hidden}
 .sheet .delx{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;color:var(--tx-2);opacity:1;font-size:16px}
 .sheet-barra{display:flex;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--linha);background:var(--sup-2);position:sticky;left:0}
 .sheet-barra .t-sub{font-size:14px}
-@media (max-width:700px){
+/* célula da Planilha: texto que vira campo ao tocar (plEditar) */
+.sheet td.pc{padding:0 9px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:text;color:var(--tx)}
+.sheet td.pc[data-t=date]{min-width:150px}
+.sheet td.pc[data-t=sel]{min-width:120px}
+.sheet td.pc.ed{padding:2px 3px;overflow:visible;max-width:none}
+.sheet td.pc:focus-visible{outline:2px solid var(--tx);outline-offset:-3px;border-radius:8px}
+.sheet .pl-n{width:56px;min-width:56px;text-align:right}
+.sheet .pl-cli{position:sticky;left:0;z-index:2;background:var(--sup);box-shadow:1px 0 0 var(--linha);max-width:180px}
+.sheet th.pl-cli{z-index:4;background:var(--sup-2)}
+.sheet .vazio-bloco{position:sticky;left:0;max-width:calc(100vw - 34px)}
+/* recém-criado: a linha acende por um instante ao aparecer no topo do grupo */
+.novo-luz{animation:novoLuz 2.4s ease-out}
+@keyframes novoLuz{0%,45%{background:var(--info-bg)}100%{background:transparent}}
+@media (max-width:700px),(hover:none) and (pointer:coarse) and (max-height:500px){
  .sheet input,.sheet select{min-height:44px;font-size:16px}
+ .sheet td.pc{font-size:16px}
  .sheet-barra{flex-wrap:wrap}
  .lc-sel{display:none}
 }
-@media (min-width:701px){
+@media (min-width:701px) and (hover:hover),(min-width:701px) and (min-height:501px){
  .at-barra{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
  .at-barra .seg{width:300px;margin:0}
  .at-barra .pilulas{margin:0}
@@ -608,17 +649,26 @@ body:has(.overlay.open){overflow:hidden}
 #pdKpis .cont{cursor:pointer}
 #producao .topo-l2 select{width:auto;max-width:44%;min-height:44px;font-size:16px}
 .lpd{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:"ic tit dir" "ic sub sub" "ic chips chips" "ic al al" "ic acao acao";
- column-gap:4px;padding:10px 12px 12px 4px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+ column-gap:4px;padding:8px 12px 10px 4px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .lpd:active{background:var(--sup-2)}
 .lpd>.prog{grid-area:ic}
 .lpd .tit{grid-area:tit;font-size:17px;line-height:22px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-top:1px}
 .lpd .dir{grid-area:dir;font-size:15px;line-height:22px;font-weight:600;padding-left:8px;white-space:nowrap}
-.lpd .sub{grid-area:sub;display:flex;gap:6px;margin-top:2px;font-size:15px;line-height:20px;color:var(--tx-2);min-width:0}
-.lpd .chips{grid-area:chips;margin-top:8px}
-.lpd .al{grid-area:al;display:flex;align-items:center;gap:6px;margin-top:8px;font-size:15px;line-height:20px;color:var(--alerta);font-weight:600;min-width:0}
+.lpd .sub{grid-area:sub;display:flex;align-items:center;gap:6px;margin-top:2px;font-size:15px;line-height:20px;color:var(--tx-2);min-width:0}
+.lpd .chips{grid-area:chips;margin-top:6px;gap:6px}
+.lpd .chips .chip{min-height:28px}
+.lpd .al{grid-area:al;display:flex;align-items:center;gap:6px;margin-top:6px;font-size:15px;line-height:20px;color:var(--alerta);font-weight:600;min-width:0}
 .lpd .al .corta{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lpd .acao{grid-area:acao;margin-top:10px}
+.lpd .acao{grid-area:acao;margin-top:8px}
 .lpd .acao .btn{width:100%}
+/* botão desabilitado não recebe o toque: o toque cai na linha e abre a folha do pedido */
+.lpd .acao .btn[disabled]{pointer-events:none}
+/* linha compacta (sem pagamento e postados): 2 andares, sem botão; o chip "Não pago" encosta à direita */
+.lpd.lpd-trava{grid-template-areas:"ic tit dir" "ic sub sub";padding:10px 12px 10px 4px;min-height:64px}
+.lpd .sub .chip{margin-left:auto;flex:none;min-height:26px;padding:0 8px;font-size:13px}
+/* faixa do grupo numa linha só */
+.grupo-nota.uma{align-items:center}
+.grupo-nota.uma span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pd-folha .props{margin:10px 0 4px}
 .pd-folha .t-secao{margin:16px 2px 8px}
 .pd-etapas{background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);overflow:hidden}
@@ -632,10 +682,12 @@ body:has(.overlay.open){overflow:hidden}
 .pd-trava{display:flex;gap:8px;align-items:center;margin:8px 2px 0;font-size:15px;color:var(--perigo);font-weight:600}
 .pd-folha .acoes-f{display:flex;flex-direction:column;gap:8px;margin-top:16px}
 .prop .valor .chip{vertical-align:middle}
-@media (min-width:701px){
- #pdKpis,#pdLista,#pdAviso{max-width:980px}
+@media (min-width:701px) and (hover:hover),(min-width:701px) and (min-height:501px){
+ /* largura de leitura (spec 5.5): até 760 px, botão numa coluna de 240 px à direita */
+ #pdKpis,#pdLista,#pdAviso{max-width:760px}
  #pdKpis{grid-template-columns:repeat(4,minmax(0,1fr))}
- .lpd{grid-template-columns:44px minmax(0,1fr) auto 260px;grid-template-areas:"ic tit dir acao" "ic sub sub acao" "ic chips chips acao" "ic al al acao";column-gap:8px}
+ .lpd{grid-template-columns:44px minmax(0,1fr) auto 240px;grid-template-areas:"ic tit dir acao" "ic sub sub acao" "ic chips chips acao" "ic al al acao";column-gap:8px}
+ .lpd.lpd-trava{grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:"ic tit dir" "ic sub sub"}
  .lpd .acao{margin-top:0;align-self:center;padding-left:8px}
  .lpd .acao .btn{white-space:normal;text-align:center;line-height:1.2;padding:6px 12px}
  .lpd:hover{background:var(--sup-2)}
@@ -714,7 +766,7 @@ th{position:sticky;top:0;background:var(--sup-2);color:var(--tx-2);font-weight:6
 td{padding:9px 10px;border-bottom:1px solid var(--linha);color:var(--tx)}
 tbody tr:hover{background:var(--sup-2)}
 td.num,th.num{text-align:right}
-@media (max-width:700px){
+@media (max-width:700px),(hover:none) and (pointer:coarse) and (max-height:500px){
  .tablewrap{max-height:none}
  th{position:static}
 }
@@ -781,7 +833,7 @@ button.ncard:active{transform:scale(.98);background:var(--sup-2)}
 .ativ .t{min-width:0;overflow-wrap:anywhere;color:var(--tx)}
 .ativ .q{display:block;font-size:13px;line-height:18px;color:var(--tx-2)}
 #actFeed .mais{margin-top:4px}
-@media (min-width:821px){
+@media (min-width:821px) and (hover:hover),(min-width:821px) and (min-height:501px){
  .ini-grade{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
  .ncard .n{font-size:22px}
  /* gráfico em cima e Operação embaixo à esquerda; custos à direita, ocupando as duas linhas */
@@ -857,7 +909,7 @@ button.ncard:active{transform:scale(.98);background:var(--sup-2)}
 .dobra-n{font-size:14px;line-height:18px;color:var(--tx-2);font-weight:500;white-space:nowrap}
 .dobra>summary:focus-visible{outline:2px solid var(--tx);outline-offset:2px;border-radius:8px}
 @media (prefers-reduced-motion:reduce){.dobra>summary .seta{transition:none}}
-@media (min-width:821px){
+@media (min-width:821px) and (hover:hover),(min-width:821px) and (min-height:501px){
  .cx-l2 .btn{flex:none;padding:0 16px}
  .cx-cartoes{grid-template-columns:repeat(4,minmax(0,1fr))}
  .cx-desc{width:240px}
@@ -907,7 +959,7 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
  .cal-mes{gap:0}
  .cal-mes b{font-size:17px}
 }
-@media (min-width:821px){
+@media (min-width:821px) and (hover:hover),(min-width:821px) and (min-height:501px){
  .cal-l2 .cal-mes{flex:0 1 auto}
  .cal-mes b{min-width:190px}
  .cal-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -948,7 +1000,7 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
 .cli-tags{width:150px}
 .cli-ativo{color:var(--tx-2)}
 .cli-rec{font-weight:600}
-@media (min-width:821px){.tab tbody tr:hover td.cli{background:var(--sup-2)}.tab .cli{max-width:240px}}
+@media (min-width:821px) and (hover:hover),(min-width:821px) and (min-height:501px){.tab tbody tr:hover td.cli{background:var(--sup-2)}.tab .cli{max-width:240px}}
 /* Produtos e Custos */
 .pgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 16px}
 .pgrid .ini-sec{margin-top:14px}
@@ -961,7 +1013,7 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
 .pr-campo .pre{font-size:14px;color:var(--tx-2);padding-left:4px}
 .pr-campo input{width:68px;text-align:right}
 .pr-pct{display:block;font-size:13px;line-height:16px;color:var(--tx-2);font-weight:500}
-@media (min-width:821px){.pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:821px) and (hover:hover),(min-width:821px) and (min-height:501px){.pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* Cadastros */
 .cad-intro{margin:0 2px 4px}
 .cad-item{position:relative;padding:12px 12px 6px 14px}
@@ -1190,7 +1242,7 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
 
   <section class="view" id="atendimentos">
    <div class="topo-l2">
-    <label class="busca"><svg class="i p" aria-hidden="true"><use href="#i-busca"/></svg><input type="search" id="search" placeholder="Buscar cliente ou produto" aria-label="Buscar atendimento" autocomplete="off" oninput="renderAtend()"></label>
+    <label class="busca"><svg class="i p" aria-hidden="true"><use href="#i-busca"/></svg><input type="search" id="search" placeholder="Buscar cliente ou produto" aria-label="Buscar atendimento" autocomplete="off" oninput="atBuscaDigitou()"></label>
     <button type="button" class="btn-filtro" id="atFiltrosBtn" onclick="folhaAbrir('atFiltros')" aria-label="Filtros"><svg class="i" aria-hidden="true"><use href="#i-filtro"/></svg><b id="atFiltrosN" style="display:none"></b></button>
    </div>
    <div class="folha">
@@ -1201,11 +1253,10 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
       <button type="button" id="vbSheet" onclick="setView('sheet')">Planilha</button>
       <button type="button" id="vbKanban" onclick="setView('kanban')">Kanban</button>
      </div>
-     <div class="pilulas">
+     <div class="pilulas" id="atPilulas">
       <button type="button" class="pilula on" id="plRapido" style="display:none" onclick="atRapidoLimpar()" aria-label="Tirar o filtro"><span><span id="plRapidoTxt"></span><svg class="i pp" aria-hidden="true"><use href="#i-x"/></svg></span></button>
       <label class="pilula" id="plEstagio"><span><span id="plEstagioTxt">Estágio</span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg></span><select id="fEstagio" onchange="renderAtend()" aria-label="Filtrar por estágio"><option value="">Todos os estágios</option></select></label>
       <label class="pilula" id="plTipo"><span><span id="plTipoTxt">Tipo</span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg></span><select id="fTipo" onchange="renderAtend()" aria-label="Filtrar por tipo de cliente"><option value="">Todos os tipos</option></select></label>
-      <label class="pilula on" id="plConc"><input type="checkbox" id="fConcluidos" checked onchange="renderAtend()"><span><svg class="i pp ok-ic" aria-hidden="true"><use href="#i-check"/></svg>Concluídos</span></label>
      </div>
     </div>
     <p class="resumo-lista" id="atResumoLista"></p>
@@ -1218,8 +1269,9 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
    <section class="folha-baixo" id="atFiltros" role="dialog" aria-modal="true" aria-labelledby="atFiltrosTit">
     <div class="alca" aria-hidden="true"></div>
     <div class="folha-cab"><span></span><h3 id="atFiltrosTit">Filtros</h3><button type="button" class="fechar-x" onclick="folhaFechar('atFiltros')" aria-label="Fechar"><span><svg class="i pp" aria-hidden="true"><use href="#i-x"/></svg></span></button></div>
+    <label class="interr"><span class="interr-t">Mostrar concluídos<small>Entregue, pós-venda e perdido</small></span><input type="checkbox" id="fConcluidos" role="switch" checked onchange="renderAtend()"></label>
     <label class="rotulo" for="fDateBase">Período pela data</label>
-    <select id="fDateBase" class="campo" onchange="renderAtend()"><option value="dataEv">do evento</option><option value="data">de fechamento</option></select>
+    <div class="sel-campo"><select id="fDateBase" class="campo" onchange="renderAtend()"><option value="dataEv">do evento</option><option value="data">de fechamento</option></select><svg class="i p" aria-hidden="true"><use href="#i-baixo"/></svg></div>
     <div class="linha2col">
      <div><label class="rotulo" for="fDe">De</label><input type="date" id="fDe" class="campo" onchange="renderAtend()"></div>
      <div><label class="rotulo" for="fAte">Até</label><input type="date" id="fAte" class="campo" onchange="renderAtend()"></div>
@@ -1356,8 +1408,8 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
     <label class="rotulo" for="calBusca">Buscar</label>
     <input type="search" id="calBusca" class="campo" placeholder="Cliente, cidade ou produto" autocomplete="off" oninput="renderCalendario()">
     <label class="rotulo" for="calEstagio">Estágio</label>
-    <select id="calEstagio" class="campo" onchange="renderCalendario()"><option value="">Todos os estágios</option></select>
-    <label class="linha-chk"><input type="checkbox" id="calConcluidos" onchange="renderCalendario()"><span>Mostrar entregues e perdidos</span></label>
+    <div class="sel-campo"><select id="calEstagio" class="campo" onchange="renderCalendario()"><option value="">Todos os estágios</option></select><svg class="i p" aria-hidden="true"><use href="#i-baixo"/></svg></div>
+    <label class="interr"><span class="interr-t">Mostrar entregues e perdidos</span><input type="checkbox" id="calConcluidos" role="switch" onchange="renderCalendario()"></label>
     <button type="button" class="btn btn-pri btn-larga" style="margin-top:16px" onclick="folhaFechar('calFiltros')">Ver resultados</button>
    </section>
   </section>
@@ -1653,7 +1705,11 @@ const todayISO=()=>new Date().toISOString().slice(0,10);
    mbCel(): a tela está no tamanho de celular (o mesmo corte do CSS, 700 px).
    O botão principal da aba fica no topo, compacto, ao lado do título; as
    abas sem ação principal não mostram botão nenhum. */
-function mbCel(){try{return window.matchMedia("(max-width:700px)").matches;}catch(e){return false;}}
+/* iPhone deitado (812 a 932 px de largura, até 500 de altura, toque) continua no layout de celular (JEV revisão 1,
+   rodada 2: 62% e 63%); o iPad, mais alto, segue no largo. O CSS usa a mesma condição nas camadas de 700 e 820 px. */
+var CEL_MQ="(max-width:700px), (hover:none) and (pointer:coarse) and (max-height:500px)";
+var MENU_MQ="(max-width:820px), (hover:none) and (pointer:coarse) and (max-height:500px)";
+function mbCel(){try{return window.matchMedia(CEL_MQ).matches;}catch(e){return false;}}
 /* pílula preta "+ Novo" no topo (celular e computador): cria o item da aba atual; some nas abas sem criação */
 var MB_ACAO={tarefas:["Nova","Nova tarefa"],atendimentos:["Novo","Novo atendimento"],calendario:["Novo","Novo atendimento"]};
 function mbTopo(v){var b=document.getElementById('topAcao');if(!b)return;var a=MB_ACAO[v];
@@ -1663,9 +1719,9 @@ function mbAcao(){var b=document.getElementById('topAcao'),v=b?b.getAttribute('d
  if(v==='tarefas')tAbrir(null);else openForm();}
 /* girou o celular ou mudou o tamanho da janela: a lista de Pedidos troca entre
    cartões e tabela (Tarefas é só CSS, não precisa redesenhar) */
-(function(){try{var mq=window.matchMedia("(max-width:700px)"),f=function(){
+(function(){try{var f=function(){
  if(typeof state!=="undefined"&&state&&state.orders&&document.getElementById('tableView'))renderAtend();};
- if(mq.addEventListener)mq.addEventListener('change',f);else if(mq.addListener)mq.addListener(f);}catch(e){}})();
+ [CEL_MQ,"(max-width:1203px)"].forEach(function(q){var mq=window.matchMedia(q);if(mq.addEventListener)mq.addEventListener('change',f);else if(mq.addListener)mq.addListener(f);});}catch(e){}})();
 /* aviso no rodapé, com um botão opcional (ex.: Desfazer). Some em 6 s. Fundo invertido, 12 px acima da barrinha do iPhone. */
 function mbAviso(txt,acao,fn){var el=document.getElementById('mbAviso');
  if(!el){el=document.createElement('div');el.id='mbAviso';el.className='mb-aviso';el.setAttribute('role','status');el.setAttribute('aria-live','polite');document.body.appendChild(el);}
@@ -1879,7 +1935,8 @@ function fillSelect(el,arr,sel){el.innerHTML=arr.map(v=>`<option value="${esc(v)
 function initFilters(){document.getElementById('fEstagio').innerHTML='<option value="">Todos os estágios</option>'+STAGES.map(s=>`<option>${s}</option>`).join('');
  document.getElementById('fTipo').innerHTML='<option value="">Todos os tipos</option>'+TIPOS.map(s=>`<option>${s}</option>`).join('');}
 /* filtro rápido que vem do Início (cartões "A receber" e "Follow-ups vencidos"): vira uma pílula ligada que sai com um toque */
-var atRapido='',AT_RAPIDO={areceber:'A receber',followup:'Follow-up vencido'};
+/* rótulos curtos: o atalho, Estágio e Tipo cabem juntos em 343 px (Concluídos foi para a folha Filtros, JEV revisão 1) */
+var atRapido='',AT_RAPIDO={areceber:'A receber',followup:'Follow-up'};
 function atRapidoCasa(o,hoje){if(atRapido==='areceber')return atFalta(o)>0.009;if(atRapido==='followup')return !!(o.followup&&o.followup<hoje&&DONE.indexOf(o.estagio)<0);return true;}
 function atRapidoLimpar(){atRapido='';renderAtend();}
 function filtered(){const q=(document.getElementById('search').value||'').toLowerCase(),fe=document.getElementById('fEstagio').value,ft=document.getElementById('fTipo').value,hj=calHojeISO();
@@ -1890,33 +1947,48 @@ function filtered(){const q=(document.getElementById('search').value||'').toLowe
   if(q){const b=(o.cliente+' '+o.cidade+' '+o.produto+' '+o.descr+' '+o.tipoEv).toLowerCase();if(!b.includes(q))return false;}return true;});}
 function clearDates(){var a=document.getElementById('fDe'),b=document.getElementById('fAte');if(a)a.value='';if(b)b.value='';renderAtend();}
 function setResumo(rows){var el=document.getElementById('atendResumo');var fat=0,sin=0;rows.forEach(function(o){var c=calc(o);fat+=c.vt;sin+=c.sinal;});var be=document.getElementById('fDateBase'),d1=(document.getElementById('fDe')||{}).value||'',d2=(document.getElementById('fAte')||{}).value||'';var per=(d1||d2)?(' · período '+(d1?dBR(d1):'…')+' a '+(d2?dBR(d2):'…')+' ('+(be&&be.value==='data'?'fechamento':'evento')+')'):'';
- if(el)el.textContent=rows.length+' pedidos · Faturamento '+BRL(fat)+' · Sinais '+BRL(sin)+per;
- var rl=document.getElementById('atResumoLista');if(rl)rl.innerHTML=rows.length?rows.length+' pedidos <span class="sep">·</span> '+BRL(fat)+' <span class="sep">·</span> sinais '+BRL(sin)+(d1||d2?' <span class="sep">·</span> com período':''):'';
+ var np=rows.length+(rows.length===1?' pedido':' pedidos');
+ if(el)el.textContent=np+' · Faturamento '+BRL(fat)+' · Sinais '+BRL(sin)+per;
+ var rl=document.getElementById('atResumoLista');if(rl)rl.innerHTML=rows.length?np+' <span class="sep">·</span> '+BRL(fat)+' <span class="sep">·</span> sinais '+BRL(sin)+(d1||d2?' <span class="sep">·</span> com período':''):'';
  atPilulas();}
-/* pílulas Estágio, Tipo e Concluídos acendem quando filtram; o botão Filtros conta o período */
+/* pílulas Estágio e Tipo acendem quando filtram; o botão Filtros conta o período e "Mostrar concluídos" desligado */
 function atPilulas(){var g=function(id){return document.getElementById(id);};
  var fe=(g('fEstagio')||{}).value||'',ft=(g('fTipo')||{}).value||'',fc=!!(g('fConcluidos')||{}).checked;
- var pe=g('plEstagio'),pt=g('plTipo'),pc=g('plConc'),te=g('plEstagioTxt'),tt=g('plTipoTxt');
+ var pe=g('plEstagio'),pt=g('plTipo'),te=g('plEstagioTxt'),tt=g('plTipoTxt');
  if(pe)pe.classList.toggle('on',!!fe);if(te)te.textContent=fe?estCurto(fe):'Estágio';
  if(pt)pt.classList.toggle('on',!!ft);if(tt)tt.textContent=ft||'Tipo';
- if(pc)pc.classList.toggle('on',fc);
  var pr=g('plRapido'),prt=g('plRapidoTxt');if(pr){pr.style.display=atRapido?'':'none';if(prt)prt.textContent=AT_RAPIDO[atRapido]||'';}
- var n=((g('fDe')||{}).value||(g('fAte')||{}).value)?1:0,b=g('atFiltrosN');if(b){b.textContent=n?String(n):'';b.style.display=n?'':'none';}}
+ var n=(((g('fDe')||{}).value||(g('fAte')||{}).value)?1:0)+(fc?0:1),b=g('atFiltrosN');if(b){b.textContent=n?String(n):'';b.style.display=n?'':'none';}
+ pilCorte(g('atPilulas'));}
 function atFiltrando(){var g=function(id){return (document.getElementById(id)||{}).value||'';};
  return !!(atRapido||g('search')||g('fEstagio')||g('fTipo')||g('fDe')||g('fAte'));}
+/* linha de pílulas que rola de lado: degradê na borda direita quando há mais para ver (JEV revisão 1: 95% e 94%) */
+function pilCorte(el){if(!el||!el.getClientRects().length)return;var mais=el.scrollWidth>el.clientWidth+1&&el.scrollLeft+el.clientWidth<el.scrollWidth-2;el.classList.toggle('corta',mais);
+ if(!el._pc){el._pc=1;el.addEventListener('scroll',function(){pilCorte(el);},{passive:true});}}
 /* "Limpar busca e filtros" do estado vazio */
 function atLimparTudo(){atRapido='';['search','fEstagio','fTipo','fDe','fAte'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
  var c=document.getElementById('fConcluidos');if(c)c.checked=true;renderAtend();}
 function renderAtend(){viewMode==='table'?renderTable():viewMode==='sheet'?renderSheet():renderKanban();updateSelBar();menuContagens();}
+/* a lista de 2 andares vale no celular e também quando a tabela não cabe (iPad, notebook pequeno, janela estreita:
+   menos de cerca de 900 px de conteúdo, JEV revisão 1: 64% e 71%) */
+function atUsaLista(){if(mbCel())return true;try{return window.matchMedia("(max-width:1203px)").matches;}catch(e){return false;}}
 function renderTable(){const rows=filtered();setResumo(rows);
  const tv=document.getElementById('tableView');
  /* lista em grupos por ação: no celular, linhas de 2 andares (pcCartoes); no computador, as mesmas em colunas */
- tv.innerHTML=mbCel()?pcCartoes(rows):pcTabela(rows);updateSelBar();}
+ tv.innerHTML=atUsaLista()?pcCartoes(rows):pcTabela(rows);subCorta(tv);updateSelBar();}
+/* linha 2: a parte variável que sobraria com menos de 6 letras some (com o "·" antes dela) */
+function subCorta(box){if(!box||!box.getClientRects().length)return;var some=[];
+ box.querySelectorAll('.sub .corta').forEach(function(e){if(e.scrollWidth>e.clientWidth+1&&e.clientWidth<48)some.push(e);});
+ some.forEach(function(e){e.style.display='none';var p=e.previousElementSibling;if(p&&p.classList.contains('sep'))p.style.display='none';});}
 /* ===== Atendimentos em grupos por ação (visual v2) =====
    O primeiro que valer: Follow-up vencido (aberto e follow-up antes de hoje), Evento em 7 dias,
    Em negociação, Fechados, Concluídos (Entregue, Pós-venda e Perdido; recolhido).
-   Dentro do grupo: follow-up, depois evento, depois contato mais recente. 60 por grupo e "Ver mais". */
-var pcLimite=60,pcLim={},pcFechados={concl:true};
+   Dentro do grupo: os criados agora (fixos no topo até recarregar), depois follow-up, evento e contato mais recente.
+   Cada grupo mostra 5 linhas no celular e 10 no computador (JEV revisão 1) e "Ver mais" abre mais 60 (pcLimite). */
+var pcLimite=60,pcLim={},pcFechados={concl:true},pcFechadosF={},pcNovos=[];
+function pcLimBase(){return mbCel()?5:10;}
+/* com busca ou filtro ligado os grupos abrem sozinhos (o resultado pode estar num recolhido); recolher continua valendo */
+function pcFech(k){return atFiltrando()?!!pcFechadosF[k]:!!pcFechados[k];}
 var PC_GRUPOS=[["venc","Follow-up vencido","#c42b22","sino"],["ev7","Evento em 7 dias","#f76808","presente"],
  ["neg","Em negociação","#3e63dd",""],["fech","Fechados","#008844",""],["concl","Concluídos","#87909e",""]];
 function pcGrupoDe(o,hoje,em7){
@@ -1929,40 +2001,44 @@ function pcGrupoDe(o,hoje,em7){
 function pcGrupos(rows){
  var hoje=calHojeISO(),em7=pdSomaDias(hoje,7),G={};PC_GRUPOS.forEach(function(g){G[g[0]]=[];});
  rows.forEach(function(o){G[pcGrupoDe(o,hoje,em7)].push(o);});
- var ordem=function(a,b){var x=a.followup||'9999',y=b.followup||'9999';if(x!==y)return x<y?-1:1;
+ /* recém-criado fica no topo do grupo até recarregar (JEV revisão 1: 80% e 85%); o mais novo primeiro */
+ var novo=function(a,b){var x=pcNovos.indexOf(a.id),y=pcNovos.indexOf(b.id);if(x<0&&y<0)return 0;if(x<0)return 1;if(y<0)return -1;return y-x;};
+ var ordem=function(a,b){var n=novo(a,b);if(n)return n;var x=a.followup||'9999',y=b.followup||'9999';if(x!==y)return x<y?-1:1;
   x=a.dataEv||'9999';y=b.dataEv||'9999';if(x!==y)return x<y?-1:1;return String(b.data||'').localeCompare(String(a.data||''))||(Number(b.id)-Number(a.id));};
- Object.keys(G).forEach(function(k){G[k].sort(k==="concl"?function(a,b){return String(b.data||'').localeCompare(String(a.data||''))||(Number(b.id)-Number(a.id));}:ordem);});
+ Object.keys(G).forEach(function(k){G[k].sort(k==="concl"?function(a,b){return novo(a,b)||String(b.data||'').localeCompare(String(a.data||''))||(Number(b.id)-Number(a.id));}:ordem);});
  return PC_GRUPOS.filter(function(g){return G[g[0]].length;}).map(function(g){return {k:g[0],nome:g[1],cor:g[2],icone:g[3],lista:G[g[0]]};});}
-function pcToggle(k){pcFechados[k]=!pcFechados[k];renderTable();}
-function pcMais(k){pcLim[k]=(pcLim[k]||pcLimite)+pcLimite;renderTable();}
+function pcToggle(k){var m=atFiltrando()?pcFechadosF:pcFechados;m[k]=!pcFech(k);renderTable();}
+function pcMais(k){pcLim[k]=(pcLim[k]||pcLimBase())+pcLimite;renderTable();}
 function pcVazio(){
  if(!state.orders.length)return '<div class="vazio-bloco"><b>Nenhum atendimento ainda</b><p>Cada conversa de WhatsApp vira um atendimento aqui.</p><button type="button" class="btn btn-pri btn-pilula" onclick="openForm()">'+ic('mais','i p')+'Novo</button></div>';
  var q=(document.getElementById('search')||{}).value||'';
  return '<div class="vazio-bloco"><b>'+(q?'Nada encontrado para “'+esc(q)+'”':'Nenhum atendimento com esses filtros')+'</b><p>Procuro no cliente, cidade, produto, descrição e evento.</p><button type="button" class="btn btn-sec" onclick="atLimparTudo()">Limpar busca e filtros</button></div>';}
-/* o que vai na linha 2 depois do estágio: follow-up vencido em vermelho ou evento e data */
+/* linha 2 depois do estágio, por prioridade (revisão 1): follow-up vencido (sino, vermelho) ou a data do evento
+   (presente, na cor do prazo), depois o tipo de evento; sem nenhum dos dois, quantidade e produto.
+   Sempre separado por "·"; o tipo encolhe primeiro e some se sobrar menos de 6 letras (subCorta). */
 function pcResto(o,k,hoje){
- var site=Number(o.id)>=FIN_ID_SITE&&!o.produto;
- if(k==="venc")return '<span class="dt-atras">follow-up '+esc(dataCurta(o.followup,hoje))+'</span>'+(o.tipoEv?' · '+esc(o.tipoEv):'');
- var ev=o.tipoEv?esc(o.tipoEv):'',dt=o.dataEv?esc(dataCurta(o.dataEv,hoje)):'',cls=(k!=="concl"&&o.dataEv)?dataCls(o.dataEv,hoje):'';
- if(dt&&cls)dt='<span class="'+cls+'">'+dt+'</span>';
- if(ev||dt)return ev+(ev&&dt?(k==="ev7"?' ':' · '):'')+dt;
- return site?'Pedido do site':((Number(o.qtd)||0)+' un · '+esc(o.produto||'sem produto'));}
+ var site=Number(o.id)>=FIN_ID_SITE&&!o.produto,p=[];
+ if(k==="venc")p.push('<span class="pt fixo-d dt-atras" title="Follow-up vencido">'+ic('sino','i pp')+esc(dataCurta(o.followup,hoje))+'</span>');
+ else if(o.dataEv){var cls=k!=="concl"?dataCls(o.dataEv,hoje):'';p.push('<span class="pt fixo-d '+cls+'" title="Data do evento">'+ic('presente','i pp')+esc(dataCurta(o.dataEv,hoje))+'</span>');}
+ if(o.tipoEv)p.push('<span class="pt corta">'+esc(o.tipoEv)+'</span>');
+ if(!p.length)p.push('<span class="pt corta">'+(site?'Pedido do site':((Number(o.qtd)||0)+' un · '+esc(o.produto||'sem produto')))+'</span>');
+ return p.join('<span class="sep">·</span>');}
 function pcCartoes(rows){
  if(!rows.length)return pcVazio();
  var hoje=calHojeISO();
  return pcGrupos(rows).map(function(g){
-  var fechado=!!pcFechados[g.k],lim=pcLim[g.k]||pcLimite,n=Math.min(g.lista.length,lim);
+  var fechado=pcFech(g.k),lim=pcLim[g.k]||pcLimBase(),n=Math.min(g.lista.length,lim);
   var cab=grupoCab(g.nome,g.cor,g.lista.length,fechado,"pcToggle('"+g.k+"')",g.icone);
-  if(fechado)return cab;
-  return cab+'<div class="grupo">'+g.lista.slice(0,n).map(function(o){
+  if(fechado)return '<section class="gsec">'+cab+'</section>';
+  return '<section class="gsec">'+cab+'<div class="grupo">'+g.lista.slice(0,n).map(function(o){
    var c=calc(o),est=o.estagio||'';
-   return '<div class="linha" role="button" tabindex="0" onclick="openForm('+o.id+')" onkeydown="if(event.key===\'Enter\')openForm('+o.id+')" title="Abrir o atendimento #'+o.id+'">'
+   return '<div class="linha" data-id="'+o.id+'" role="button" tabindex="0" onclick="openForm('+o.id+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openForm('+o.id+');}" title="Abrir o atendimento #'+o.id+'">'
     +estProg(est)+'<div class="tit">'+esc(o.cliente||'(sem nome)')+'</div>'
     +'<div class="dir"><span class="val num">'+BRL(c.vt)+'</span></div>'
     +'<div class="sub"><span class="fixo est" style="--c:'+estCor(est)+'">'+esc(estCurto(est))+'</span><span class="sep fixo">·</span>'
-    +'<span class="corta">'+pcResto(o,g.k,hoje)+'</span>'+pagChip(o,false,true)+'</div></div>';}).join('')
+    +pcResto(o,g.k,hoje)+pagChip(o,false,true)+'</div></div>';}).join('')
    +(g.lista.length>n?'<button type="button" class="mais" onclick="pcMais(\''+g.k+'\')">Ver mais '+(g.lista.length-n)+'</button>':'')
-   +'</div>';}).join('');}
+   +'</div></section>';}).join('');}
 /* computador: os mesmos grupos em colunas, com a caixinha de seleção (toggleSel, #selBar) */
 function selGrupo(k,ch){var rows=filtered(),hoje=calHojeISO(),em7=pdSomaDias(hoje,7);
  rows.filter(function(o){return pcGrupoDe(o,hoje,em7)===k;}).forEach(function(o){if(ch)selSet.add(o.id);else selSet.delete(o.id);});renderAtend();}
@@ -1970,58 +2046,80 @@ function pcTabela(rows){
  if(!rows.length)return pcVazio();
  var hoje=calHojeISO();
  return pcGrupos(rows).map(function(g){
-  var fechado=!!pcFechados[g.k],lim=pcLim[g.k]||pcLimite,n=Math.min(g.lista.length,lim);
+  var fechado=pcFech(g.k),lim=pcLim[g.k]||pcLimBase(),n=Math.min(g.lista.length,lim);
   var cab=grupoCab(g.nome,g.cor,g.lista.length,fechado,"pcToggle('"+g.k+"')",g.icone);
-  if(fechado)return cab;
+  if(fechado)return '<section class="gsec">'+cab+'</section>';
   var todos=g.lista.every(function(o){return selSet.has(o.id);});
-  return cab+'<div class="grupo"><div class="cols cols-cab"><label class="lc-sel" title="Selecionar o grupo"><input type="checkbox" aria-label="Selecionar todos de '+esc(g.nome)+'"'+(todos?' checked':'')+' onclick="selGrupo(\''+g.k+'\',this.checked)"></label><span></span><span>Cliente</span><span>Estágio</span><span>Pagamento</span><span class="c v">Valor</span><span>Evento</span><span>Follow-up</span></div>'
+  return '<section class="gsec">'+cab+'<div class="grupo"><div class="cols cols-cab"><label class="lc-sel" title="Selecionar o grupo"><input type="checkbox" aria-label="Selecionar todos de '+esc(g.nome)+'"'+(todos?' checked':'')+' onclick="selGrupo(\''+g.k+'\',this.checked)"></label><span></span><span>Cliente</span><span>Estágio</span><span>Pagamento</span><span class="c v">Valor</span><span>Evento</span><span>Follow-up</span></div>'
    +g.lista.slice(0,n).map(function(o){
     var c=calc(o),est=o.estagio||'',fu=o.followup?dataCurta(o.followup,hoje):'',fuc=(o.followup&&DONE.indexOf(est)<0)?dataCls(o.followup,hoje):'';
-    var ev=[o.tipoEv,o.dataEv?dataCurta(o.dataEv,hoje):''].filter(Boolean).join(' ');
-    return '<div class="cols lc" role="button" tabindex="0" onclick="openForm('+o.id+')" onkeydown="if(event.key===\'Enter\')openForm('+o.id+')" title="Abrir o atendimento #'+o.id+'">'
+    /* evento: a data primeiro (é o que corta por último), depois o tipo */
+    var ev=[o.dataEv?dataCurta(o.dataEv,hoje):'',o.tipoEv].filter(Boolean).join(' · ');
+    /* a linha tem a caixinha dentro, então ela não é "botão": quem abre pelo teclado é o nome */
+    return '<div class="cols lc" data-id="'+o.id+'" onclick="openForm('+o.id+')" title="Abrir o atendimento #'+o.id+'">'
      +'<label class="lc-sel" onclick="event.stopPropagation()"><input type="checkbox" class="rowsel" aria-label="Selecionar '+esc(o.cliente||'#'+o.id)+'"'+(selSet.has(o.id)?' checked':'')+' onclick="event.stopPropagation();toggleSel('+o.id+',this.checked)"></label>'
-     +estProg(est)+'<span class="nome">'+esc(o.cliente||'(sem nome)')+'</span>'
+     +estProg(est)+'<span class="nome" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openForm('+o.id+');}">'+esc(o.cliente||'(sem nome)')+'</span>'
      +'<span class="c est" style="--c:'+estCor(est)+'">'+esc(estCurto(est))+'</span>'
      +'<span class="c">'+pagChip(o,false,true)+'</span>'
      +'<span class="c v num">'+BRL(c.vt)+'</span>'
      +'<span class="c">'+esc(ev)+'</span>'
      +'<span class="c '+fuc+'">'+esc(fu)+'</span></div>';}).join('')
    +(g.lista.length>n?'<button type="button" class="mais" onclick="pcMais(\''+g.k+'\')">Ver mais '+(g.lista.length-n)+'</button>':'')
-   +'</div>';}).join('');}
+   +'</div></section>';}).join('');}
 function selCell(id,key,val,arr){return '<select onchange="updCell('+id+',\''+key+'\',this.value)">'+arr.map(v=>'<option value="'+esc(v)+'"'+(v===val?' selected':'')+'>'+(esc(v)||'(vazio)')+'</option>').join('')+'</select>';}
 function inCell(id,key,val,type,w){return '<input type="'+(type||'text')+'" value="'+esc(val==null?'':val)+'" '+(w?'style="min-width:'+w+'px"':'')+' onchange="updCell('+id+',\''+key+'\',this.value)">';}
+/* Planilha (JEV revisão 1: campo só ao tocar, 61% e 55%). Com 320 linhas eram quase 6 mil campos montados de uma
+   vez; agora a célula é texto e vira o campo de verdade (o mesmo inCell/selCell, que grava com updCell no change)
+   ao tocar, com Enter ou ao chegar pelo Tab; ao sair do campo volta a ser texto. Cliente vem logo depois do #
+   e gruda à esquerda ao rolar de lado. */
+var PL_COLS=[["cliente","text",140],["data","date",0],["whats","text",120],["cidade","text",100],["canal","sel",0,"CANAIS"],
+ ["tipoCli","sel",0,"TIPOS"],["tipoEv","sel",0,"EVENTOS"],["dataEv","date",0],["produto","sel",0,"PRODUTOS"],["qtd","number",60],
+ ["valorUnit","number",70],["#vt"],["#sn"],["#mg"],["estagio","sel",0,"STAGES"],["statusPag","sel",0,"PAGSTATUS"],
+ ["formaPag","sel",0,"PAGFORMA"],["entrega","sel",0,"ENTREGA"],["custoEntrega","number",70],["followup","date",0],["obs","text",160]];
+var PL_LISTAS={CANAIS:CANAIS,TIPOS:TIPOS,EVENTOS:EVENTOS,PRODUTOS:PRODUTOS,STAGES:STAGES,PAGSTATUS:PAGSTATUS,PAGFORMA:PAGFORMA,ENTREGA:ENTREGA};
+function plCol(k){for(var i=0;i<PL_COLS.length;i++)if(PL_COLS[i][0]===k)return PL_COLS[i];return null;}
+function plTxt(o,col){var v=o[col[0]];if(v==null||v==='')return '';if(col[1]==='date')return dBR(String(v).slice(0,10));return String(v);}
+function plTd(o,col){return '<td class="pc'+(col[0]==='cliente'?' pl-cli':'')+'" data-k="'+col[0]+'" data-t="'+col[1]+'" tabindex="0"'+(col[2]?' style="min-width:'+col[2]+'px"':'')+'>'+esc(plTxt(o,col))+'</td>';}
 function renderSheet(){const rows=filtered();setResumo(rows);
- const head=["#","Data","Cliente","WhatsApp","Cidade","Canal","Tipo","Evento","Data ev.","Produto","Qtd","V.unit","V.total","Sinal 30%","Margem","Estágio","Pgto","Forma","Entrega","Custo entr.","Follow-up","Obs",""];
+ const head=["#","Cliente","Data","WhatsApp","Cidade","Canal","Tipo","Evento","Data ev.","Produto","Qtd","V.unit","V.total","Sinal 30%","Margem","Estágio","Pgto","Forma","Entrega","Custo entr.","Follow-up","Obs",""];
  let h='<div class="sheet-barra"><button type="button" class="btn btn-sec" onclick="quickAdd()">'+ic('mais','i p')+'Linha rápida</button><span class="t-sub">Toque numa célula e edite: salva sozinho ao sair do campo.</span></div>';
- h+='<table><thead><tr>'+head.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>';
- if(!rows.length)h+='<tr><td colspan="23" class="t-sub" style="padding:24px;text-align:center">Nada aqui. Toque em "Linha rápida" para começar.</td></tr>';
+ /* vazio: a mensagem fica na largura da tela, fora da tabela (dentro dela saía cortada no celular) */
+ if(!rows.length){document.getElementById('sheetView').innerHTML=h+(state.orders.length?pcVazio():'<div class="vazio-bloco"><b>Nenhum atendimento ainda</b><p>Toque em "Linha rápida" para começar.</p></div>');return;}
+ h+='<table><thead><tr>'+head.map((x,i)=>'<th'+(i===0?' class="pl-n"':i===1?' class="pl-cli"':'')+'>'+x+'</th>').join('')+'</tr></thead><tbody>';
  rows.forEach(o=>{const c=calc(o);
-  h+='<tr id="shr'+o.id+'">'
-   +'<td class="ro">'+o.id+'</td>'
-   +'<td>'+inCell(o.id,'data',o.data,'date')+'</td>'
-   +'<td>'+inCell(o.id,'cliente',o.cliente,'text',140)+'</td>'
-   +'<td>'+inCell(o.id,'whats',o.whats,'text',120)+'</td>'
-   +'<td>'+inCell(o.id,'cidade',o.cidade,'text',100)+'</td>'
-   +'<td>'+selCell(o.id,'canal',o.canal,CANAIS)+'</td>'
-   +'<td>'+selCell(o.id,'tipoCli',o.tipoCli,TIPOS)+'</td>'
-   +'<td>'+selCell(o.id,'tipoEv',o.tipoEv,EVENTOS)+'</td>'
-   +'<td>'+inCell(o.id,'dataEv',o.dataEv,'date')+'</td>'
-   +'<td>'+selCell(o.id,'produto',o.produto,PRODUTOS)+'</td>'
-   +'<td>'+inCell(o.id,'qtd',o.qtd,'number',60)+'</td>'
-   +'<td>'+inCell(o.id,'valorUnit',o.valorUnit,'number',70)+'</td>'
-   +'<td class="ro" id="shvt'+o.id+'">'+BRL(c.vt)+'</td>'
-   +'<td class="ro" id="shsn'+o.id+'">'+BRL(c.sinal)+'</td>'
-   +'<td class="ro" id="shmg'+o.id+'">'+BRL(c.mg)+'</td>'
-   +'<td>'+selCell(o.id,'estagio',o.estagio,STAGES)+'</td>'
-   +'<td>'+selCell(o.id,'statusPag',o.statusPag,PAGSTATUS)+'</td>'
-   +'<td>'+selCell(o.id,'formaPag',o.formaPag,PAGFORMA)+'</td>'
-   +'<td>'+selCell(o.id,'entrega',o.entrega,ENTREGA)+'</td>'
-   +'<td>'+inCell(o.id,'custoEntrega',o.custoEntrega,'number',70)+'</td>'
-   +'<td>'+inCell(o.id,'followup',o.followup,'date')+'</td>'
-   +'<td>'+inCell(o.id,'obs',o.obs,'text',160)+'</td>'
+  h+='<tr id="shr'+o.id+'" data-id="'+o.id+'"><td class="ro pl-n">'+o.id+'</td>'
+   +PL_COLS.map(col=>col[0]==='#vt'?'<td class="ro" id="shvt'+o.id+'">'+BRL(c.vt)+'</td>':col[0]==='#sn'?'<td class="ro" id="shsn'+o.id+'">'+BRL(c.sinal)+'</td>':col[0]==='#mg'?'<td class="ro" id="shmg'+o.id+'">'+BRL(c.mg)+'</td>':plTd(o,col)).join('')
    +'<td><button type="button" class="delx" title="Excluir" aria-label="Excluir o atendimento #'+o.id+'" onclick="delRow('+o.id+')">'+ic('x','i p')+'</button></td>'
   +'</tr>';});
- h+='</tbody></table>';document.getElementById('sheetView').innerHTML=h;}
+ h+='</tbody></table>';const sv=document.getElementById('sheetView');sv.innerHTML=h;plLigar(sv);}
+/* abre o campo da célula; o teclado do iPhone abre porque o foco vem do próprio toque (click) */
+function plEditar(td){if(!td||!td.isConnected)return;var f=td.querySelector('input,select');if(f){f.focus();return;}
+ /* outra célula que ficou aberta volta a ser texto (o change dela já gravou) */
+ var sv=td.closest('#sheetView');if(sv)sv.querySelectorAll('td.pc.ed').forEach(function(x){if(x!==td&&!x.contains(document.activeElement))plRestaurar(x);});
+ var tr=td.closest('tr'),id=Number(tr&&tr.getAttribute('data-id')),k=td.getAttribute('data-k'),col=plCol(k),o=state.orders.find(x=>x.id===id);if(!o||!col)return;
+ td.classList.add('ed');
+ td.innerHTML=col[1]==='sel'?selCell(id,k,o[k],PL_LISTAS[col[3]]):inCell(id,k,o[k],col[1]==='text'?'text':col[1],col[2]);
+ f=td.firstElementChild;f.setAttribute('data-orig',f.value);f.setAttribute('aria-label',(td.closest('table').querySelectorAll('th')[td.cellIndex]||{}).textContent||k);
+ try{f.focus({preventScroll:true});}catch(e){f.focus();}
+ if(f.tagName==='SELECT'){try{f.showPicker();}catch(e){}}}
+function plRestaurar(td){if(!td||!td.isConnected||!td.classList.contains('ed'))return;var tr=td.closest('tr'),id=Number(tr&&tr.getAttribute('data-id'));
+ var o=state.orders.find(x=>x.id===id),col=plCol(td.getAttribute('data-k'));td.classList.remove('ed');td.textContent=(o&&col)?plTxt(o,col):'';}
+function plLigar(sv){if(sv._pl)return;sv._pl=1;
+ sv.addEventListener('click',function(e){var td=e.target.closest('td.pc');if(td&&!e.target.closest('input,select'))plEditar(td);});
+ /* chegou pelo teclado (Tab): já abre o campo, como era antes */
+ sv.addEventListener('focusin',function(e){var td=e.target;if(td&&td.matches&&td.matches('td.pc')){var kb=false;try{kb=td.matches(':focus-visible');}catch(x){}if(kb)plEditar(td);}});
+ sv.addEventListener('keydown',function(e){var t=e.target;
+  if(t.matches&&t.matches('td.pc')&&(e.key==='Enter'||e.key==='F2'||e.key===' ')){e.preventDefault();plEditar(t);return;}
+  if(t.matches&&t.matches('td.pc input,td.pc select')){
+   if(e.key==='Escape'){var o=t.getAttribute('data-orig');if(o!=null&&t.tagName==='INPUT')t.value=o;var td=t.closest('td');t.blur();if(td)td.focus();}
+   else if(e.key==='Enter'&&t.tagName==='INPUT'){e.preventDefault();var td2=t.closest('td');t.blur();if(td2)td2.focus();}}});
+ /* escolheu no seletor: grava (updCell no onchange) e a célula volta a ser texto */
+ sv.addEventListener('change',function(e){var t=e.target;if(t.tagName==='SELECT'&&t.closest('td.pc')){var td=t.closest('td');setTimeout(function(){plRestaurar(td);},0);}});
+ sv.addEventListener('focusout',function(e){var t=e.target;if(!(t.matches&&t.matches('td.pc input,td.pc select')))return;var td=t.closest('td');
+  setTimeout(function(){if(td&&!td.contains(document.activeElement))plRestaurar(td);},0);});}
+/* busca: na Planilha redesenha 250 ms depois da última letra (a tabela é grande); na Lista e no Kanban, na hora */
+var _atBuscaT=null;
+function atBuscaDigitou(){clearTimeout(_atBuscaT);if(viewMode==='sheet')_atBuscaT=setTimeout(renderAtend,250);else renderAtend();}
 function updCell(id,key,val){const o=state.orders.find(x=>x.id===id);if(!o)return;const _antesPag=o.statusPag;
  if(['qtd','valorUnit','custoEntrega'].includes(key))val=parseFloat(String(val).replace(',','.'))||0;
  o[key]=val;if(key==='produto'&&state.precos[val]!=null&&(!o.valorUnit||confirm('Atualizar o valor unitário para o preço de tabela ('+BRL(state.precos[val])+')?'))){o.valorUnit=state.precos[val];}
@@ -2032,7 +2130,7 @@ function updCell(id,key,val){const o=state.orders.find(x=>x.id===id);if(!o)retur
  setResumo(filtered());}
 function quickAdd(){const d={id:state.seq++,data:todayISO(),cliente:'',whats:'',cidade:'',canal:'WhatsApp direto',tipoCli:'Evento',tipoEv:'',dataEv:'',produto:PRODUTOS[1]||PRODUTOS[0],descr:'',qtd:30,valorUnit:state.precos[PRODUTOS[1]||PRODUTOS[0]]||0,estagio:'Lead novo',statusPag:'',formaPag:'',entrega:'',custoEntrega:0,followup:'',obs:''};
  state.orders.unshift(d);save();syncOrder(d);renderSheet();
- setTimeout(function(){const tr=document.getElementById('shr'+d.id);if(tr){const inp=tr.querySelectorAll('input')[1];if(inp)inp.focus();}},50);}
+ setTimeout(function(){const tr=document.getElementById('shr'+d.id);if(tr)plEditar(tr.querySelector('td.pc[data-k="cliente"]'));},50);}
 function delRow(id){if(!confirm('Excluir o atendimento #'+id+'?'))return;const i=state.orders.findIndex(x=>x.id===id),o=state.orders[i];logAct('excluiu o atendimento #'+id);state.orders=state.orders.filter(x=>x.id!==id);save();const pr=syncDelete(id);renderSheet();renderPainel&&renderPainel();pedDesfazer([[i,o]],[pr],'Atendimento excluído');}
 // Financeiro no CRM (27/09/2026): o Caixa e o livro-caixa da empresa. Custo tem as categorias do Enzo; recebimento
 // de pedido digitado entra sozinho (sinal e integral) com o numero do pedido; venda do site vem direto do pedido,
@@ -2243,9 +2341,9 @@ function plInfo(o){const p=o&&o.producao;if(!p)return'';const sn=v=>{v=String(v|
   +'</div>';}
 async function plSyncMostrar(){const el=document.getElementById("plSync");if(!el||!SHEET_URL)return;
  try{const r=await fetch(sbUrl("pedidos_sync?select=em,resumo&order=id.desc&limit=1"),{headers:sbHeaders()});
-  if(!r.ok){el.innerHTML='Planilha de pedidos: <b>ainda não ligada</b> · <a href="'+PL_URL+'" target="_blank" rel="noopener">abrir ↗</a>';return;}
+  if(!r.ok){el.innerHTML='Planilha de pedidos: <b>ainda não ligada</b><a class="folha-link" href="'+PL_URL+'" target="_blank" rel="noopener">'+ic('planilha','i p')+'Abrir a planilha</a>';return;}
   const j=(await r.json())[0];const min=j?Math.round((Date.now()-new Date(j.em).getTime())/60000):null;
-  el.innerHTML='Planilha de pedidos: '+(j?'sincronizada '+(min<1?'agora':min<60?'há '+min+' min':min<1440?'há '+Math.round(min/60)+' h':'há '+Math.round(min/1440)+' dias')+' · '+(j.resumo&&j.resumo.linhas||0)+' linhas':'ainda não enviou')+' · <a href="'+PL_URL+'" target="_blank" rel="noopener">abrir ↗</a>';
+  el.innerHTML='Planilha de pedidos: '+(j?'sincronizada '+(min<1?'agora':min<60?'há '+min+' min':min<1440?'há '+Math.round(min/60)+' h':'há '+Math.round(min/1440)+' dias')+' · '+(j.resumo&&j.resumo.linhas||0)+' linhas':'ainda não enviou')+'<a class="folha-link" href="'+PL_URL+'" target="_blank" rel="noopener">'+ic('planilha','i p')+'Abrir a planilha</a>';
  }catch(e){el.textContent='';}}
 /* Radar Sazonal (visual v2): data grande à esquerda, nome, "em N dias", chip cinza PICO (JEV) e o laranja
    PREPARAR AGORA quando faltam 45 dias ou menos; dica em 15 px */
@@ -2330,7 +2428,7 @@ function calNav(n){
 function calHoje(){calMes=calHojeISO().slice(0,7);calDiaSel=calHojeISO();renderCalendario();}
 /* no celular (até 820 px) tocar no dia abre a folha do dia; no computador a lista fica abaixo da grade e o
    segundo clique no mesmo dia tira a seleção, como antes */
-function calCel(){try{return window.matchMedia("(max-width:820px)").matches;}catch(e){return false;}}
+function calCel(){try{return window.matchMedia(MENU_MQ).matches;}catch(e){return false;}}
 function calAbrirDia(dia){
  if(calCel()){calDiaSel=dia;renderCalendario();folhaAbrir('calDia');return;}
  calDiaSel=(calDiaSel===dia?'':dia);renderCalendario();
@@ -2539,36 +2637,50 @@ function pdQtd(o){var site=Number(o.id)>=FIN_ID_SITE&&!o.produto,q=Number(o.qtd)
 var PD_UI={"Aguardando arte":["--e-lead","zero",0],"Arte aprovada":["--e-conversa","meio",.25],"Produzindo":["--e-orcamento","meio",.5],"Pronto":["--e-producao","meio",.75],"Postado":["--e-fechado","ok",1]};
 function pdProg(et){var u=PD_UI[et]||PD_UI["Aguardando arte"];return progIcone(u[1],'var('+u[0]+')',u[2],et);}
 function pdEtapaTxt(et){var u=PD_UI[et]||PD_UI["Aguardando arte"];return '<span class="fixo est" style="--c:var('+u[0]+')">'+esc(et)+'</span>';}
-/* chip do prazo de postagem: atrasado (vermelho), hoje (âmbar), amanhã, até dia X, ou falta a arte */
+/* chip do prazo de postagem: atrasado (vermelho), hoje (âmbar), amanhã, até dia X. Sem arte aprovada não há
+   prazo de postagem: o chip mostra a data do evento (JEV, revisão 1: 70% e 84%), âmbar quando a entrega pode
+   passar do evento, vermelho se o evento já passou; sem data, chip tracejado para preencher */
 function pdChipPrazo(o,hoje){var pa=pdPostarAte(o);
- if(!pa)return '<span class="chip vazio">'+ic('caixa','i pp')+'Falta a arte</span>';
+ if(!pa){var ev=pdEv(o);
+  if(!ev)return '<span class="chip vazio">'+ic('presente','i pp')+'Sem data do evento</span>';
+  var ce=ev<hoje?' perigo':(pdChegaAte(o,hoje)>ev?' alerta':'');
+  return '<span class="chip'+ce+'" title="Data do evento: '+esc(pdDiaSem(ev))+'">'+ic('presente','i pp')+'Evento '+esc(dBR(ev).slice(0,5))+'</span>';}
  var d=calDias(pa);
  if(pa<hoje)return '<span class="chip perigo">'+ic('caixa','i pp')+'Atrasado '+Math.abs(d)+(Math.abs(d)===1?' dia':' dias')+'</span>';
  if(pa===hoje)return '<span class="chip alerta">'+ic('caixa','i pp')+'Postar hoje</span>';
  if(d===1)return '<span class="chip">'+ic('caixa','i pp')+'Postar amanhã</span>';
- return '<span class="chip">'+ic('caixa','i pp')+'Postar até '+esc(pdDiaSem(pa))+'</span>';}
+ return '<span class="chip">'+ic('caixa','i pp')+'Até '+esc(pdDiaSem(pa))+'</span>';}
 /* alerta só quando dá para agir: o evento ainda não passou e a entrega estimada passa dele */
 function pdAlerta(o,hoje){var ev=pdEv(o);if(!ev||ev<hoje||pdChegaAte(o,hoje)<=ev)return '';
  return 'Pode chegar após o evento ('+dBR(ev).slice(0,5)+')'+(pdPostarAte(o)?'':', mesmo aprovando a arte hoje');}
 function pdRotuloAvancar(prox){return !prox?'Confirmar postagem':prox==='Arte aprovada'?'Marcar arte aprovada':prox==='Postado'?'Marcar como postado':'Avançar para '+prox;}
-function pdCartao(o,hoje){
+/* abertura comum da linha da Produção: tocar abre a folha do pedido (com a trava, quando não está pago) */
+function pdLinhaAbre(o,extra){return '<div class="lpd'+(extra||'')+'" role="button" tabindex="0" onclick="pdFolhaAbrir('+o.id+')" onkeydown="if((event.key===\'Enter\'||event.key===\' \')&&event.target===this){event.preventDefault();pdFolhaAbrir('+o.id+');}" title="Detalhes da produção de '+esc(o.cliente||'#'+o.id)+'">';}
+function pdCartao(o,hoje,grupo){
  var et=pdEtapa(o),i=PROD_ETAPAS.indexOf(et),prox=PROD_ETAPAS[i+1];
  var pago=pagOk(o),al=pdAlerta(o,hoje),bt;
- if(!pago)bt='<button type="button" class="btn btn-larga" disabled>'+ic('cadeado','i p')+'Confirme o pagamento no pedido</button>';
- else if(!pdPodeGravar())bt='<button type="button" class="btn btn-larga" disabled title="Falta rodar o schema_producao.sql no Supabase">'+ic('cadeado','i p')+'As etapas ainda não salvam</button>';
+ /* sem pagamento (JEV, revisão 1: linha compacta 66% e 77%): nome, quantidade, etapa e o chip "Não pago" com
+    cadeado, sem botão; a faixa do grupo explica a trava uma vez e tocar abre a folha com a trava */
+ if(!pago)return pdLinhaAbre(o,' lpd-trava')
+  +pdProg(et)+'<div class="tit">'+esc(o.cliente||'(sem nome)')+'</div><div class="dir num">'+pdQtd(o)+'</div>'
+  +'<div class="sub">'+pdEtapaTxt(et)+'<span class="sep fixo">·</span><span class="corta">'+pdMeta(o)+'</span>'+pagChip(o,true)+'</div></div>';
+ if(!pdPodeGravar())bt='<button type="button" class="btn btn-larga" disabled title="Falta rodar o schema_producao.sql no Supabase">'+ic('cadeado','i p')+'Etapas não salvam</button>';
+ /* evento já passou sem arte aprovada (JEV, revisão 1, rodada 2: 61% e 70%): o botão é o cinza "Marcar como
+    postado", com a mesma confirmação; a próxima etapa (arte) não faz sentido depois do evento */
+ else if(grupo==='passou')bt='<button type="button" class="btn btn-sec btn-larga" onclick="event.stopPropagation();pdIrPara('+o.id+',&#39;Postado&#39;)">'+ic('caminhao','i p')+'Marcar como postado</button>';
  else bt='<button type="button" class="btn btn-pri btn-larga" onclick="event.stopPropagation();'+(prox?'pdAvancar('+o.id+')':'pdIrPara('+o.id+',&#39;Postado&#39;)')+'">'+esc(pdRotuloAvancar(prox))+ic('avancar','i p')+'</button>';
- return '<div class="lpd" role="button" tabindex="0" onclick="pdFolhaAbrir('+o.id+')" onkeydown="if(event.key===\'Enter\'&&event.target===this)pdFolhaAbrir('+o.id+')" title="Detalhes da produção de '+esc(o.cliente||'#'+o.id)+'">'
+ return pdLinhaAbre(o)
   +pdProg(et)+'<div class="tit">'+esc(o.cliente||'(sem nome)')+'</div><div class="dir num">'+pdQtd(o)+'</div>'
   +'<div class="sub">'+pdEtapaTxt(et)+'<span class="sep fixo">·</span><span class="corta">'+pdMeta(o)+'</span></div>'
   +'<div class="chips">'+pdChipPrazo(o,hoje)+pagChip(o,true)+'</div>'
   +(al?'<div class="al">'+ic('alerta','i pp')+'<span class="corta">'+esc(al)+'</span></div>':'')
   +'<div class="acao">'+bt+'</div></div>';}
 
+/* postado: o Desfazer fica só na folha do pedido (JEV, revisão 1: 97% e 99%), a linha não tem botão */
 function pdCartaoPostado(o){
- return '<div class="lpd" role="button" tabindex="0" onclick="pdFolhaAbrir('+o.id+')" onkeydown="if(event.key===\'Enter\'&&event.target===this)pdFolhaAbrir('+o.id+')">'
+ return pdLinhaAbre(o,' lpd-trava')
   +pdProg("Postado")+'<div class="tit">'+esc(o.cliente||'(sem nome)')+'</div><div class="dir num">'+pdQtd(o)+'</div>'
   +'<div class="sub">'+pdEtapaTxt("Postado")+'<span class="sep fixo">·</span><span class="corta">'+esc(pdDiaSem(o.postado_em))+' · '+pdMeta(o)+'</span></div>'
-  +'<div class="acao"><button type="button" class="btn btn-sec btn-larga" onclick="event.stopPropagation();pdDesfazerPostado('+o.id+')"'+(pdPodeGravar()?'':' disabled')+'>'+ic('desfazer','i p')+'Desfazer a postagem</button></div>'
   +'</div>';}
 
 function pdToggle(k){pdFechados[k]=!pdFechados[k];renderProducao();}
@@ -2629,21 +2741,24 @@ function renderProducao(){
   var lista=G[g[0]],fechado=!!pdFechados[g[0]],lim=pdLim[g[0]]||30;
   var cab=grupoCab(g[1],g[2],lista.length,fechado,"pdToggle('"+g[0]+"')",g[3],'','pdg_'+g[0]);
   if(fechado)return cab;
-  return cab+'<div class="grupo">'
-   +(g[0]==='pag'?'<div class="grupo-nota">'+ic('cadeado','i p')+'<span>Não produza: confirme o pagamento no pedido (Pago ou Sinal pago). Ele sai daqui sozinho.</span></div>':'')
-   +(g[0]==='passou'?'<div class="grupo-nota neutra">Sem arte aprovada e o evento já passou. Se já foram entregues, toque no pedido e escolha Postado em Mudar etapa.</div>':'')
-   +lista.slice(0,lim).map(function(o){return pdCartao(o,hoje);}).join('')
+  return '<section class="gsec">'+cab+'<div class="grupo">'
+   +(g[0]==='pag'?'<div class="grupo-nota uma">'+ic('cadeado','i p')+'<span>Não produza: falta confirmar o pagamento</span></div>':'')
+   +(g[0]==='passou'?'<div class="grupo-nota neutra">Sem arte aprovada e o evento já passou. Se já foram entregues, marque como postado.</div>':'')
+   +lista.slice(0,lim).map(function(o){return pdCartao(o,hoje,g[0]);}).join('')
    +(lista.length>lim?'<button type="button" class="mais" onclick="pdMais(&#39;'+g[0]+'&#39;)">Ver mais '+(lista.length-lim)+'</button>':'')
-   +'</div>';}).join('');
- if(!h)h='<div class="vazio-bloco"><b>'+(q||fResp?'Nenhum pedido com esse filtro':'Nada para produzir agora')+'</b><p>'+(q||fResp?'Tente outra busca.':'Pedido fechado ou pago aparece aqui sozinho.')+'</p></div>';
+   +'</div></section>';}).join('');
 
- /* postados nos últimos 7 dias: só para desfazer um toque errado */
+ /* postados nos últimos 7 dias: só para desfazer um toque errado (na folha do pedido). Seguem a busca e o responsável. */
  var corte=pdSomaDias(hoje,-7);
- var post=state.orders.filter(function(o){var p=String(o.postado_em||'').slice(0,10);return p&&p>=corte;})
+ var post=state.orders.filter(function(o){var p=String(o.postado_em||'').slice(0,10);if(!p||p<corte)return false;
+   if(fResp&&pdResps(o).indexOf(fResp)<0)return false;
+   if(q){var b=((o.cliente||'')+' '+(o.produto||'')+' '+(o.descr||'')+' '+(o.tipoEv||'')+' '+(o.cidade||'')).toLowerCase();if(b.indexOf(q)<0)return false;}
+   return true;})
   .sort(function(a,b){return String(b.postado_em).localeCompare(String(a.postado_em));});
+ if(!h&&(!post.length||!(q||fResp)))h='<div class="vazio-bloco"><b>'+(q||fResp?'Nenhum pedido com esse filtro':'Nada para produzir agora')+'</b><p>'+(q||fResp?'Tente outra busca.':'Pedido fechado ou pago aparece aqui sozinho.')+'</p></div>';
  if(post.length){var fp=!!pdFechados.postados;
-  h+=grupoCab("Postados nos últimos 7 dias","#008844",post.length,fp,"pdToggle('postados')","",'','pdg_postados')
-   +(fp?'':'<div class="grupo">'+post.map(pdCartaoPostado).join('')+'</div>');}
+  h+='<section class="gsec">'+grupoCab("Postados nos últimos 7 dias","#008844",post.length,fp,"pdToggle('postados')","",'','pdg_postados')
+   +(fp?'':'<div class="grupo">'+post.map(pdCartaoPostado).join('')+'</div>')+'</section>';}
  box.innerHTML=h;
  if(pdFolhaId)pdFolhaPintar();}
 
@@ -2783,9 +2898,23 @@ function pfTopo(){
  /* select vazio fica cinza ("Adicionar"), como valor vazio do Notion */
  document.querySelectorAll('#overlay .prop select').forEach(function(s){s.classList.toggle('vazio-sel',!s.value);});}
 function pfIrEvento(){var e=document.getElementById('f_evento');if(!e)return;try{e.scrollIntoView({block:'center',behavior:'smooth'});}catch(x){e.scrollIntoView();}setTimeout(function(){try{e.focus({preventScroll:true});}catch(x){}},250);}
-function saveForm(){if(!f_cliente.value.trim()){alert('Informe o nome do cliente.');return;}
+var currentIdAntes=null;
+function saveForm(){if(!f_cliente.value.trim()){alert('Informe o nome do cliente.');return;}currentIdAntes=currentId;
  const d={data:f_data.value,cliente:f_cliente.value.trim(),whats:f_whats.value.trim(),cidade:f_cidade.value.trim(),canal:f_canal.value,tipoCli:f_tipo.value,tipoEv:f_evento.value,dataEv:f_dataEv.value,produto:f_produto.value,descr:f_descr.value.trim(),qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,estagio:f_estagio.value,statusPag:f_statuspag.value,formaPag:f_formapag.value,entrega:f_entrega.value,custoEntrega:+f_custoent.value||0,followup:f_followup.value,obs:f_obs.value.trim()};
- let _sv,_antesPag=null;if(currentId){const _cur=state.orders.find(x=>x.id===currentId);_antesPag=_cur?_cur.statusPag:null;_sv=Object.assign(_cur,d);logAct('atualizou o atendimento #'+_sv.id+' ('+_sv.cliente+')');}else{d.id=state.seq++;_sv=d;state.orders.unshift(d);logAct('criou o atendimento #'+d.id+' ('+d.cliente+')');}save();syncOrder(_sv);finPagamento(_sv,_antesPag);closeForm();renderAtend();renderPainel();if(document.getElementById('calendario')&&document.getElementById('calendario').classList.contains('active'))renderCalendario();}
+ let _sv,_antesPag=null;if(currentId){const _cur=state.orders.find(x=>x.id===currentId);_antesPag=_cur?_cur.statusPag:null;_sv=Object.assign(_cur,d);logAct('atualizou o atendimento #'+_sv.id+' ('+_sv.cliente+')');}else{d.id=state.seq++;_sv=d;state.orders.unshift(d);pcNovos.push(d.id);logAct('criou o atendimento #'+d.id+' ('+d.cliente+')');}save();syncOrder(_sv);finPagamento(_sv,_antesPag);closeForm();
+ if(!currentIdAntes)pcMostrarNovo(_sv);
+ renderAtend();renderPainel();if(document.getElementById('calendario')&&document.getElementById('calendario').classList.contains('active'))renderCalendario();
+ if(!currentIdAntes)pcRolarNovo(_sv);}
+/* atendimento recém-criado (JEV revisão 1: fixo no topo do grupo, 80% e 85%): abre o grupo dele, rola até a linha
+   e mostra o aviso "Atendimento criado" com "Ver" (abre a ficha) */
+function pcMostrarNovo(o){var k=pcGrupoDe(o,calHojeISO(),pdSomaDias(calHojeISO(),7));pcFechados[k]=false;pcFechadosF[k]=false;}
+function pcRolarNovo(o){
+ var aba=document.getElementById('atendimentos'),ativa=aba&&aba.classList.contains('active');
+ var el=ativa&&viewMode==='table'?document.querySelector('#tableView [data-id="'+o.id+'"]'):null;
+ if(el){try{var tb=document.querySelector('.topbar'),r=el.getBoundingClientRect(),topo=(tb?tb.offsetHeight:0)+52;
+  if(r.top<topo||r.bottom>window.innerHeight-80)window.scrollTo({top:Math.max(0,r.top+window.scrollY-topo-8),behavior:'smooth'});}catch(e){}
+  el.classList.add('novo-luz');setTimeout(function(){el.classList.remove('novo-luz');},2400);}
+ mbAviso('Atendimento criado','Ver',function(){openForm(o.id);});}
 function deleteCurrent(){if(currentId&&confirm('Excluir este atendimento?')){const _id=currentId;const i=state.orders.findIndex(x=>x.id===_id),o=state.orders[i];logAct('excluiu o atendimento #'+_id);state.orders=state.orders.filter(x=>x.id!==_id);save();const pr=syncDelete(_id);closeForm();renderAtend();renderPainel();pedDesfazer([[i,o]],[pr],'Atendimento excluído');}}
 /* apagar pergunta como sempre e, depois, oferece Desfazer por 6 s: volta o pedido para a lista e grava de novo
    (mesmo id), só depois que a exclusão terminou no banco. Se o app fechar nesses 6 s, fica apagado. */
@@ -2908,7 +3037,7 @@ function renderCadastros(){var el=document.getElementById('cadList');if(!el)retu
   el.innerHTML=(novos.length?grupoCab("Novos","#3e63dd",novos.length,cadNovosFechado,"cadToggleNovos()","",'','cadNovosCab')+(cadNovosFechado?'':'<div class="grupo">'+novos.map(cadItem).join('')+'</div>'):'<p class="t-sub cad-intro">Nenhum cadastro novo.</p>')
    +(imps.length?grupoCab("Já viraram atendimento","#008844",imps.length,!cadImpAberto,"cadToggleImp()","",'','cadImpCab')+(cadImpAberto?'<div class="grupo">'+imps.map(cadItem).join('')+'</div>':''):'');
  }).catch(function(e){el.innerHTML='<div class="vazio-bloco"><b>Não consegui carregar os cadastros</b><p>'+esc(String(e.message||e))+'</p><button type="button" class="btn btn-sec" onclick="renderCadastros()">Tentar de novo</button></div>';});}
-function cadConverter(id){var o=(state.cadastros||[]).find(function(x){return x.id===id;});if(!o)return;if(!confirm('Criar um atendimento a partir do cadastro de '+(o.nome||'')+'?'))return;var novo={id:state.seq++,data:todayISO(),cliente:o.nome||'',whats:o.whats||'',cidade:o.endereco||'',canal:'Formulário',tipoCli:'Evento',tipoEv:'',dataEv:o.data_evento||'',produto:o.produto||PRODUTOS[0],descr:o.personalizacao||'',qtd:Number(o.qtd)||30,valorUnit:state.precos[o.produto]||0,estagio:'Fechado (ganho)',statusPag:'Sinal pago',formaPag:'Pix',entrega:'',custoEntrega:0,followup:'',obs:'Tema/cores: '+(o.tema||'')+(o.cpf?' | CPF: '+o.cpf:'')+' | CEP: '+(o.cep||'')};state.orders.unshift(novo);if(typeof logAct==='function')logAct('importou o cadastro de '+(o.nome||'')+' como atendimento #'+novo.id);save();syncOrder(novo);finPagamento(novo,'');o.status='importado';if(SHEET_URL)fetch(sbUrl("cadastros?id=eq."+id),{method:'PATCH',headers:sbHeaders(),body:JSON.stringify({status:'importado'})}).catch(function(e){});renderCadastros();if(typeof renderAtend==='function')renderAtend();if(typeof renderPainel==='function')renderPainel();alert('Pronto! Virou o atendimento #'+novo.id+', já está na aba Atendimentos.');}
+function cadConverter(id){var o=(state.cadastros||[]).find(function(x){return x.id===id;});if(!o)return;if(!confirm('Criar um atendimento a partir do cadastro de '+(o.nome||'')+'?'))return;var novo={id:state.seq++,data:todayISO(),cliente:o.nome||'',whats:o.whats||'',cidade:o.endereco||'',canal:'Formulário',tipoCli:'Evento',tipoEv:'',dataEv:o.data_evento||'',produto:o.produto||PRODUTOS[0],descr:o.personalizacao||'',qtd:Number(o.qtd)||30,valorUnit:state.precos[o.produto]||0,estagio:'Fechado (ganho)',statusPag:'Sinal pago',formaPag:'Pix',entrega:'',custoEntrega:0,followup:'',obs:'Tema/cores: '+(o.tema||'')+(o.cpf?' | CPF: '+o.cpf:'')+' | CEP: '+(o.cep||'')};state.orders.unshift(novo);pcNovos.push(novo.id);if(typeof logAct==='function')logAct('importou o cadastro de '+(o.nome||'')+' como atendimento #'+novo.id);save();syncOrder(novo);finPagamento(novo,'');o.status='importado';if(SHEET_URL)fetch(sbUrl("cadastros?id=eq."+id),{method:'PATCH',headers:sbHeaders(),body:JSON.stringify({status:'importado'})}).catch(function(e){});renderCadastros();if(typeof renderAtend==='function')renderAtend();if(typeof renderPainel==='function')renderPainel();alert('Pronto! Virou o atendimento #'+novo.id+', já está na aba Atendimentos.');}
 var lastSaveErr="";
 /* ponto de salvar no topo: verde salvo, âmbar salvando, vermelho não salvou. O "não salvou" vira a
    faixa de largura total embaixo do topo (com Tentar de novo), em vez de espremer o título. */
