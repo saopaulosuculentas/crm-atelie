@@ -443,11 +443,11 @@ body:has(.overlay.open){overflow:hidden}
 }
 
 /* folha que sobe dentro de um .overlay (Instalar no celular): o fundo do overlay é o véu */
-.overlay.open>.folha-baixo{display:block;animation:sobe .2s cubic-bezier(.2,0,0,1)}
+.overlay.open>.folha-baixo.inst{display:block;animation:sobe .2s cubic-bezier(.2,0,0,1)}
 .inst-bloco{border:1px solid var(--linha);border-radius:var(--r2);padding:12px 14px;margin-bottom:12px;background:var(--sup-2)}
 .inst-bloco h3{font-size:16px;font-weight:600;margin-bottom:6px}
 .inst-passos{margin:0;padding-left:20px;line-height:1.55;font-size:16px;color:var(--tx)}
-@media (min-width:821px){.overlay.open>.folha-baixo{animation:none}}
+@media (min-width:821px){.overlay.open>.folha-baixo.inst{animation:none}}
 
 
 /* ===================== TAREFAS (Lista, Quadro, Equipe) =====================
@@ -663,6 +663,46 @@ body:has(.overlay.open){overflow:hidden}
 .pl-link .valor{text-align:right;color:var(--tx-3)}
 .pag .acoes2 .btn.desab{pointer-events:none}
 #pfMargem.dt-ok,#pfMargem.dt-atras{font-weight:600}
+/* ficha da tarefa */
+.pag .t-salvar{min-height:44px;padding:0 18px;margin-right:2px}
+#tOverlay .titulo-campo{margin-top:6px}
+.t-chips{margin-top:8px}
+.t-resp{display:inline-flex;gap:6px;flex-wrap:wrap}
+.t-resp .pilula>span{padding:0 11px 0 5px}
+.t-tags-ver{display:contents}
+.t-tags-prop{margin:10px 0 0}
+#tUrgChip .band{margin-right:1px}
+.cu-descr{min-height:88px}
+.t-anexos .tanexos{display:contents}
+.t-anexo{grid-template-columns:minmax(0,1fr) auto;padding:2px 4px 2px 12px}
+.t-anexo .rot{min-width:0;color:var(--tx);text-decoration:none;font-size:16px}
+.t-anexo .rot img{width:32px;height:32px;border-radius:6px;object-fit:cover;flex:none;background:var(--sup-2)}
+.t-anexo .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t-anexar .rot{color:var(--tx-2)}
+.t-anexar:active{background:var(--sup-2)}
+.tup{font-size:15px;color:var(--tx-2);margin:-12px 2px 16px}
+.tcoms{background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);margin:8px 0 12px;padding:2px 0}
+.tcom{position:relative;display:flex;gap:10px;padding:10px 4px 10px 12px;align-items:flex-start}
+.tcom+.tcom::before{content:"";position:absolute;left:46px;right:0;top:0;height:1px;background:var(--linha)}
+.tcom .av{width:26px;height:26px;font-size:11px;border:0;margin-top:1px}
+.tcom .bd{flex:1;min-width:0}
+.tcom .who{font-size:15px;font-weight:700}
+.tcom .ts{font-size:13px;color:var(--tx-2);margin-left:6px}
+.tcom .txt{font-size:16px;line-height:22px;margin-top:2px;white-space:pre-wrap;overflow-wrap:anywhere}
+.tcom .txt a{font-weight:600}
+.tcom .del{color:var(--tx-2);margin:-8px 0 -8px}
+.tcomvazio{font-size:15px;color:var(--tx-2);padding:12px}
+.tmencao{font-weight:700;padding:1px 5px;border-radius:5px;white-space:nowrap}
+.t-rodape{display:block;padding-top:8px}
+.tcomwrap{position:relative}
+.tcomnovo{display:flex;gap:8px;align-items:flex-end}
+.tcomnovo textarea{flex:1;min-width:0;min-height:44px;max-height:140px;border:0;border-radius:var(--r2);background:var(--campo);padding:11px 12px;font-size:16px;line-height:22px;color:var(--tx);outline:0;resize:none}
+.tcomnovo textarea:focus{box-shadow:var(--foco)}
+.tcomnovo textarea::placeholder{color:var(--tx-2);opacity:1}
+.tmenlist{position:absolute;left:0;bottom:calc(100% + 6px);z-index:6;background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);box-shadow:var(--sombra-2);padding:4px;min-width:200px}
+.tmen{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 10px;border-radius:8px;font-size:16px;font-weight:600;color:var(--tx);text-align:left}
+.tmen.sel,.tmen:hover{background:var(--sup-2)}
+.tmen .av{width:24px;height:24px;border:0}
 
 
 /* ===================== ABAS QUE AINDA USAM AS PEÇAS ANTIGAS =====================
@@ -799,112 +839,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
  th{position:static}
  #clientesView td.cli,#clientesView th.cli{position:sticky;left:0;max-width:150px;min-width:120px;white-space:normal;word-break:break-word}
  .callista .item{padding:11px 12px;gap:7px}
-}
-
-/* ===== CSS antigo das abas que ainda não foram refeitas (sai aba por aba) ===== */
-.modal{background:#fff;border-radius:18px;width:780px;max-width:100%;box-shadow:0 30px 70px rgba(0,0,0,.35);overflow:hidden}
-.modal .mhead{background:var(--green-dk);padding:17px 24px;color:#fff}
-.modal .mhead h2{font-size:18px}
-.mbody{padding:20px 24px}
-.cu-pessoa{border:1px solid var(--line);background:transparent;color:var(--muted);
- border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;cursor:pointer;
- margin-right:4px;line-height:1.6}
-.cu-pessoa.on{font-weight:800}
-.cu-modal{background:var(--card);border-radius:14px;width:760px;max-width:100%;
- box-shadow:0 30px 70px rgba(0,0,0,.4);overflow:hidden;display:flex;flex-direction:column;max-height:92vh}
-.cu-top{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex:0 0 auto}
-.cu-statussel{appearance:none;-webkit-appearance:none;border:0;border-radius:6px;color:#fff;
- font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:5px 26px 5px 11px;
- cursor:pointer;font-family:inherit;
- background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
- background-repeat:no-repeat;background-position:right 9px center}
-.cu-statussel.escuro{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='%231f2a22' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>")}
-.cu-statussel option{color:var(--ink);background:var(--card)}
-.cu-top .fechar{margin-left:auto;background:transparent;border:0;box-shadow:none;color:var(--muted);
- font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
-.cu-top .fechar:hover{color:var(--ink)}
-.cu-body{padding:16px 20px 20px;overflow:auto;flex:1 1 auto}
-.cu-titulo{width:100%;border:0;outline:0;background:transparent;color:var(--ink);
- font-size:23px;font-weight:800;font-family:inherit;padding:2px 0 10px;line-height:1.25}
-.cu-titulo::placeholder{color:var(--muted);font-weight:600}
-.cu-chip{display:inline-flex;align-items:center;gap:6px;border:1px dashed var(--line);border-radius:8px;
- padding:5px 10px;font-size:12px;font-weight:600;color:var(--muted);background:transparent;cursor:pointer}
-.cu-chip:hover{border-color:var(--green2);color:var(--green-dk)}
-.cu-chip.preenchido{border-style:solid;color:var(--ink)}
-.cu-chip select,.cu-chip input{border:0;outline:0;background:transparent;font-family:inherit;
- font-size:12px;font-weight:600;color:inherit;cursor:pointer;padding:0;max-width:150px}
-.cu-chip input[type=date]{cursor:pointer;color-scheme:light}
-[data-tema="escuro"] .cu-chip input[type=date]{color-scheme:dark}
-.cu-sec{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;
- letter-spacing:.5px;margin:0 0 7px}
-.cu-descr{width:100%;min-height:96px;border:1px solid transparent;border-radius:9px;padding:9px 11px;
- font-size:13.5px;font-family:inherit;line-height:1.5;background:transparent;color:var(--ink);resize:vertical}
-.cu-descr:hover{border-color:var(--line)}
-.cu-descr:focus{border-color:var(--green2);outline:0;background:var(--cream)}
-.cu-descr::placeholder{color:var(--muted)}
-.cu-foot{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--line);flex:0 0 auto}
-.tdtools{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
-.tdtools button{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:7px;
- padding:4px 10px;font-size:11.5px;font-weight:700;cursor:pointer;box-shadow:none}
-.tdtools button:hover{background:var(--moss);color:var(--green-dk);border-color:var(--green2)}
-.tdhint{font-size:11px;color:var(--muted);margin-top:5px}
-.tanexo{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card);width:118px;font-size:11px}
-.tanexo img,.tanexo video{display:block;width:118px;height:82px;object-fit:cover;background:var(--cream)}
-.tanexo .nm{display:block;padding:5px 7px;color:var(--ink);text-decoration:none;word-break:break-all;line-height:1.25;max-height:44px;overflow:hidden}
-.tanexo .nm:hover{color:var(--green-dk);text-decoration:underline}
-.tanexo .x{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;border:0;cursor:pointer;
- background:rgba(20,30,22,.72);color:#fff;font-size:12px;line-height:20px;padding:0;box-shadow:none}
-.tanexo.lk{width:auto;max-width:100%;display:flex;align-items:center;gap:6px;padding:6px 32px 6px 10px;border-radius:20px}
-.tanexo.lk .nm{padding:0;color:var(--green-dk);font-weight:700;max-width:270px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
-.tanexo.lk .x{top:50%;transform:translateY(-50%)}
-.tup{font-size:11.5px;color:var(--green-dk);font-weight:700;margin-top:7px}
-.tcom{display:flex;gap:9px;padding:8px 2px;border-bottom:1px solid var(--line)}
-.tcom:last-child{border-bottom:0}
-.tcom .av{width:26px;height:26px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;flex:0 0 auto;
- display:inline-flex;align-items:center;justify-content:center}
-.tcom .bd{flex:1;min-width:0}
-.tcom .who{font-size:12px;font-weight:800;color:var(--ink)}
-.tcom .ts{font-size:10.5px;color:var(--muted);margin-left:6px;font-weight:600}
-.tcom .txt{font-size:12.5px;color:var(--ink);line-height:1.45;white-space:pre-wrap;word-break:break-word;margin-top:2px}
-.tcom .txt a{color:var(--green-dk);font-weight:700}
-.tcom .del{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:12px;padding:0 4px;box-shadow:none;flex:0 0 auto}
-.tcom .del:hover{color:var(--danger)}
-.tmencao{font-weight:800;padding:1px 5px;border-radius:5px;white-space:nowrap}
-.tcom .txt .tmencao{font-size:12.5px}
-.tmen{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:transparent;
- border:0;box-shadow:none;cursor:pointer;padding:7px 9px;border-radius:7px;font-size:13px;
- font-weight:600;color:var(--ink);font-family:inherit}
-.tmen:hover,.tmen.sel{background:var(--hover)}
-.tmen .av{width:22px;height:22px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:800;
- display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
-[data-tema="escuro"] .modal{background:var(--card);color:var(--ink)}
-[data-tema="escuro"] .cu-descr:focus{background:#151d18}
-[data-tema="escuro"] .tanexo .nm{color:var(--ink)}
-[data-tema="escuro"] .tanexo.lk .nm{color:var(--green-dk)}
-[data-tema="escuro"] .modal .mhead{background:#1c4327}
-@media(max-width:560px){
- .cu-titulo{font-size:19px}
-}
-@media (max-width:700px){
- .modal{width:100%!important;max-width:100%;min-height:100%;border-radius:0;overflow:visible;display:flex;flex-direction:column;box-shadow:none}
- .modal .mhead{position:sticky;top:0;z-index:3;padding:calc(10px + env(safe-area-inset-top)) var(--mb-r) 10px var(--mb-l)}
- .modal .mhead h2{font-size:18px;line-height:1.25}
- .modal .mhead button{min-width:44px;min-height:44px}
- .mbody{padding:16px var(--mb-r) 16px var(--mb-l);flex:1 0 auto}
- .cu-modal{width:100%;max-width:100%;max-height:none;border-radius:0;box-shadow:none}
- .cu-top{padding:calc(6px + env(safe-area-inset-top)) var(--mb-r) 6px var(--mb-l);min-height:56px}
- .cu-top .fechar{min-width:44px;min-height:44px;font-size:22px}
- .cu-statussel{font-size:12.5px;padding:9px 28px 9px 12px}
- .cu-body{padding:14px var(--mb-r) 18px var(--mb-l);-webkit-overflow-scrolling:touch}
- .cu-titulo{font-size:20px!important}
- .cu-chip{min-height:42px;font-size:14px;padding:6px 12px}
- .cu-chip select,.cu-chip input{max-width:none}
- .cu-pessoa{font-size:14px;padding:6px 12px;margin:2px 4px 2px 0}
- .tdtools button{min-height:40px;font-size:13.5px;padding:6px 12px}
- .cu-descr{font-size:16px}
- .tcom .txt{font-size:14.5px}
- .cu-foot{padding:10px var(--mb-r) calc(10px + env(safe-area-inset-bottom)) var(--mb-l)}
- .cu-foot .btn{min-height:46px;font-size:15.5px!important;padding:10px 16px!important}
 }
 </style>
 <script>
@@ -1320,53 +1254,63 @@ tbody tr:hover td.cli{background:var(--sup-2)}
  </div>
 </div>
 
-<!-- Modal no formato da tarefa do ClickUp: pilula de status no topo, titulo
-     grande e uma fileira de chips no lugar do formulario de campos. -->
+<!-- Ficha da tarefa (visual v2, anatomia do ClickUp): página cheia com etapa num chip cheio, título
+     grande que cresce, chips (responsáveis, prazo, prioridade com bandeira, etiquetas), descrição,
+     anexos em linhas, atividade e o campo de comentário fixo no rodapé. Ids t_* e chip_* de sempre. -->
 <div class="overlay" id="tOverlay">
- <div class="cu-modal">
-  <div class="cu-top">
-   <select id="t_etapa" class="cu-statussel" onchange="tPintarStatus()"></select>
-   <span id="tTitle" style="font-size:12px;color:var(--muted);font-weight:600">Nova tarefa</span>
-   <button type="button" class="fechar" onclick="tFechar()" aria-label="Fechar" title="Fechar">✕</button>
+ <div class="pag" role="dialog" aria-modal="true" aria-labelledby="t_titulo">
+  <div class="pag-topo">
+   <button type="button" class="voltar" onclick="tFechar()"><svg class="i" aria-hidden="true"><use href="#i-esq"/></svg>Tarefas</button>
+   <span class="esp"></span>
+   <span id="tTitle" hidden>Nova tarefa</span>
+   <button type="button" class="btn btn-pri btn-pilula t-salvar" onclick="tSalvar()">Salvar</button>
+   <button type="button" class="btn-icone" id="tMaisBtn" onclick="folhaAbrir('tAcoes')" aria-label="Mais ações"><svg class="i" aria-hidden="true"><use href="#i-pontos"/></svg></button>
   </div>
-  <div class="cu-body">
-   <input type="text" id="t_titulo" class="cu-titulo" placeholder="Nome da tarefa" autocomplete="off">
-
-   <div class="cu-chips">
-    <span class="cu-chip" id="chip_resp" title="Responsáveis: clique para marcar mais de um">👤 <span id="t_resp"></span></span>
-    <label class="cu-chip" id="chip_prazo" title="Data de vencimento">📅 <input type="date" id="t_prazo" onchange="tPintarChips()"></label>
-    <label class="cu-chip" id="chip_urg" title="Prioridade"><span id="urgFlag">🏳️</span> <select id="t_urg" onchange="tPintarChips()"></select></label>
-    <label class="cu-chip" id="chip_tags" title="Etiquetas: separe por vírgula">🏷️ <input type="text" id="t_tags" placeholder="Etiquetas" oninput="tPintarChips()" style="max-width:190px"></label>
+  <div class="pag-corpo">
+   <label class="toq" title="Etapa"><span class="chip-st tf-est" id="tEtapaChip"><span id="tEtapaTxt">A fazer</span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg></span><select id="t_etapa" onchange="tPintarStatus()" aria-label="Etapa"></select></label>
+   <textarea id="t_titulo" class="titulo-campo cu-titulo" rows="1" placeholder="Nome da tarefa" autocomplete="off" aria-label="Nome da tarefa" enterkeyhint="done"
+    onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" oninput="this.value=this.value.replace(/\n/g,' ');pfCresce(this)"></textarea>
+   <div class="chips toques t-chips">
+    <span class="toq" id="chip_resp" title="Responsáveis: toque para marcar mais de um"><span id="t_resp" class="t-resp" role="group" aria-label="Responsáveis"></span></span>
+    <label class="toq" id="chip_prazo" title="Prazo"><span class="chip" id="tPrazoChip"><svg class="i pp" aria-hidden="true"><use href="#i-cal"/></svg><span id="tPrazoTxt">Prazo</span></span><input type="date" id="t_prazo" onchange="tPintarChips()" aria-label="Prazo"></label>
+    <label class="toq" id="chip_urg" title="Prioridade"><span class="chip" id="tUrgChip"><span id="urgFlag"></span><span id="tUrgTxt">Prioridade</span></span><select id="t_urg" onchange="tPintarChips()" aria-label="Prioridade"></select></label>
+    <span id="tTagsVer" class="t-tags-ver"></span>
    </div>
+   <div class="props t-tags-prop"><div class="prop" id="chip_tags"><label class="rot" for="t_tags"><svg class="i p" aria-hidden="true"><use href="#i-etiqueta"/></svg>Etiquetas</label><textarea id="t_tags" rows="1" placeholder="Adicionar, separe por vírgula" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" oninput="this.value=this.value.replace(/
+/g,' ');pfCresce(this);tPintarChips()"></textarea></div></div>
 
-   <div class="cu-sec">Descrição</div>
-   <div class="tdtools">
-    <button type="button" onclick="tAnexoArquivo()" title="Foto, vídeo ou qualquer arquivo">📎 Anexar arquivo</button>
-    <button type="button" onclick="tAnexoLink()" title="Colar um link (Drive, Instagram, planilha...)">🔗 Colar link</button>
+   <h3 class="t-secao">Descrição</h3>
+   <div class="props"><div class="prop prop-obs"><textarea id="t_descr" class="cu-descr" rows="3" placeholder="Adicione uma descrição, cole um link ou um print" aria-label="Descrição" onpaste="tColar(event)" oninput="pfCresce(this)"></textarea></div></div>
+
+   <h3 class="t-secao">Anexos</h3>
+   <div class="props t-anexos">
+    <div id="tAnexosBox" class="tanexos"></div>
+    <button type="button" class="prop t-anexar" onclick="tAnexoArquivo()"><span class="rot"><svg class="i p" aria-hidden="true"><use href="#i-clipe"/></svg>Anexar arquivo ou foto</span></button>
+    <button type="button" class="prop t-anexar" onclick="tAnexoLink()"><span class="rot"><svg class="i p" aria-hidden="true"><use href="#i-mais"/></svg>Colar um link</span></button>
    </div>
-   <textarea id="t_descr" class="cu-descr" placeholder="Adicione uma descrição, cole um link, jogue um print aqui com Ctrl+V..." onpaste="tColar(event)"></textarea>
    <input type="file" id="t_file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.zip" style="display:none" onchange="tEnviarArquivos(this.files);this.value='';">
-   <div id="tAnexosBox" class="tanexos"></div>
    <div id="tUpStat" class="tup" style="display:none"></div>
 
-   <div class="cu-sec" style="margin-top:20px">Atividade</div>
+   <h3 class="t-secao">Atividade</h3>
    <div id="tComsBox" class="tcoms"></div>
+  </div>
+  <div class="rodape t-rodape">
    <div class="tcomwrap">
     <div class="tcomnovo" id="tComNovo">
-     <textarea id="t_com" rows="1" placeholder="Escreva um comentário... use @ para marcar alguém"
-       onkeydown="tComTecla(event)" oninput="tMencaoDigitou(event)" onblur="setTimeout(tFecharMencoes,140)"></textarea>
-     <button type="button" class="btn" style="padding:7px 14px;font-size:12.5px" onclick="tComentar()">Enviar</button>
+     <textarea id="t_com" rows="1" placeholder="Comentário (@ marca alguém)" aria-label="Comentário"
+       onkeydown="tComTecla(event)" oninput="tMencaoDigitou(event);pfCresce(this)" onblur="setTimeout(tFecharMencoes,140)"></textarea>
+     <button type="button" class="btn btn-pri" onclick="tComentar()">Enviar</button>
     </div>
     <div id="tMencoes" class="tmenlist" style="display:none"></div>
    </div>
   </div>
-  <div class="cu-foot">
-   <button class="btn ghost" id="tDelBtn" onclick="tExcluir()" style="color:var(--danger);padding:7px 13px;font-size:12.5px">Excluir</button>
-   <div style="flex:1"></div>
-   <button class="btn ghost" style="padding:7px 13px;font-size:12.5px" onclick="tFechar()">Cancelar</button>
-   <button class="btn" style="padding:7px 18px;font-size:12.5px" onclick="tSalvar()">Salvar</button>
-  </div>
  </div>
+ <div class="veu" id="tAcoesVeu" onclick="folhaFechar('tAcoes')"></div>
+ <section class="folha-baixo" id="tAcoes" role="dialog" aria-modal="true" aria-labelledby="tAcoesTit">
+  <div class="alca" aria-hidden="true"></div>
+  <div class="folha-cab"><span></span><h3 id="tAcoesTit">Tarefa</h3><button type="button" class="fechar-x" onclick="folhaFechar('tAcoes')" aria-label="Fechar"><span><svg class="i pp" aria-hidden="true"><use href="#i-x"/></svg></span></button></div>
+  <button type="button" class="btn btn-sec btn-perigo btn-larga" id="tDelBtn" onclick="folhaFechar('tAcoes');tExcluir()" style="margin-top:8px">Excluir tarefa</button>
+ </section>
 </div>
 
 <!-- Ajuda para instalar o CRM como aplicativo (PWA). Clicar fora fecha: aqui nao ha nada digitado para perder. -->
@@ -2686,10 +2630,9 @@ var tRespSel=[];
 function tRespRender(){
  var el=document.getElementById('t_resp');if(!el)return;
  el.innerHTML=T_EQUIPE.map(function(p){
-  var on=tRespSel.indexOf(p)>=0,c=tCorPessoa(p);
-  var st=on?('background:'+c+';border-color:'+c+';color:'+tTextoSobre(c)):'';
-  return '<button type="button" class="cu-pessoa'+(on?' on':'')+'" style="'+st+'"'
-   +' onclick="tRespToggle(\''+p+'\')">'+p+'</button>';
+  var on=tRespSel.indexOf(p)>=0;
+  return '<button type="button" class="pilula com-av cu-pessoa'+(on?' on':'')+'" aria-pressed="'+on+'"'
+   +' onclick="tRespToggle(\''+p+'\')"><span>'+avatar(p)+esc(p)+'</span></button>';
  }).join('');
 }
 function tRespToggle(p){
@@ -3204,17 +3147,10 @@ function tRemoverAnexo(id){
 function tRenderAnexos(){
  var el=document.getElementById('tAnexosBox');if(!el)return;
  el.innerHTML=tAnexos.map(function(a){
-  var x='<button type="button" class="x" title="Remover" onclick="tRemoverAnexo(\''+esc(String(a.id))+'\')">✕</button>';
-  if(a.tipo==="link")
-   return '<div class="tanexo lk">🔗 <a class="nm" href="'+esc(a.url)+'" target="_blank" rel="noopener" title="'+esc(a.url)+'">'+esc(a.nome||a.url)+'</a>'+x+'</div>';
-  if(a.tipo==="imagem")
-   return '<div class="tanexo"><a href="'+esc(a.url)+'" target="_blank" rel="noopener"><img src="'+esc(a.url)+'" alt="'+esc(a.nome||'')+'"></a>'
-    +'<a class="nm" href="'+esc(a.url)+'" target="_blank" rel="noopener">'+esc(a.nome||'imagem')+'</a>'+x+'</div>';
-  if(a.tipo==="video")
-   return '<div class="tanexo"><video src="'+esc(a.url)+'" controls preload="metadata"></video>'
-    +'<a class="nm" href="'+esc(a.url)+'" target="_blank" rel="noopener">'+esc(a.nome||'vídeo')+'</a>'+x+'</div>';
-  return '<div class="tanexo lk">📄 <a class="nm" href="'+esc(a.url)+'" target="_blank" rel="noopener">'+esc(a.nome||'arquivo')
-   +(a.tamanho?' · '+tTamanho(a.tamanho):'')+'</a>'+x+'</div>';
+  var x='<button type="button" class="btn-icone" title="Remover" aria-label="Remover '+esc(a.nome||'anexo')+'" onclick="tRemoverAnexo(\''+esc(String(a.id))+'\')">'+ic('x','i p')+'</button>';
+  var miolo=a.tipo==="imagem"?'<img src="'+esc(a.url)+'" alt="" loading="lazy">':ic(a.tipo==="link"?'clipe':a.tipo==="video"?'camadas':'texto','i p');
+  return '<div class="prop t-anexo"><a class="rot" href="'+esc(a.url)+'" target="_blank" rel="noopener" title="'+esc(a.url)+'">'+miolo
+   +'<span class="nm">'+esc(a.nome||a.url||'arquivo')+(a.tamanho?' <span class="t-sub">· '+tTamanho(a.tamanho)+'</span>':'')+'</span></a>'+x+'</div>';
  }).join('');
 }
 
@@ -3231,7 +3167,7 @@ function tLinkar(txt){
   var quem=T_EQUIPE.find(function(p){return p.toLowerCase()===nome.toLowerCase();});
   if(!quem)return todo;
   var c=tCorPessoa(quem);
-  return '<span class="tmencao" style="background:'+c+'2e;color:'+c+'">@'+esc(quem)+'</span>';
+  return '<span class="tmencao" style="background:'+c+';color:#fff">@'+esc(quem)+'</span>';
  });
 }
 
@@ -3272,7 +3208,7 @@ function tRenderMencoes(){
  b.innerHTML=_menLista.map(function(p,i){
   var c=tCorPessoa(p);
   return '<button type="button" class="tmen'+(i===_menIdx?' sel':'')+'" onmousedown="event.preventDefault();tEscolherMencao('+i+')">'
-   +'<i class="av" style="background:'+c+'">'+esc(tIniciais(p))+'</i>'+esc(p)+'</button>';
+   +'<i class="av" style="--c:'+c+'">'+esc(tIniciais(p))+'</i>'+esc(p)+'</button>';
  }).join('');
  b.style.display='';
 }
@@ -3323,11 +3259,11 @@ function tRenderComentarios(){
  var eu=userName();
  el.innerHTML=tComentarios.map(function(c){
   var cor=tCorPessoa(c.autor);
-  return '<div class="tcom"><span class="av" style="background:'+cor+'">'+esc(tIniciais(c.autor||'?'))+'</span>'
+  return '<div class="tcom"><span class="av" style="--c:'+cor+'">'+esc(tIniciais(c.autor||'?'))+'</span>'
    +'<div class="bd"><span class="who">'+esc(c.autor||'Equipe')+'</span>'
    +'<span class="ts">'+esc(typeof fmtTs==='function'?fmtTs(c.criado_em):(c.criado_em||''))+'</span>'
    +'<div class="txt">'+tLinkar(c.texto||'')+'</div></div>'
-   +((c.autor===eu)?'<button type="button" class="del" title="Apagar" onclick="tApagarComentario('+c.id+')">🗑</button>':'')
+   +((c.autor===eu)?'<button type="button" class="btn-icone del" title="Apagar comentário" aria-label="Apagar comentário" onclick="tApagarComentario('+c.id+')">'+ic('x','i p')+'</button>':'')
    +'</div>';
  }).join('');
  el.scrollTop=el.scrollHeight;
@@ -3372,32 +3308,25 @@ function tFill(sel,arr,pares){var s=document.getElementById(sel);if(!s)return;s.
  arr.forEach(function(v){var o=document.createElement('option');
   if(pares){o.value=v[0];o.textContent=v[1];}else{o.value=v;o.textContent=v;}s.appendChild(o);});}
 
-/* a pilula de status no topo pinta na cor da etapa escolhida, igual ao ClickUp */
+/* a etapa no topo é um chip cheio na cor da etapa (o select fica transparente por cima) */
 function tPintarStatus(){
  var s=document.getElementById('t_etapa');if(!s)return;
- var c=tCorEtapa(s.value);
- s.style.background=c;
- s.style.color=tTextoSobre(c);
- s.classList.toggle('escuro',tClaro(c));   /* seta preta quando o fundo e claro */
+ var c=tCorEtapa(s.value),ch=document.getElementById('tEtapaChip'),tx=document.getElementById('tEtapaTxt');
+ if(ch){ch.style.setProperty('--c',c);ch.style.setProperty('--ct',tTextoSobre(c));}
+ if(tx)tx.textContent=s.value||T_ETAPAS[0];
 }
-/* chip vazio fica tracejado e apagado; preenchido fica solido - assim bate o
-   olho e voce ve o que ainda falta preencher na tarefa */
+/* chip vazio fica tracejado; preenchido fica sólido. Prazo pela regra do ClickUp (hoje âmbar,
+   atrasado vermelho), prioridade com bandeira, etiquetas como chips com ponto na cor */
 function tPintarChips(){
- var resp=document.getElementById('t_resp'),prazo=document.getElementById('t_prazo'),
-     urg=document.getElementById('t_urg'),tags=document.getElementById('t_tags');
- function marca(idChip,cheio){var c=document.getElementById(idChip);if(c)c.classList.toggle('preenchido',!!cheio);}
- marca('chip_resp',resp&&resp.value);
- marca('chip_prazo',prazo&&prazo.value);
- marca('chip_urg',urg&&urg.value&&urg.value!=="media");
- marca('chip_tags',tags&&tags.value.trim());
- if(resp&&resp.value){
-  var c=document.getElementById('chip_resp');
-  if(c){c.style.borderColor=tCorPessoa(resp.value);c.style.color=tCorPessoa(resp.value);}
- }else{var c0=document.getElementById('chip_resp');if(c0){c0.style.borderColor="";c0.style.color="";}}
- var f=document.getElementById('urgFlag');
- if(f&&urg){f.textContent="⚑";f.style.color=tCor(urg.value);}
- var cu=document.getElementById('chip_urg');
- if(cu&&urg){cu.style.borderColor=(urg.value==="media")?"":tCor(urg.value);}
+ var prazo=document.getElementById('t_prazo'),urg=document.getElementById('t_urg'),tags=document.getElementById('t_tags');
+ var pc=document.getElementById('tPrazoChip'),pt=document.getElementById('tPrazoTxt'),pv=prazo&&prazo.value,et=(document.getElementById('t_etapa')||{}).value;
+ if(pc){var hoje=calHojeISO();pc.className='chip'+(!pv?' vazio':(et==='Feito'?'':(pv<hoje?' perigo':(pv===hoje?' alerta':''))));}
+ if(pt)pt.textContent=pv?dataCurta(pv):'Prazo';
+ var uv=urg?urg.value:'media',f=document.getElementById('urgFlag'),ut=document.getElementById('tUrgTxt'),uc=document.getElementById('tUrgChip');
+ if(f)f.innerHTML=bandeiraSvg(uv);if(ut)ut.textContent=uv==='media'?'Prioridade normal':tUrgLbl(uv);
+ if(uc)uc.className='chip'+(uv==='media'?' vazio':'');
+ var tv=document.getElementById('tTagsVer'),lista=(tags&&tags.value||'').split(',').map(function(x){return x.trim();}).filter(Boolean);
+ if(tv)tv.innerHTML=lista.map(function(g){return '<span class="toq"><span class="tag" style="--c:'+tCorTag(g)+'">'+esc(g)+'</span></span>';}).join('');
 }
 
 function tAbrir(id){
@@ -3406,6 +3335,7 @@ function tAbrir(id){
  var t=id?tarefas.find(function(x){return x.id===id;}):null;
  document.getElementById('tTitle').textContent=t?'Editando':'Nova tarefa';
  document.getElementById('tDelBtn').style.display=t?'':'none';
+ var mb=document.getElementById('tMaisBtn');if(mb)mb.style.display=t?'':'none';
  document.getElementById('t_titulo').value=t?(t.titulo||""):"";
  document.getElementById('t_descr').value=t?(t.descricao||""):"";
  tRespSel=t?tResps(t):((userName()&&T_EQUIPE.indexOf(userName())>=0)?[userName()]:[T_EQUIPE[0]]);
@@ -3424,9 +3354,11 @@ function tAbrir(id){
  var cx=document.getElementById('t_com');if(cx)cx.value="";
  tCarregarComentarios(id||null);
  document.getElementById('tOverlay').classList.add('open');
+ var pg=document.querySelector('#tOverlay .pag');if(pg)pg.scrollTop=0;
+ ['t_titulo','t_descr','t_tags','t_com'].forEach(function(k){pfCresce(document.getElementById(k));});
  setTimeout(function(){var i=document.getElementById('t_titulo');if(i&&!tAtual)i.focus();},60);
 }
-function tFechar(){document.getElementById('tOverlay').classList.remove('open');tAtual=null;tPastaAtual="";}
+function tFechar(){folhaFechar('tAcoes');document.getElementById('tOverlay').classList.remove('open');tAtual=null;tPastaAtual="";}
 
 async function tSalvar(){
  var titulo=(document.getElementById('t_titulo').value||"").trim();
