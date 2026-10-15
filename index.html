@@ -1478,7 +1478,7 @@ var PROD_FERIADOS={
  "2027-11-02":"Finados","2027-11-15":"Proclamação da República","2027-11-20":"Consciência Negra",
  "2027-12-25":"Natal"};
 var PROD_DSEM=["dom","seg","ter","qua","qui","sex","sáb"];
-var pdFechados={postados:true};   // grupos recolhidos (os postados começam fechados)
+var pdFechados={postados:true,passou:true};   // grupos recolhidos (postados e evento que já passou começam fechados)
 
 /* datas sempre como "YYYY-MM-DD" e conta em UTC: sem fuso nem horário de verão no meio */
 function pdData(iso){var p=String(iso).slice(0,10).split("-");return new Date(Date.UTC(+p[0],+p[1]-1,+p[2]));}
@@ -1512,7 +1512,9 @@ function pdPedido(id){return (state.orders||[]).find(function(x){return x.id===i
 
 function pdGrupoDe(o,hoje,prox,fimSem){
  var pa=pdPostarAte(o);
- if(!pa)return "arte";
+ /* sem arte e com o evento já no passado: quase sempre pedido antigo que ninguém marcou como Entregue
+    (eram 109 de 194 em 15/10/2026). Vai para um grupo próprio, recolhido, para não afogar o resto. */
+ if(!pa){var ev=pdEv(o);return (ev&&ev<hoje)?"passou":"arte";}
  if(pa<hoje)return "atras";
  if(pa===hoje)return "hoje";
  if(pa<=prox)return "amanha";
@@ -1539,7 +1541,7 @@ function pdCartao(o,hoje){
   ?'<button type="button" class="btn pd-avancar" onclick="pdAvancar('+o.id+')"'+dis+'>Avançar ▸ '+esc(prox)+'</button>'
   :'<button type="button" class="btn pd-avancar" onclick="pdIrPara('+o.id+',&#39;Postado&#39;)"'+dis+'>Confirmar postagem</button>';
  var menu='<select class="pd-menu" onchange="pdIrPara('+o.id+',this.value);this.value=&#39;&#39;"'+(pode?'':' disabled')+' aria-label="Voltar ou mudar a etapa">'
-  +'<option value="">↩ Voltar etapa</option>'
+  +'<option value="">↩ Voltar / mudar</option>'
   +PROD_ETAPAS.filter(function(x){return x!==et;}).map(function(x){return '<option value="'+esc(x)+'">'+(PROD_ETAPAS.indexOf(x)<i?'↩ ':'')+esc(x)+'</option>';}).join('')
   +'</select>';
  return '<div class="pd-card" style="border-left-color:'+cor+'">'
@@ -1556,7 +1558,7 @@ function pdCartaoPostado(o){
   +'<div class="pd-top"><button type="button" class="pd-cli" onclick="openForm('+o.id+')">'+esc(o.cliente||'(sem nome)')+'</button>'
   +'<span class="badge" style="--c:'+PROD_COR.Postado+'">Postado '+esc(pdDiaSem(o.postado_em))+'</span></div>'
   +'<div class="pd-meta">'+(o.qtd||0)+' un · '+esc(o.produto||'')+(o.tipoEv?' · '+esc(o.tipoEv):'')+'</div>'
-  +'<div class="pd-acoes"><button type="button" class="pd-desfazer" onclick="pdDesfazerPostado('+o.id+')"'+(pdPodeGravar()?'':' disabled')+'>↩ Desfazer: voltar para Pronto</button></div>'
+  +'<div class="pd-acoes"><button type="button" class="pd-desfazer" onclick="pdDesfazerPostado('+o.id+')"'+(pdPodeGravar()?'':' disabled')+'>↩ Desfazer a postagem</button></div>'
   +'</div>';}
 
 function pdToggle(k){pdFechados[k]=!pdFechados[k];renderProducao();}
@@ -1590,11 +1592,12 @@ function renderProducao(){
   if(q){var b=((o.cliente||'')+' '+(o.produto||'')+' '+(o.descr||'')+' '+(o.tipoEv||'')+' '+(o.cidade||'')).toLowerCase();if(b.indexOf(q)<0)return false;}
   return true;});
 
- var G={atras:[],hoje:[],amanha:[],semana:[],depois:[],arte:[]};
+ var G={atras:[],hoje:[],amanha:[],semana:[],depois:[],arte:[],passou:[]};
  vis.forEach(function(o){G[pdGrupoDe(o,hoje,prox,fimSem)].push(o);});
  var porData=function(a,b){var x=pdPostarAte(a),y=pdPostarAte(b);if(x!==y)return x<y?-1:1;
   var ea=pdEv(a)||'9999',eb=pdEv(b)||'9999';if(ea!==eb)return ea<eb?-1:1;return a.id-b.id;};
  Object.keys(G).forEach(function(k){G[k].sort(porData);});
+ G.passou.reverse();   // evento mais recente primeiro
 
  var lblAmanha=(prox===amanha)?'Amanhã':'Próximo dia útil ('+pdDiaSem(prox)+')';
  var k=[["Atrasados",G.atras.length,"t","🚨"],["Postar hoje",G.hoje.length,"g","📦"],
@@ -1603,13 +1606,15 @@ function renderProducao(){
   return '<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div></div>';}).join('');
 
  var grupos=[["atras","Atrasados","#b00020"],["hoje","Postar hoje","#c2693f"],["amanha",lblAmanha,"#d99a2b"],
-             ["semana","Esta semana","#3b82c4"],["depois","Depois","#6aa17a"],["arte","Aguardando arte","#8a94a6"]];
+             ["semana","Esta semana","#3b82c4"],["depois","Depois","#6aa17a"],["arte","Aguardando arte","#8a94a6"],
+             ["passou","Evento já passou, sem arte","#7a8676"]];
  var h=grupos.filter(function(g){return G[g[0]].length;}).map(function(g){
   var lista=G[g[0]],fechado=!!pdFechados[g[0]];
   return '<div class="cu-grupo'+(fechado?' fechado':'')+'">'
    +'<div class="cu-ghead" onclick="pdToggle(&#39;'+g[0]+'&#39;)"><span class="cu-caret">▼</span>'
    +'<span class="cu-status" style="background:'+g[2]+';color:'+tTextoSobre(g[2])+'">'+esc(g[1])+'</span>'
    +'<span class="cu-gcount">'+lista.length+'</span></div>'
+   +(g[0]==='passou'?'<div class="pd-grid"><div class="mini" style="grid-column:1/-1;line-height:1.5">Pedidos sem arte aprovada cujo evento já passou. Se já foram entregues, abra "↩ Voltar / mudar" e escolha Postado: o pedido vai para Entregue e sai daqui.</div></div>':'')
    +'<div class="pd-grid">'+lista.map(function(o){return pdCartao(o,hoje);}).join('')+'</div></div>';}).join('');
  if(!h)h='<div class="pd-vazio">'+(q||fResp?'Nenhum pedido com esse filtro.':'Nenhum pedido para produzir agora. Pedido fechado ou pago aparece aqui sozinho. 👏')+'</div>';
 
@@ -1631,7 +1636,8 @@ function pdGravar(o,acao){logAct(acao+' no pedido #'+o.id+' ('+(o.cliente||'')+'
 function pdAplicar(o,et){
  var hoje=calHojeISO();
  if(et==="Aguardando arte")o.arte_aprovada_em=null;
- else if(!pdArte(o))o.arte_aprovada_em=hoje;          // passou da arte: o dia de hoje vale como aprovação
+ else if(et!=="Postado"&&!pdArte(o))o.arte_aprovada_em=hoje;   // passou da arte: o dia de hoje vale como aprovação
+ /* (pedido antigo fechado direto como Postado não ganha data de arte inventada) */
  if(et==="Postado"){o.postado_em=hoje;o.estagio="Entregue";}   // como o quadro faz hoje
  else{
   if(o.postado_em){o.postado_em=null;if(o.estagio==="Entregue")o.estagio="Em produção";}
@@ -1652,8 +1658,8 @@ function pdMudarArte(id,val){
 function pdDesfazerPostado(id){
  if(!pdPodeGravar()){pdSemColuna();return;}
  var o=pdPedido(id);if(!o)return;
- o.postado_em=null;o.prod_etapa="Pronto";if(o.estagio==="Entregue")o.estagio="Em produção";
- pdGravar(o,'produção: desfez a postagem (voltou para "Pronto")');}
+ o.postado_em=null;o.prod_etapa=pdArte(o)?"Pronto":"Aguardando arte";if(o.estagio==="Entregue")o.estagio="Em produção";
+ pdGravar(o,'produção: desfez a postagem (voltou para "'+o.prod_etapa+'")');}
 
 /* ---------- app no celular (PWA) ---------- */
 var _instEvt=null;
