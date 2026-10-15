@@ -1521,10 +1521,15 @@ function pdGrupoDe(o,hoje,prox,fimSem){
  if(pa<=fimSem)return "semana";
  return "depois";}
 
+/* quantidade e produto. Pedido do site chega pelo webhook sem produto (os itens ficam na Yampi) */
+function pdMeta(o){
+ var site=Number(o.id)>=FIN_ID_SITE&&!o.produto;
+ var q=Number(o.qtd)||0,oq=site?(q>1?q+' un · ':''):q+' un · ';
+ return oq+(site?'🛒 Pedido do site (itens na Yampi)':esc(o.produto||'sem produto'))+(o.tipoEv?' · '+esc(o.tipoEv):'');}
 function pdCartao(o,hoje){
  var et=pdEtapa(o),cor=PROD_COR[et],pa=pdPostarAte(o),i=PROD_ETAPAS.indexOf(et),prox=PROD_ETAPAS[i+1];
  var pode=pdPodeGravar(),dis=pode?'':' disabled title="Falta rodar o schema_producao.sql no Supabase"';
- var meta=(o.qtd||0)+' un · '+esc(o.produto||'sem produto')+(o.tipoEv?' · '+esc(o.tipoEv):'');
+ var meta=pdMeta(o);
  var datas='';
  if(pa){var d=calDias(pa),cls=pa<hoje?' late':(pa===hoje?' hoje':'');
   datas+='<span class="pd-data'+cls+'">📦 Postar até '+pdDiaSem(pa)+(pa<hoje?' · atrasado '+Math.abs(d)+(Math.abs(d)===1?' dia':' dias'):(pa===hoje?' · hoje':''))+'</span>';}
@@ -1557,7 +1562,7 @@ function pdCartaoPostado(o){
  return '<div class="pd-card" style="border-left-color:'+PROD_COR.Postado+'">'
   +'<div class="pd-top"><button type="button" class="pd-cli" onclick="openForm('+o.id+')">'+esc(o.cliente||'(sem nome)')+'</button>'
   +'<span class="badge" style="--c:'+PROD_COR.Postado+'">Postado '+esc(pdDiaSem(o.postado_em))+'</span></div>'
-  +'<div class="pd-meta">'+(o.qtd||0)+' un · '+esc(o.produto||'')+(o.tipoEv?' · '+esc(o.tipoEv):'')+'</div>'
+  +'<div class="pd-meta">'+pdMeta(o)+'</div>'
   +'<div class="pd-acoes"><button type="button" class="pd-desfazer" onclick="pdDesfazerPostado('+o.id+')"'+(pdPodeGravar()?'':' disabled')+'>↩ Desfazer a postagem</button></div>'
   +'</div>';}
 
