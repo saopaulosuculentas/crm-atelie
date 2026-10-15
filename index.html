@@ -376,7 +376,7 @@ body:has(.overlay.open){overflow:hidden}
 .rodape .esp{flex:1}
 .pag .t-secao{margin:20px 2px 0}
 .titulo-campo{width:100%;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--tx);font-size:26px;line-height:31px;font-weight:700;letter-spacing:-.4px;
- padding:2px 6px;margin:2px -6px 0;outline:0;resize:none;overflow:hidden;display:block}
+ padding:6px 6px;margin:0 -6px;min-height:44px;outline:0;resize:none;overflow:hidden;display:block;width:calc(100% + 12px)}
 .titulo-campo:focus{border-color:var(--linha-forte);background:var(--sup)}
 .titulo-campo::placeholder{color:var(--tx-3);opacity:1}
 .cadeado-ic{color:var(--tx-2)}
@@ -643,6 +643,28 @@ body:has(.overlay.open){overflow:hidden}
 }
 
 
+/* ===================== FICHAS: pedido e tarefa (página cheia) ===================== */
+.pag .chip-st.pf-est,.pag .chip-st.tf-est{height:32px;font-size:13px;padding:0 10px}
+.pag .chips.toques .chip svg.i{color:currentColor}
+.pag .chip.vazio svg.i{color:var(--tx-3)}
+.prop select.vazio-sel{color:var(--tx-3)}
+.prop-obs{grid-template-columns:1fr;padding:2px 12px}
+.prop-obs textarea{min-height:66px}
+.pf-custos{margin:20px 0 0}
+.pf-custos summary{list-style:none;display:flex;align-items:center;gap:6px;min-height:44px;cursor:pointer;padding:0 2px}
+.pf-custos summary::-webkit-details-marker{display:none}
+.pf-custos summary .t-secao{margin:0}
+.pf-custos summary svg{color:var(--tx-2);transform:rotate(-90deg);transition:transform .15s}
+.pf-custos[open] summary svg{transform:none}
+.pf-custos .props{margin-top:4px}
+.grupo-nota.pl-diverge{color:var(--alerta);background:var(--alerta-bg);border-bottom:0;border-top:1px solid var(--linha)}
+.grupo-nota.neutra{border-bottom:0;border-top:1px solid var(--linha)}
+.pl-link{text-decoration:none;color:var(--tx);border-top:1px solid var(--linha)}
+.pl-link .valor{text-align:right;color:var(--tx-3)}
+.pag .acoes2 .btn.desab{pointer-events:none}
+#pfMargem.dt-ok,#pfMargem.dt-atras{font-weight:600}
+
+
 /* ===================== ABAS QUE AINDA USAM AS PEÇAS ANTIGAS =====================
    Início (Painel), Caixa, Clientes, Produtos, Calendário, Cadastros, Sazonal, Login e a
    tabela antiga. Mesmas classes de antes, agora só com tokens (seguem o tema sozinhas). */
@@ -784,15 +806,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 .modal .mhead{background:var(--green-dk);padding:17px 24px;color:#fff}
 .modal .mhead h2{font-size:18px}
 .mbody{padding:20px 24px}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px 17px}
-.field{display:flex;flex-direction:column;gap:5px}
-.field.full{grid-column:1/3}
-.field label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-.field input,.field select,.field textarea{padding:10px 11px;border:1px solid var(--line);border-radius:10px;font-size:13.5px;font-family:inherit;background:#fff}
-.field textarea{resize:vertical;min-height:48px}
-.calcbox{grid-column:1/3;background:var(--cream);border:1px dashed var(--gold);border-radius:11px;padding:12px 15px;display:flex;gap:24px;flex-wrap:wrap;font-size:13px}
-.calcbox b{color:var(--green-dk);font-size:15px}
-.mfoot{padding:15px 24px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px}
 .cu-pessoa{border:1px solid var(--line);background:transparent;color:var(--muted);
  border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;cursor:pointer;
  margin-right:4px;line-height:1.6}
@@ -864,16 +877,11 @@ tbody tr:hover td.cli{background:var(--sup-2)}
 .tmen:hover,.tmen.sel{background:var(--hover)}
 .tmen .av{width:22px;height:22px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:800;
  display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
-[data-tema="escuro"] .field input::placeholder,[data-tema="escuro"] .field textarea::placeholder{color:#6f7d72}
 [data-tema="escuro"] .modal{background:var(--card);color:var(--ink)}
 [data-tema="escuro"] .cu-descr:focus{background:#151d18}
 [data-tema="escuro"] .tanexo .nm{color:var(--ink)}
 [data-tema="escuro"] .tanexo.lk .nm{color:var(--green-dk)}
 [data-tema="escuro"] .modal .mhead{background:#1c4327}
-@media(max-width:820px){
- .fgrid{grid-template-columns:1fr}
- .field.full,.calcbox{grid-column:1}
-}
 @media(max-width:560px){
  .cu-titulo{font-size:19px}
 }
@@ -883,11 +891,6 @@ tbody tr:hover td.cli{background:var(--sup-2)}
  .modal .mhead h2{font-size:18px;line-height:1.25}
  .modal .mhead button{min-width:44px;min-height:44px}
  .mbody{padding:16px var(--mb-r) 16px var(--mb-l);flex:1 0 auto}
- .mfoot{position:sticky;bottom:0;z-index:3;background:var(--card);gap:8px;padding:10px var(--mb-r) calc(10px + env(safe-area-inset-bottom)) var(--mb-l)}
- .mfoot .btn{min-height:48px;font-size:16px;padding:12px 16px}
- .field label{font-size:12px}
- .field input,.field select,.field textarea{min-height:46px;padding:11px 12px}
- .calcbox{gap:12px 18px;font-size:14px}
  .cu-modal{width:100%;max-width:100%;max-height:none;border-radius:0;box-shadow:none}
  .cu-top{padding:calc(6px + env(safe-area-inset-top)) var(--mb-r) 6px var(--mb-l);min-height:56px}
  .cu-top .fechar{min-width:44px;min-height:44px;font-size:22px}
@@ -1239,40 +1242,80 @@ tbody tr:hover td.cli{background:var(--sup-2)}
  </div>
 </div>
 
+<!-- Ficha do pedido (visual v2): página cheia no celular e painel de 560 px à direita no computador.
+     Nome, valor e chips no topo; propriedades em linhas (rótulo cinza, o valor é o próprio campo).
+     Os ids f_* e c_* são os de sempre: openForm, calcModal e saveForm leem e gravam neles. -->
 <div class="overlay" id="overlay">
- <div class="modal">
-  <div class="mhead" style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2 id="mTitle">Novo atendimento</h2><button type="button" onclick="closeForm()" aria-label="Fechar" title="Fechar" style="background:transparent;border:0;color:#fff;font-size:24px;line-height:1;cursor:pointer;padding:0 6px">✕</button></div>
-  <div class="mbody"><div id="f_planilha"></div><div class="fgrid">
-    <div class="field"><label>Data do contato</label><input type="date" id="f_data"></div>
-    <div class="field"><label>Cliente</label><input type="text" id="f_cliente" placeholder="Nome"></div>
-    <div class="field"><label>WhatsApp (só números)</label><input type="text" id="f_whats" placeholder="11999998888"></div>
-    <div class="field"><label>Cidade / Bairro</label><input type="text" id="f_cidade"></div>
-    <div class="field"><label>Canal / Origem</label><select id="f_canal"></select></div>
-    <div class="field"><label>Tipo de cliente</label><select id="f_tipo"></select></div>
-    <div class="field"><label>Tipo de evento</label><select id="f_evento"></select></div>
-    <div class="field"><label>Data do evento / entrega</label><input type="date" id="f_dataEv"></div>
-    <div class="field"><label>Produto</label><select id="f_produto" onchange="onProdChange()"></select></div>
-    <div class="field"><label>Quantidade</label><input type="number" id="f_qtd" min="0" value="0" oninput="calcModal()"></div>
-    <div class="field full"><label>Descrição do pedido</label><input type="text" id="f_descr" placeholder="Ex.: 50 un + Rótulo Personalizado + TAG + Pedrinhas"></div>
-    <div class="field"><label>Valor unitário (R$)</label><input type="number" id="f_valor" step="0.01" min="0" oninput="calcModal()"></div>
-    <div class="field"><label>Estágio</label><select id="f_estagio"></select></div>
-    <div class="field"><label>Status pagamento</label><select id="f_statuspag"></select></div>
-    <div class="field"><label>Forma de pagamento</label><select id="f_formapag"></select></div>
-    <div class="field"><label>Forma de entrega</label><select id="f_entrega"></select></div>
-    <div class="field"><label>Custo de entrega (R$)</label><input type="number" id="f_custoent" step="0.01" min="0" value="0" oninput="calcModal()"></div>
-    <div class="field"><label>Próximo follow-up</label><input type="date" id="f_followup"></div>
-    <div class="field full"><label>Observações</label><textarea id="f_obs"></textarea></div>
-    <div class="calcbox">
-      <span>Valor total<br><b id="c_vt">R$ 0,00</b></span><span>Sinal (30%)<br><b id="c_sinal">R$ 0,00</b></span><span>Custo unit<br><b id="c_cu">R$ 0,00</b></span>
-      <span>Custo produtos<br><b id="c_ct">R$ 0,00</b></span><span>Entrega<br><b id="c_de">R$ 0,00</b></span><span>Margem<br><b id="c_mg">R$ 0,00</b></span>
-      <span>Margem %<br><b id="c_mp">0%</b></span>
+ <div class="pag" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="pag-topo">
+   <button type="button" class="voltar" onclick="closeForm()"><svg class="i" aria-hidden="true"><use href="#i-esq"/></svg><span id="pfVoltar">Atendimentos</span></button>
+   <span class="esp"></span>
+  </div>
+  <div class="pag-corpo">
+   <h2 id="mTitle" hidden>Novo atendimento</h2>
+   <textarea id="f_cliente" class="titulo-campo" rows="1" placeholder="Nome do cliente" aria-label="Cliente" autocomplete="off" enterkeyhint="done"
+    onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" oninput="this.value=this.value.replace(/\n/g,' ');pfCresce(this)"></textarea>
+   <div class="t-sub" id="pfSub"></div>
+   <div class="valor-g num" id="c_vt">R$ 0,00</div>
+   <div class="t-sub"><span id="pfQxU"></span> <span class="sep">·</span> <span id="pfMargem">margem <span id="c_mgTopo"></span> (<span id="c_mpTopo"></span>)</span></div>
+   <div class="chips toques" style="margin-top:10px">
+    <label class="toq" title="Estágio"><span class="chip-st pf-est" id="pfEstChip"><span id="pfEstTxt">Lead novo</span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg></span><select id="f_estagio" aria-label="Estágio" onchange="pfTopo()"></select></label>
+    <label class="toq" title="Pagamento"><span class="chip" id="pfPagChip"><span id="pfPagTxt">Pagamento</span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg></span><select id="f_statuspag" aria-label="Status do pagamento" onchange="pfTopo()"></select></label>
+    <button type="button" class="toq" onclick="pfIrEvento()"><span class="chip" id="pfEvChip"><svg class="i pp" aria-hidden="true"><use href="#i-presente"/></svg><span id="pfEvTxt">Evento</span></span></button>
+    <label class="toq" title="Próximo follow-up"><span class="chip" id="pfFuChip"><svg class="i pp" aria-hidden="true"><use href="#i-sino"/></svg><span id="pfFuTxt">Follow-up</span></span><input type="date" id="f_followup" aria-label="Próximo follow-up" onchange="pfTopo()"></label>
+   </div>
+   <div class="acoes2">
+    <a class="btn btn-sec" id="pfWhats" target="_blank" rel="noopener" href="#"><svg class="i p" aria-hidden="true"><use href="#i-whats"/></svg>WhatsApp</a>
+    <a class="btn btn-sec" id="pfLigar" href="#"><svg class="i p" aria-hidden="true"><use href="#i-tel"/></svg>Ligar</a>
+   </div>
+   <div id="f_planilha"></div>
+
+   <h3 class="t-secao">Pedido</h3>
+   <div class="props">
+    <div class="prop"><label class="rot" for="f_produto"><svg class="i p" aria-hidden="true"><use href="#i-planta"/></svg>Produto</label><select id="f_produto" onchange="onProdChange()"></select></div>
+    <div class="prop"><label class="rot" for="f_qtd"><svg class="i p" aria-hidden="true"><use href="#i-camadas"/></svg>Quantidade</label><input type="number" id="f_qtd" min="0" value="0" inputmode="numeric" oninput="calcModal()"></div>
+    <div class="prop"><label class="rot" for="f_valor"><svg class="i p" aria-hidden="true"><use href="#i-cifrao"/></svg>Valor unitário</label><input type="number" id="f_valor" step="0.01" min="0" inputmode="decimal" oninput="calcModal()"></div>
+    <div class="prop"><label class="rot" for="f_descr"><svg class="i p" aria-hidden="true"><use href="#i-texto"/></svg>Descrição</label><textarea id="f_descr" rows="1" placeholder="Adicionar" oninput="pfCresce(this)"></textarea></div>
+    <div class="prop"><label class="rot" for="f_evento"><svg class="i p" aria-hidden="true"><use href="#i-presente"/></svg>Tipo de evento</label><select id="f_evento" onchange="pfTopo()"></select></div>
+    <div class="prop"><label class="rot" for="f_dataEv"><svg class="i p" aria-hidden="true"><use href="#i-cal"/></svg>Data do evento</label><input type="date" id="f_dataEv" onchange="pfTopo()"></div>
+   </div>
+   <h3 class="t-secao">Pagamento</h3>
+   <div class="props">
+    <div class="prop so-ler"><span class="rot"><svg class="i p" aria-hidden="true"><use href="#i-cifrao"/></svg>Status</span><span class="valor" id="pfPagStatus"></span></div>
+    <div class="prop"><label class="rot" for="f_formapag"><svg class="i p" aria-hidden="true"><use href="#i-carteira"/></svg>Forma</label><select id="f_formapag"></select></div>
+    <div class="prop so-ler"><span class="rot"><svg class="i p" aria-hidden="true"><use href="#i-sobe"/></svg>Sinal 30%</span><span class="valor num" id="c_sinal">R$ 0,00</span></div>
+    <div class="prop so-ler"><span class="rot"><svg class="i p" aria-hidden="true"><use href="#i-relogio"/></svg>Saldo 70%</span><span class="valor num" id="c_saldo">R$ 0,00</span></div>
+   </div>
+   <h3 class="t-secao">Entrega</h3>
+   <div class="props">
+    <div class="prop"><label class="rot" for="f_entrega"><svg class="i p" aria-hidden="true"><use href="#i-caminhao"/></svg>Forma</label><select id="f_entrega"></select></div>
+    <div class="prop"><label class="rot" for="f_custoent"><svg class="i p" aria-hidden="true"><use href="#i-cifrao"/></svg>Custo</label><input type="number" id="f_custoent" step="0.01" min="0" value="0" inputmode="decimal" oninput="calcModal()"></div>
+   </div>
+   <h3 class="t-secao">Contato e origem</h3>
+   <div class="props">
+    <div class="prop"><label class="rot" for="f_whats"><svg class="i p" aria-hidden="true"><use href="#i-whats"/></svg>WhatsApp</label><input type="tel" id="f_whats" inputmode="tel" placeholder="11999998888" oninput="pfTopo()"></div>
+    <div class="prop"><label class="rot" for="f_cidade"><svg class="i p" aria-hidden="true"><use href="#i-local"/></svg>Cidade</label><input type="text" id="f_cidade" placeholder="Adicionar"></div>
+    <div class="prop"><label class="rot" for="f_canal"><svg class="i p" aria-hidden="true"><use href="#i-megafone"/></svg>Canal</label><select id="f_canal" onchange="pfTopo()"></select></div>
+    <div class="prop"><label class="rot" for="f_tipo"><svg class="i p" aria-hidden="true"><use href="#i-pessoa"/></svg>Tipo de cliente</label><select id="f_tipo"></select></div>
+    <div class="prop"><label class="rot" for="f_data"><svg class="i p" aria-hidden="true"><use href="#i-cal"/></svg>Data do contato</label><input type="date" id="f_data" onchange="pfTopo()"></div>
+   </div>
+   <details class="pf-custos">
+    <summary><span class="t-secao">Custo e margem</span><svg class="i p" aria-hidden="true"><use href="#i-baixo"/></svg></summary>
+    <div class="props">
+     <div class="prop so-ler"><span class="rot">Custo unitário</span><span class="valor num" id="c_cu">R$ 0,00</span></div>
+     <div class="prop so-ler"><span class="rot">Custo dos produtos</span><span class="valor num" id="c_ct">R$ 0,00</span></div>
+     <div class="prop so-ler"><span class="rot">Entrega</span><span class="valor num" id="c_de">R$ 0,00</span></div>
+     <div class="prop so-ler"><span class="rot">Margem</span><span class="valor num" id="c_mg">R$ 0,00</span></div>
+     <div class="prop so-ler"><span class="rot">Margem %</span><span class="valor num" id="c_mp">0%</span></div>
     </div>
-  </div></div>
-  <div class="mfoot">
-   <button class="btn ghost" id="delBtn" onclick="deleteCurrent()" style="color:var(--danger)">Excluir</button>
-   <div style="flex:1"></div>
-   <button class="btn ghost" onclick="closeForm()">Cancelar</button>
-   <button class="btn" onclick="saveForm()">Salvar</button>
+   </details>
+   <h3 class="t-secao">Observações</h3>
+   <div class="props"><div class="prop prop-obs"><textarea id="f_obs" rows="2" placeholder="Adicionar observação" aria-label="Observações" oninput="pfCresce(this)"></textarea></div></div>
+  </div>
+  <div class="rodape">
+   <button type="button" class="btn btn-perigo" id="delBtn" onclick="deleteCurrent()">Excluir</button>
+   <span class="esp"></span>
+   <button type="button" class="btn btn-pri" style="min-width:120px" onclick="saveForm()">Salvar</button>
   </div>
  </div>
 </div>
@@ -1620,7 +1663,7 @@ function renderMensal(){const el=document.getElementById('chartMes');if(!el)retu
   return '<div class="mcol'+(m===cur?' cur':'')+'" title="'+lbl(m)+': '+BRL(v)+'"><div class="mval">'+fmtK(v)+'</div><div class="mtrack"><div class="mfill" style="height:'+h+'%"></div></div><div class="mlbl">'+lbl(m)+'</div></div>';}).join('');}
 function chart(id,data,fmt){const max=Math.max(1,...data.map(d=>d[1]));document.getElementById(id).innerHTML=data.length?data.map(d=>`<div class="bar-row"><div class="name" title="${esc(d[0])}">${esc(d[0])}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(d[1]/max*100)}%"></div></div><div class="num">${fmt(d[1])}</div></div>`).join(''):'<div class="mini">Sem dados</div>';}
 
-function fillSelect(el,arr,sel){el.innerHTML=arr.map(v=>`<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(v)||'(vazio)'}</option>`).join('');}
+function fillSelect(el,arr,sel){el.innerHTML=arr.map(v=>`<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(v)||'Adicionar'}</option>`).join('');}
 function initFilters(){document.getElementById('fEstagio').innerHTML='<option value="">Todos os estágios</option>'+STAGES.map(s=>`<option>${s}</option>`).join('');
  document.getElementById('fTipo').innerHTML='<option value="">Todos os tipos</option>'+TIPOS.map(s=>`<option>${s}</option>`).join('');}
 function filtered(){const q=(document.getElementById('search').value||'').toLowerCase(),fe=document.getElementById('fEstagio').value,ft=document.getElementById('fTipo').value;
@@ -1890,12 +1933,23 @@ function renderCaixa(){
 // CRM (ids 500000001 a 599999999, a planilha manda neles); pedido do site e digitado so recebem status e producao.
 const PL_URL="https://docs.google.com/spreadsheets/d/1kGCIPN_YS6zxq33eTvA82-iTwYEd3CJkCPcWmTS0cmc/edit";
 function plDaPlanilha(o){const n=Number(o&&o.id);return n>=FIN_ID_PLANILHA&&n<FIN_ID_SITE;}
-function plInfo(o){const p=o&&o.producao;if(!p)return'';const sn=v=>{v=String(v||'').trim();return /^sim$/i.test(v)?'✅':/^n[aã]o$/i.test(v)?'❌':'·';};
- return '<div class="note" style="margin-bottom:12px">📋 <b>Planilha Pedidos Sucs</b> · '+esc(p.aba||'')+(p.semana?' · '+esc(p.semana):'')
-  +'<br>Status: <b>'+esc(p.status||'sem status')+'</b> · Arte '+sn(p.arte)+' · Tag '+sn(p.tag)+' · Vídeo '+sn(p.video)
-  +(p.nome_tag?'<br>Nome na tag: '+esc(p.nome_tag):'')+(p.logistica?'<br>Entrega: '+esc(p.logistica):'')+(p.obs?'<br>Obs: '+esc(p.obs):'')
-  +(plDaPlanilha(o)?'<br><span class="mini">Este pedido vem da planilha: o que mudar aqui volta ao que está nela na próxima sincronização. Edite na planilha.</span>':'')
-  +' <a class="mini" href="'+PL_URL+'" target="_blank" rel="noopener">abrir a planilha ↗</a></div>';}
+/* seção PLANILHA da ficha (pedido que existe na planilha Pedidos Sucs): selo, status num chip, arte/tag/vídeo
+   e, quando o estágio do CRM diverge do status da planilha, uma linha âmbar dizendo qual vale */
+function plInfo(o){const p=o&&o.producao;if(!p)return'';const sn=v=>{v=String(v||'').trim();return /^sim$/i.test(v)?'sim':/^n[aã]o$/i.test(v)?'não':'sem marcação';};
+ const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\(.*?\)/g,'').trim();
+ const linha=(rot,val)=>'<div class="prop so-ler"><span class="rot">'+rot+'</span><span class="valor">'+val+'</span></div>';
+ const doPl=plDaPlanilha(o),diverge=p.status&&o.estagio&&norm(p.status)!==norm(o.estagio);
+ return '<h3 class="t-secao">Planilha Pedidos Sucs</h3><div class="props">'
+  +linha('Status',p.status?'<span class="chip">'+esc(p.status)+'</span>':'<span class="vazio">sem status</span>')
+  +(p.aba||p.semana?linha('Aba',esc((p.aba||'')+(p.semana?' · '+p.semana:''))):'')
+  +linha('Arte, tag, vídeo',esc(sn(p.arte)+', '+sn(p.tag)+', '+sn(p.video)))
+  +(p.nome_tag?linha('Nome na tag',esc(p.nome_tag)):'')
+  +(p.logistica?linha('Entrega',esc(p.logistica)):'')
+  +(p.obs?linha('Obs.',esc(p.obs)):'')
+  +(diverge?'<div class="grupo-nota pl-diverge">'+ic('alerta','i p')+'<span>A planilha diz “'+esc(p.status)+'” e o CRM diz “'+esc(estCurto(o.estagio))+'”. '+(doPl?'Vale a planilha: edite lá, o que mudar aqui volta na próxima sincronização.':'Vale o CRM: a planilha só manda o status da produção.')+'</span></div>'
+   :(doPl?'<div class="grupo-nota neutra">Este pedido vem da planilha: o que mudar aqui volta ao que está nela na próxima sincronização. Edite na planilha.</div>':''))
+  +'<a class="prop pl-link" href="'+PL_URL+'" target="_blank" rel="noopener"><span class="rot">'+ic('planilha','i p')+'Abrir a planilha</span><span class="valor">'+ic('dir','i p')+'</span></a>'
+  +'</div>';}
 async function plSyncMostrar(){const el=document.getElementById("plSync");if(!el||!SHEET_URL)return;
  try{const r=await fetch(sbUrl("pedidos_sync?select=em,resumo&order=id.desc&limit=1"),{headers:sbHeaders()});
   if(!r.ok){el.innerHTML='Planilha de pedidos: <b>ainda não ligada</b> · <a href="'+PL_URL+'" target="_blank" rel="noopener">abrir ↗</a>';return;}
@@ -2383,10 +2437,44 @@ function openForm(id){currentId=id||null;
  f_data.value=g('data',todayISO());f_cliente.value=g('cliente');f_whats.value=g('whats');f_cidade.value=g('cidade');f_canal.value=g('canal','Indicação');f_tipo.value=g('tipoCli','Evento');f_evento.value=g('tipoEv','');f_dataEv.value=g('dataEv');
  f_produto.value=g('produto',PRODUTOS[0]);f_qtd.value=g('qtd',0);f_descr.value=g('descr');f_valor.value=o?o.valorUnit:state.precos[PRODUTOS[0]];f_estagio.value=g('estagio','Lead novo');f_statuspag.value=g('statusPag','');f_formapag.value=g('formaPag','');f_entrega.value=g('entrega','');f_custoent.value=g('custoEntrega',0);f_followup.value=g('followup');f_obs.value=g('obs');
  const _pl=document.getElementById('f_planilha');if(_pl)_pl.innerHTML=o?plInfo(o):'';
- calcModal();document.getElementById('overlay').classList.add('open');}
+ /* "< voltar" com o nome da aba de onde a ficha abriu */
+ var vt=document.getElementById('pfVoltar'),tt=document.getElementById('ttl');if(vt)vt.textContent=(tt&&tt.textContent)||'Voltar';
+ calcModal();pfTopo();document.getElementById('overlay').classList.add('open');
+ var pg=document.querySelector('#overlay .pag');if(pg)pg.scrollTop=0;
+ [f_cliente,f_descr,f_obs].forEach(pfCresce);
+ if(!o)setTimeout(function(){try{f_cliente.focus();}catch(e){}},60);}
 function closeForm(){document.getElementById('overlay').classList.remove('open');currentId=null;if(pdAtiva())renderProducao();}
 function onProdChange(){f_valor.value=state.precos[f_produto.value]??0;calcModal();}
-function calcModal(){const c=calc({qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,produto:f_produto.value,custoEntrega:+f_custoent.value||0});c_vt.textContent=BRL(c.vt);c_sinal.textContent=BRL(c.sinal);c_cu.textContent=BRL(c.cu);c_ct.textContent=BRL(c.ct);c_de.textContent=BRL(c.de);c_mg.textContent=BRL(c.mg);c_mp.textContent=PCT(c.mp);}
+function calcModal(){const c=calc({qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,produto:f_produto.value,custoEntrega:+f_custoent.value||0});c_vt.textContent=BRL(c.vt);c_sinal.textContent=BRL(c.sinal);c_cu.textContent=BRL(c.cu);c_ct.textContent=BRL(c.ct);c_de.textContent=BRL(c.de);c_mg.textContent=BRL(c.mg);c_mp.textContent=PCT(c.mp);
+ /* topo da ficha: "qtd × unitário · margem" (verde; vermelho só se a margem for negativa) e o saldo de 70% */
+ var s=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+ s('c_saldo',BRL(c.saldo));s('c_mgTopo',BRL(c.mg));s('c_mpTopo',PCT(c.mp));s('pfQxU',(+f_qtd.value||0)+' un × '+BRL(+f_valor.value||0));
+ var m=document.getElementById('pfMargem');if(m)m.className=c.mg<0?'dt-atras':'dt-ok';}
+/* área de texto que cresce com o conteúdo (nome, descrição, observações) */
+function pfCresce(t){if(!t||!t.style)return;t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px';}
+/* chips do topo: estágio (chip cheio na cor), pagamento, evento e follow-up (vazio = tracejado) */
+function pfTopo(){
+ var hoje=calHojeISO(),est=f_estagio.value,sp=f_statuspag.value;
+ var ec=document.getElementById('pfEstChip'),et=document.getElementById('pfEstTxt');
+ if(ec){var cor=STAGE_COLORS[est]||'#6b7280';ec.style.setProperty('--c',cor);ec.style.setProperty('--ct',tTextoSobre(cor));}
+ if(et)et.textContent=estCurto(est);
+ var pc=document.getElementById('pfPagChip'),pt=document.getElementById('pfPagTxt'),info=pagInfo({statusPag:sp});
+ /* antes de Fechado o pagamento sem status fica neutro: o vermelho é só para dinheiro que falta em pedido fechado */
+ var fechado=PAG_DESDE.indexOf(est)>=0;
+ if(pc)pc.className='chip '+(sp?info.cls:(fechado?'perigo':'vazio'));
+ if(pt)pt.textContent=sp==='Sinal pago'?'Sinal pago':(sp||(fechado?'Não pago':'Pagamento'));
+ var ps=document.getElementById('pfPagStatus');if(ps)ps.innerHTML=sp?'<span class="'+(info.pg)+'" style="font-size:17px">'+esc(sp)+'</span>':'<span class="vazio">'+(fechado?'Não pago':'Sem status')+'</span>';
+ var ev=f_evento.value,dv=f_dataEv.value,evc=document.getElementById('pfEvChip'),evt=document.getElementById('pfEvTxt');
+ if(evc)evc.className='chip'+(ev||dv?'':' vazio');if(evt)evt.textContent=(ev||dv)?((ev||'Evento')+(dv?' '+dataCurta(dv,hoje):'')):'Evento';
+ var fu=f_followup.value,fc=document.getElementById('pfFuChip'),ft=document.getElementById('pfFuTxt');
+ if(fc)fc.className='chip'+(!fu?' vazio':(fu<hoje&&DONE.indexOf(est)<0?' perigo':(fu===hoje?' alerta':'')));
+ if(ft)ft.textContent=fu?'Follow-up '+dataCurta(fu,hoje):'Follow-up';
+ var w=String(f_whats.value||'').replace(/\D/g,''),wa=document.getElementById('pfWhats'),tl=document.getElementById('pfLigar');
+ [[wa,w?'https://wa.me/55'+w:''],[tl,w?'tel:+55'+w:'']].forEach(function(x){if(!x[0])return;if(x[1]){x[0].setAttribute('href',x[1]);x[0].classList.remove('desab');x[0].removeAttribute('aria-disabled');}else{x[0].removeAttribute('href');x[0].classList.add('desab');x[0].setAttribute('aria-disabled','true');}});
+ var sub=document.getElementById('pfSub');if(sub)sub.innerHTML=currentId?('#'+currentId+' <span class="sep">·</span> '+esc(f_canal.value||'sem canal')+(f_data.value?' <span class="sep">·</span> contato em '+dBR(f_data.value).slice(0,5):'')):'Novo atendimento';
+ /* select vazio fica cinza ("Adicionar"), como valor vazio do Notion */
+ document.querySelectorAll('#overlay .prop select').forEach(function(s){s.classList.toggle('vazio-sel',!s.value);});}
+function pfIrEvento(){var e=document.getElementById('f_evento');if(!e)return;try{e.scrollIntoView({block:'center',behavior:'smooth'});}catch(x){e.scrollIntoView();}setTimeout(function(){try{e.focus({preventScroll:true});}catch(x){}},250);}
 function saveForm(){if(!f_cliente.value.trim()){alert('Informe o nome do cliente.');return;}
  const d={data:f_data.value,cliente:f_cliente.value.trim(),whats:f_whats.value.trim(),cidade:f_cidade.value.trim(),canal:f_canal.value,tipoCli:f_tipo.value,tipoEv:f_evento.value,dataEv:f_dataEv.value,produto:f_produto.value,descr:f_descr.value.trim(),qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,estagio:f_estagio.value,statusPag:f_statuspag.value,formaPag:f_formapag.value,entrega:f_entrega.value,custoEntrega:+f_custoent.value||0,followup:f_followup.value,obs:f_obs.value.trim()};
  let _sv,_antesPag=null;if(currentId){const _cur=state.orders.find(x=>x.id===currentId);_antesPag=_cur?_cur.statusPag:null;_sv=Object.assign(_cur,d);logAct('atualizou o atendimento #'+_sv.id+' ('+_sv.cliente+')');}else{d.id=state.seq++;_sv=d;state.orders.unshift(d);logAct('criou o atendimento #'+d.id+' ('+d.cliente+')');}save();syncOrder(_sv);finPagamento(_sv,_antesPag);closeForm();renderAtend();renderPainel();if(document.getElementById('calendario')&&document.getElementById('calendario').classList.contains('active'))renderCalendario();}
