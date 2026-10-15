@@ -931,9 +931,14 @@ var PROD_EXT=null;const PROD_COLS=["prod_etapa","arte_aprovada_em","postado_em"]
 async function prodDetectarExt(){try{const r=await fetch(sbUrl("pedidos?select=prod_etapa&limit=1"),{headers:sbHeaders()});PROD_EXT=r.ok?true:(r.status===400?false:null);}catch(e){PROD_EXT=null;}}
 function openCfg(){var u=prompt("Cole o link do projeto Supabase (https://xxxxx.supabase.co). Deixe em branco para modo local:",SHEET_URL||"");if(u===null)return;var t=prompt("Cole a chave do projeto (anon public):",TOKEN||"");if(t===null)return;_cfg={url:(u||"").trim(),token:(t||"").trim()};localStorage.setItem(CFGKEY,JSON.stringify(_cfg));SHEET_URL=_cfg.url;TOKEN=_cfg.token;alert(SHEET_URL?"Conectado. Carregando dados da nuvem...":"Modo local ativado.");init();}
 async function apiGet(){
- const r1=await fetch(sbUrl("pedidos?select=*&order=id.asc"),{headers:sbHeaders()});
- if(!r1.ok)throw new Error("auth");
- const orders=await r1.json();
+ /* O Supabase devolve no maximo 1000 linhas por pedido. Em 15/10/2026 eram 1003 pedidos e os 3 de id
+    mais alto (vendas do site, duas em producao) sumiam do CRM sem aviso. Agora busca em paginas ate vir vazio. */
+ let orders=[];
+ for(let off=0,volta=0;volta<100;volta++){
+  const r1=await fetch(sbUrl("pedidos?select=*&order=id.asc&limit=1000&offset="+off),{headers:sbHeaders()});
+  if(!r1.ok)throw new Error("auth");
+  const pg=await r1.json();if(!pg.length)break;
+  orders=orders.concat(pg);off+=pg.length;}
  orders.forEach(o=>{COLS.forEach(k=>{if(o[k]===null||o[k]===undefined)o[k]="";});o.id=Number(o.id);o.qtd=Number(o.qtd)||0;o.valorUnit=Number(o.valorUnit)||0;});
  let config={};
  try{const r2=await fetch(sbUrl("config?select=dados&id=eq.1"),{headers:sbHeaders()});if(r2.ok){const j=await r2.json();if(Array.isArray(j)&&j[0]&&j[0].dados)config=j[0].dados;}}catch(e){}
