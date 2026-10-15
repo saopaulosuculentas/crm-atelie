@@ -2,7 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- viewport-fit=cover: sem isso o iPhone devolve 0 no env(safe-area-inset-*) e o
+     app em tela cheia nao sabe onde ficam o entalhe e a barrinha de baixo -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <!-- Revalidar sempre. O Chrome estava servindo a versao velha do cache e o
      Luan via a tela antiga achando que o deploy nao tinha subido. Com ETag a
      revalidacao volta 304 e nao custa banda. -->
@@ -193,7 +195,7 @@ tbody tr:nth-child(even) td.cli{background:var(--zebra)}tbody tr:nth-child(odd) 
 .login .skip{background:none;border:0;color:#7a8676;font-size:12px;margin-top:12px;text-decoration:underline}
 .login .skip:hover{color:#1c4327}
 
-/* ===== FACELIFT v2 — visual de alto nível ===== */
+/* ===== FACELIFT v2: visual de alto nível ===== */
 body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif}
 .kpi{border-radius:17px;transition:transform .16s ease,box-shadow .16s ease}
 .kpi:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(28,67,39,.14)}
@@ -225,7 +227,7 @@ tbody tr:hover{background:#f0f5ec}
 .mval{font-size:10px;font-weight:800;color:var(--green-dk);white-space:nowrap;height:14px}
 .mlbl{font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap}
 @media(max-width:760px){.mchart{height:165px;gap:9px;overflow-x:auto;overflow-y:hidden;justify-content:flex-start;padding-bottom:8px;-webkit-overflow-scrolling:touch}.mcol{flex:0 0 auto;min-width:44px}.mval{font-size:9px}.mlbl{font-size:9px}.mtrack{max-width:34px}}
-/* ===================== TAREFAS — no formato do ClickUp =====================
+/* ===================== TAREFAS: no formato do ClickUp =====================
    As medidas saíram do ClickUp real do Luan (workspace SPRINTS MARKETING):
    lista agrupada por status, cabeçalho de coluna fininho, linha de 38px,
    pílula de status em CAIXA ALTA e bandeira colorida na prioridade.
@@ -338,7 +340,7 @@ tbody tr:hover{background:#f0f5ec}
  padding:6px 13px;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:none;white-space:nowrap;align-self:center}
 .temaTop:hover{background:var(--moss)}
 
-/* ===================== MODAL DE TAREFA — igual ao ClickUp =====================
+/* ===================== MODAL DE TAREFA: igual ao ClickUp =====================
    No ClickUp a tarefa não é um formulário: é um título grande e uma fileira de
    "chips" (responsável, data, prioridade, etiquetas) que você clica. Copiei
    essa anatomia, junto com a barra de atividade no rodapé.
@@ -482,7 +484,7 @@ tbody tr:hover{background:#f0f5ec}
 [data-tema="escuro"] .login input{background:#141c17;color:var(--ink);border-color:var(--line)}
 [data-tema="escuro"] .login input::placeholder{color:#6f7d72}
 [data-tema="escuro"] .login .skip:hover{color:var(--green2)}
-/* tarefas — quase tudo ja usa var(--card)/var(--cream)/var(--line), entao aqui
+/* tarefas: quase tudo ja usa var(--card)/var(--cream)/var(--line), entao aqui
    so sobra o que tem cor fixa por motivo de contraste */
 [data-tema="escuro"] .tcol{background:#151d18;border-color:var(--line)}
 [data-tema="escuro"] .tcol.over{background:#22352a;border-color:var(--green2)}
@@ -578,6 +580,253 @@ tbody tr:hover{background:#f0f5ec}
  .pd-avancar{font-size:15.5px}
  .pd-cli{font-size:16px}
 }
+/* pagamento a vista (15/10/2026): o dono perguntou se dava para saber na hora
+   se o pedido esta pago. Chip cheio, na cor do PAY_COLORS. */
+.pag-chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:800;line-height:1;
+ padding:5px 10px;border-radius:999px;white-space:nowrap;background:var(--c);color:#fff}
+.pag-chip.claro{color:#1f2a22}
+.pd-trava{font-size:12.5px;font-weight:700;color:var(--danger);line-height:1.35}
+
+/* ===================== CELULAR PRIMEIRO (15/10/2026) =====================
+   O Luan, o Felipe e o Enzo usam o CRM quase sempre no celular, pelo app na
+   Tela de Início. Tudo dentro do @media abaixo só vale até 700 px: o computador
+   fica como estava. Fora do @media ficam só os "interruptores" que escondem as
+   peças do celular no computador.
+   Regras: corpo com 15 px ou mais, campo com 16 px (menos que isso o iPhone dá
+   zoom ao tocar), alvo de toque de 44 px, espaçamento de 12 a 16 px, nada
+   empurrando a página para o lado e espaço para o entalhe e a barrinha do
+   iPhone (env(safe-area-inset-*), que só funciona com viewport-fit=cover). */
+.cu-seg,.tb-rola{display:contents}
+.mb-so,.mb-acao,.cu-chips-m,.cu-card .cu-mob{display:none}
+/* o círculo de concluir: no computador é só a bolinha de sempre e o clique
+   passa direto para a linha (abre a tarefa), como antes */
+.cu-chk{display:inline-flex;align-items:center;justify-content:center;background:none;border:0;box-shadow:none;
+ padding:0;margin:0;flex:0 0 auto;pointer-events:none;color:inherit}
+/* aviso de rodapé com "Desfazer" (concluir tarefa pelo círculo) */
+.mb-aviso{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translate(-50%,20px);
+ z-index:300;display:flex;align-items:center;gap:12px;background:#1c2a20;color:#fff;border-radius:14px;
+ padding:6px 6px 6px 16px;font-size:15px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.35);
+ max-width:calc(100vw - 24px);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease}
+.mb-aviso.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.mb-aviso button{background:transparent;color:#8ed4a3;font-weight:800;font-size:15px;padding:10px 12px;
+ border-radius:10px;min-height:44px;white-space:nowrap}
+
+@media (max-width:700px){
+ :root{--mb-top:calc(61px + env(safe-area-inset-top));--mb-l:max(12px,env(safe-area-inset-left));--mb-r:max(12px,env(safe-area-inset-right))}
+ body{font-size:15px}
+ /* clip em vez de hidden: hidden transformava o .main numa caixa de rolagem e
+    o topo "grudado" (sticky) deixava de grudar no celular */
+ .main{overflow-x:hidden;overflow-x:clip}
+ input:not(.cu-titulo),select,textarea{font-size:16px!important}
+ .mb-esconde{display:none!important}
+ .mb-so{display:inline}.pc-so{display:none}
+
+ /* ---- topo: ☰, título da aba e o botão principal numa linha só ---- */
+ .topbar{height:var(--mb-top);padding:calc(8px + env(safe-area-inset-top)) var(--mb-r) 8px var(--mb-l)}
+ .topbar #sub,.temaTop,#presenca{display:none!important}
+ .tbrow{gap:10px;flex-wrap:nowrap;height:44px}
+ .hamb{width:44px;height:44px;border-radius:12px;font-size:21px}
+ #ttl{flex:1 1 auto;min-width:0;font-size:20px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #saveStat{margin-left:0!important;font-size:12px!important;white-space:normal!important;max-width:30vw;line-height:1.15;text-align:right}
+ .mb-acao.on{display:inline-flex}
+ .mb-acao{align-items:center;gap:5px;height:40px;padding:0 15px;border-radius:999px;font-size:15px;font-weight:800;
+  flex:0 0 auto;background:linear-gradient(135deg,#2e7d46,#205c34);color:#fff;box-shadow:0 3px 10px rgba(46,125,70,.28)}
+ .mb-acao b{font-size:19px;line-height:1;font-weight:700}
+ .content{padding:12px var(--mb-r) calc(40px + env(safe-area-inset-bottom)) var(--mb-l)}
+
+ /* ---- menu lateral (☰) ---- */
+ .side{width:min(290px,84vw);padding:calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left))}
+ .side nav button{min-height:46px;font-size:15.5px}
+ .side .data button{min-height:42px;font-size:14px}
+ .side .hint{font-size:12px}
+
+ /* ---- barras de filtro ---- */
+ .toolbar{gap:8px;margin-bottom:12px}
+ .toolbar input[type=text]{flex:1 1 100%;width:100%;min-width:0;min-height:44px}
+ .toolbar select,.toolbar input[type=date],.toolbar .btn,.toolbar .chk{min-height:44px}
+ .tb-rola{display:flex;flex:1 1 100%;flex-wrap:nowrap;gap:8px;overflow-x:auto;min-width:0;padding:1px 0 3px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none}
+ .tb-rola::-webkit-scrollbar{display:none}
+ .tb-rola>*{flex:0 0 auto}
+ .chk{font-size:14px}
+ .btn{font-size:14.5px}
+ .seg{flex:1 1 100%;width:100%}
+ .seg button{flex:1 1 0;min-height:42px;padding:8px 6px;font-size:14.5px}
+ .tb-atend .seg{order:1}.tb-atend #search{order:2}.tb-atend .tb-rola{order:3}
+ .tb-atend #plSync{order:4;flex:1 1 100%;font-size:12px!important;line-height:1.35}
+ #plSync a{color:var(--green-dk);font-weight:700}
+ #atendResumo{font-size:13.5px!important}
+ #painel .toolbar select{flex:1 1 0;min-width:0}
+ #pInfo{flex:1 1 100%;font-size:12.5px}
+ #caixa .toolbar .btn{flex:1 1 0}
+ #caixa .toolbar select{flex:1 1 100%}
+ #caixa .toolbar .mini{flex:1 1 100%;font-size:12.5px;line-height:1.4}
+ .calbar .calnav{min-width:44px;min-height:44px;font-size:18px}
+ .calbar .mes{flex:1 1 auto;font-size:18px;min-width:0;white-space:nowrap}
+ .calbar #calBusca{order:5}.calbar .tb-rola{order:6}
+
+ /* ---- cartões de número (KPIs): 2 por linha, nunca estreitos na esquerda ---- */
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px;margin-bottom:16px}
+ .kpi{padding:12px 12px 11px;border-radius:14px}
+ .kpi:hover{transform:none}
+ .kpi .lbl{font-size:11px;line-height:1.25;padding-right:20px}
+ .kpi .val{font-size:19px;line-height:1.1}
+ .kpi .ic{font-size:14px;top:10px;right:10px}
+ .kpi .fin-sub{font-size:12px}
+ /* Produção e Calendário: número grande em cima, rótulo curto embaixo */
+ #pdKpis{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px}
+ #calKpis{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px}
+ #pdKpis .kpi,#calKpis .kpi{display:flex;flex-direction:column;padding:10px 8px 9px 11px}
+ #pdKpis .kpi .ic,#calKpis .kpi .ic{display:none}
+ #pdKpis .kpi .val,#calKpis .kpi .val{order:-1;margin:0 0 4px;font-size:22px}
+ #pdKpis .kpi .lbl,#calKpis .kpi .lbl{font-size:10.5px;padding:0;letter-spacing:.2px}
+ #calKpis .kpi:nth-child(3){order:4;grid-column:span 2}
+ #calKpis .kpi:nth-child(4){order:3}
+ #calKpis .kpi:nth-child(5){order:5}
+ #calKpis .kpi:nth-child(3) .val{font-size:20px}
+ #cxKpis .kpi:first-child{grid-column:1/-1}
+
+ /* ---- painéis, gráficos e tabelas ---- */
+ .panel,.panel.wide{padding:14px;border-radius:15px}
+ .panel h3,.panel.wide h3{font-size:15px;margin-bottom:12px}
+ .panels{gap:12px}
+ .bar-row{font-size:13.5px;gap:8px}
+ .bar-row .name{width:104px}
+ .bar-row .num{width:auto;min-width:52px;font-size:12.5px}
+ .pgrid{grid-template-columns:minmax(0,1fr)}
+ #produtos .panel{overflow-x:auto}
+ table{font-size:13.5px}
+ /* Clientes: o nome fica preso na esquerda e quebra linha; o resto rola dentro da caixa */
+ #clientesView td.cli,#clientesView th.cli{position:sticky;left:0;max-width:150px;min-width:120px;white-space:normal;word-break:break-word}
+ .badge{font-size:12px;padding:4px 10px}
+ .note{font-size:13.5px}
+ .kcol{min-width:80vw;width:80vw;scroll-snap-align:start}
+ .kanban{scroll-snap-type:x mandatory}
+ .calgrid{gap:4px}
+ .caldia,.caldia.fora{min-height:56px}
+ .callista .item{padding:11px 12px;gap:7px}
+
+ /* ---- Tarefas: sub-abas em controle segmentado e filtros numa linha ---- */
+ .cu-views{flex-wrap:wrap;border-bottom:0;gap:10px;margin:0 0 12px;overflow:visible}
+ .cu-seg{display:flex;width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+ .cu-seg button{flex:1 1 0;justify-content:center;border-bottom:0!important;margin:0;border-radius:9px;min-height:40px;font-size:14.5px;padding:8px 6px;line-height:1}
+ .cu-seg button.on{background:var(--green);color:#fff}
+ .cu-acoes{margin-left:0!important;width:100%;flex-wrap:nowrap!important;overflow-x:auto;padding:0!important;gap:8px!important;scrollbar-width:none}
+ .cu-acoes::-webkit-scrollbar{display:none}
+ .cu-acoes>*{flex:0 0 auto}
+ .cu-acoes select,.cu-acoes .btn{min-height:40px;font-size:14.5px!important;padding:8px 14px!important}
+ .cu-acoes .btn.ghost{border:1px solid var(--line)!important;background:var(--card)!important;color:var(--ink)!important}
+
+ /* cartões de resumo: 3 colunas em largura total, número grande + rótulo curto */
+ .cu-resumo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+ .cu-card{min-width:0;padding:10px 10px 9px;border-radius:12px;display:block}
+ .cu-card .ic,.cu-card>div:not(.cu-mob){display:none}
+ .cu-card .cu-mob{display:block}
+ .cu-mob strong{display:block;font-size:24px;font-weight:800;line-height:1.1;color:var(--ink)}
+ .cu-mob em{display:block;font-style:normal;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;line-height:1.25}
+
+ /* lista: cabeçalho do grupo gruda embaixo do topo enquanto rola */
+ .cu-grupo{margin-bottom:14px}
+ .cu-ghead{position:sticky;top:var(--mb-top);z-index:6;background:var(--bg);min-height:44px;padding:8px 2px 8px;margin:0}
+ .cu-status{font-size:12px;padding:4px 10px}
+ .cu-gcount{font-size:13px}
+ .cu-gadd{font-size:13.5px;padding:8px 10px;min-height:36px}
+ .cu-cols{display:none}
+ /* linha 1: círculo (alvo de 44 px) + título até 2 linhas; linha 2: chips */
+ .cu-row{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:4px;row-gap:3px;align-items:start;
+  padding:2px 4px 11px 0;min-height:56px}
+ .cu-row:hover{background:transparent}
+ .cu-nome{display:contents}
+ .cu-chk{pointer-events:auto;cursor:pointer;grid-column:1;grid-row:1/span 2;width:44px;height:44px;align-self:start;
+  -webkit-tap-highlight-color:transparent;tap-highlight-color:transparent}
+ .cu-chk .cu-dot{width:22px;height:22px;border-width:2px;display:inline-flex;align-items:center;justify-content:center}
+ .cu-chk .cu-dot.cheio:after{content:"✓";color:#fff;font-size:13px;font-weight:900;font-style:normal;line-height:1}
+ .cu-chk:active .cu-dot{transform:scale(.88)}
+ .cu-tt{grid-column:2;grid-row:1;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;font-size:15.5px;line-height:1.3;font-weight:600;padding-top:11px;word-break:break-word}
+ .cu-row .cu-marcas,.cu-row .cu-tags,.cu-row>.cu-avs,.cu-row>.cu-due,.cu-row>.cu-prio{display:none}
+ .cu-chips-m{display:flex;grid-column:2;grid-row:2;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
+ .mc{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;line-height:1;padding:5px 8px;
+  border-radius:7px;background:var(--pill);color:var(--muted);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+ .mc.late{background:#fbe4e2;color:#c0271f}
+ .mc.hoje{background:#fdf1dc;color:#9a6a17}
+ .mc .cu-flag{font-size:12px}
+ .mc-avs{display:inline-flex;padding-left:6px}
+ .mc-avs .cu-av{width:24px;height:24px;margin-left:-6px;border:2px solid var(--bg);font-size:10.5px}
+ .cu-addrow{min-height:44px;font-size:14.5px;padding:10px 4px}
+ .cu-novo{padding:6px 4px}
+ .cu-novo>span{display:none}
+ .cu-vazio{font-size:14px}
+ .tcard .tt{font-size:15px}
+
+ /* ---- Pedidos: a tabela larga vira lista de cartões (renderTable) ---- */
+ .tablewrap.pc-modo{background:none;border:0;box-shadow:none;overflow:visible;max-height:none;border-radius:0}
+ .pc-lista{display:flex;flex-direction:column;gap:10px}
+ .pc-card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--green);border-radius:14px;
+  padding:12px 14px;display:flex;flex-direction:column;gap:5px;cursor:pointer;box-shadow:var(--shadow);
+  -webkit-tap-highlight-color:transparent}
+ .pc-card:active{background:var(--hover)}
+ .pc-l1{display:flex;align-items:flex-start;gap:10px}
+ .pc-cli{flex:1 1 auto;min-width:0;font-size:16px;font-weight:800;color:var(--ink);line-height:1.25;word-break:break-word}
+ .pc-val{flex:0 0 auto;font-size:15.5px;font-weight:800;color:var(--green-dk);white-space:nowrap}
+ .pc-meta{font-size:14px;color:var(--muted);line-height:1.4;word-break:break-word}
+ .pc-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:3px}
+ .pc-wa{font-size:14px;padding:4px 2px}
+ .pc-mais{width:100%;min-height:48px;margin-top:4px}
+ .pc-vazio{padding:28px 12px;text-align:center;color:var(--muted);font-size:15px}
+
+ /* ---- Produção: mesma linguagem (grupo grudado, cartão largo, botão grande) ---- */
+ .pd-grid{gap:10px}
+ .pd-card{padding:12px 14px}
+ .pd-meta{font-size:14px}
+ .pd-data{font-size:13px}
+ .pag-chip{font-size:13px;padding:6px 11px}
+ .pd-menu{max-width:none;flex:0 0 44%;padding:0 8px}
+ .pd-avancar{font-size:15px;line-height:1.2}
+
+ /* ---- janelas (modais) em tela cheia, botões grandes ---- */
+ .overlay{padding:0;align-items:stretch}
+ .modal{width:100%!important;max-width:100%;min-height:100%;border-radius:0;overflow:visible;display:flex;flex-direction:column;box-shadow:none}
+ .modal .mhead{position:sticky;top:0;z-index:3;padding:calc(10px + env(safe-area-inset-top)) var(--mb-r) 10px var(--mb-l)}
+ .modal .mhead h2{font-size:18px;line-height:1.25}
+ .modal .mhead button{min-width:44px;min-height:44px}
+ .mbody{padding:16px var(--mb-r) 16px var(--mb-l);flex:1 0 auto}
+ .mfoot{position:sticky;bottom:0;z-index:3;background:var(--card);gap:8px;padding:10px var(--mb-r) calc(10px + env(safe-area-inset-bottom)) var(--mb-l)}
+ .mfoot .btn{min-height:48px;font-size:16px;padding:12px 16px}
+ .field label{font-size:12px}
+ .field input,.field select,.field textarea{min-height:46px;padding:11px 12px}
+ .calcbox{gap:12px 18px;font-size:14px}
+ .cu-modal{width:100%;max-width:100%;max-height:none;border-radius:0;box-shadow:none}
+ .cu-top{padding:calc(6px + env(safe-area-inset-top)) var(--mb-r) 6px var(--mb-l);min-height:56px}
+ .cu-top .fechar{min-width:44px;min-height:44px;font-size:22px}
+ .cu-statussel{font-size:12.5px;padding:9px 28px 9px 12px}
+ .cu-body{padding:14px var(--mb-r) 18px var(--mb-l);-webkit-overflow-scrolling:touch}
+ .cu-titulo{font-size:20px!important}
+ .cu-chips{gap:8px}
+ .cu-chip{min-height:42px;font-size:14px;padding:6px 12px}
+ .cu-chip select,.cu-chip input{max-width:none}
+ .cu-pessoa{font-size:14px;padding:6px 12px;margin:2px 4px 2px 0}
+ .tdtools button{min-height:40px;font-size:13.5px;padding:6px 12px}
+ .cu-descr{font-size:16px}
+ .tcom .txt{font-size:14.5px}
+ .cu-foot{padding:10px var(--mb-r) calc(10px + env(safe-area-inset-bottom)) var(--mb-l)}
+ .cu-foot .btn{min-height:46px;font-size:15.5px!important;padding:10px 16px!important}
+ .tcomnovo .btn{min-height:40px}
+ .tcomnovo textarea{min-height:44px;line-height:1.35}
+ .tcard .tmeta>span{font-size:12px;padding:3px 9px}
+ .tcol h4{font-size:14px}
+ .login{padding:calc(20px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom))}
+}
+/* tema escuro das peças novas. O cabeçalho do modal usava var(--green-dk), que no
+   escuro é verde-claro: o título branco ficava quase sem contraste. */
+[data-tema="escuro"] .modal .mhead{background:#1c4327}
+[data-tema="escuro"] .pag-chip.claro{color:#1f2a22}
+@media (max-width:700px){
+ [data-tema="escuro"] .mc.late{background:#3d1e1b;color:#ff8a80}
+ [data-tema="escuro"] .mc.hoje{background:#3a2f14;color:#e0b56a}
+ [data-tema="escuro"] .cu-row:hover{background:transparent}
+ [data-tema="escuro"] .cu-acoes .btn.ghost{background:var(--card)!important}
+}
 
 </style>
 <script>
@@ -630,7 +879,7 @@ tbody tr:hover{background:#f0f5ec}
   <div class="hint" id="whoami" style="margin-top:8px"></div>
   <!-- versao a vista: se alguem disser "esta diferente aqui", da pra saber na
        hora se e cache ou se e outra coisa -->
-  <div class="hint" id="versao" style="opacity:.55">versão 2026-10-15 (Produção + app)</div>
+  <div class="hint" id="versao" style="opacity:.55">versão 2026-10-15b (celular primeiro + pagamento)</div>
   <div class="hint">☁ Salva sozinho. Se aparecer "⚠ não salvou" no topo, toque em "Salvar tudo".</div>
   <button onclick="toggleMais()" style="background:transparent;color:var(--muted);font-size:12px;padding:6px 4px;text-align:left">⋯ Mais opções</button>
   <div id="maisOpc" style="display:none">
@@ -643,7 +892,7 @@ tbody tr:hover{background:#f0f5ec}
 </aside>
 
 <div class="main">
- <div class="topbar"><div class="tbrow"><button class="hamb" onclick="toggleMenu()" aria-label="Menu">☰</button><h2 id="ttl">Painel</h2><span id="presenca" style="margin-left:14px;font-size:12px;color:var(--muted);font-weight:700;align-self:center;white-space:nowrap"></span><span id="saveStat" style="margin-left:10px;font-size:12px;font-weight:800;align-self:center;white-space:nowrap"></span><button class="temaTop" id="btnTemaTop" onclick="alternarTema()" title="Alternar entre tema claro e escuro">🌙 Escuro</button></div><p id="sub">Atualiza sozinho conforme você preenche os atendimentos.</p></div>
+ <div class="topbar"><div class="tbrow"><button class="hamb" onclick="toggleMenu()" aria-label="Menu">☰</button><h2 id="ttl">Painel</h2><span id="presenca" style="margin-left:14px;font-size:12px;color:var(--muted);font-weight:700;align-self:center;white-space:nowrap"></span><span id="saveStat" style="margin-left:10px;font-size:12px;font-weight:800;align-self:center;white-space:nowrap"></span><button type="button" class="mb-acao" id="topAcao" onclick="mbAcao()"></button><button class="temaTop" id="btnTemaTop" onclick="alternarTema()" title="Alternar entre tema claro e escuro">🌙 Escuro</button></div><p id="sub">Atualiza sozinho conforme você preenche os atendimentos.</p></div>
  <div class="content">
 
   <section class="view active" id="painel">
@@ -675,10 +924,13 @@ tbody tr:hover{background:#f0f5ec}
   </section>
 
   <section class="view" id="atendimentos">
-   <div class="toolbar">
-    <button class="btn" onclick="openForm()">+ Novo atendimento</button>
+   <!-- no celular: sub-abas em cima, busca e os filtros numa linha que rola (.tb-rola).
+        No computador .tb-rola e display:contents, entao a barra fica igual a antes. -->
+   <div class="toolbar tb-atend">
+    <button class="btn mb-esconde" onclick="openForm()">+ Novo atendimento</button>
     <span class="mini" id="plSync" style="align-self:center"></span>
     <input type="text" id="search" placeholder="Buscar cliente, cidade, produto..." oninput="renderAtend()">
+    <div class="tb-rola">
     <select id="fEstagio" onchange="renderAtend()"><option value="">Todos os estágios</option></select>
     <select id="fTipo" onchange="renderAtend()"><option value="">Todos os tipos</option></select>
     <select id="fDateBase" onchange="renderAtend()" title="Base da data"><option value="dataEv">📅 por data do evento</option><option value="data">📅 por data de fechamento</option></select>
@@ -686,8 +938,9 @@ tbody tr:hover{background:#f0f5ec}
     <input type="date" id="fAte" onchange="renderAtend()" title="Até" style="padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px">
     <button class="btn ghost" onclick="clearDates()">Limpar datas</button>
     <label class="chk"><input type="checkbox" id="fConcluidos" checked onchange="renderAtend()"> Mostrar concluídos</label>
-    <div style="flex:1"></div>
-    <div class="seg"><button id="vbTable" class="active" onclick="setView('table')">Tabela</button><button id="vbSheet" onclick="setView('sheet')">✏️ Planilha</button><button id="vbKanban" onclick="setView('kanban')">Kanban</button></div>
+    </div>
+    <div class="mb-esconde" style="flex:1"></div>
+    <div class="seg"><button id="vbTable" class="active" onclick="setView('table')"><span class="pc-so">Tabela</span><span class="mb-so">Lista</span></button><button id="vbSheet" onclick="setView('sheet')">✏️ Planilha</button><button id="vbKanban" onclick="setView('kanban')">Kanban</button></div>
    </div>
    <div id="atendResumo" class="mini" style="margin:-2px 0 12px;color:var(--green-dk);font-weight:700;font-size:13px"></div>
    <div id="selBar" style="display:none;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px;padding:9px 13px;background:var(--moss);border-radius:12px;font-size:13px"><b><span id="selCount">0</span> selecionado(s)</b><button class="btn ghost" onclick="exportarSelecionados()">⬇ Exportar p/ planilha</button><button class="btn ghost" style="color:var(--danger)" onclick="excluirSelecionados()">🗑 Excluir selecionados</button><button class="btn ghost" onclick="limparSel()">Limpar</button></div>
@@ -707,11 +960,11 @@ tbody tr:hover{background:#f0f5ec}
    <div class="kpis" id="cxKpis" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))"></div>
    <div class="panel wide" id="cxSinaisWrap" style="margin-bottom:16px"><h3>💵 Sinais de 30% · dos pedidos em aberto</h3><div id="cxSinais"></div></div>
    <div class="tablewrap sheet" id="cxSheet" style="max-height:46vh;margin-bottom:18px"></div>
-   <div class="panel wide"><h3>📅 Mês a mês — evolução do caixa</h3><div class="tablewrap" style="box-shadow:none;border:0;max-height:380px" id="cxMeses"></div></div>
+   <div class="panel wide"><h3>📅 Mês a mês: evolução do caixa</h3><div class="tablewrap" style="box-shadow:none;border:0;max-height:380px" id="cxMeses"></div></div>
   </section>
 
   <section class="view" id="sazonal">
-   <div class="panel wide"><h3>🔥 Radar sazonal — nunca mais esqueça uma data</h3><div id="cxSazonal"></div></div>
+   <div class="panel wide"><h3>🔥 Radar sazonal: nunca mais esqueça uma data</h3><div id="cxSazonal"></div></div>
   </section>
 
   <section class="view" id="clientes">
@@ -734,15 +987,19 @@ tbody tr:hover{background:#f0f5ec}
 
   <section class="view" id="tarefas">
    <!-- barra de visoes no formato do ClickUp: abas embaixo, nao botoes soltos -->
+   <!-- .cu-seg e display:contents no computador (abas como sempre) e vira controle
+        segmentado de largura total no celular; .cu-acoes vira uma linha que rola -->
    <div class="cu-views">
+    <div class="cu-seg">
     <button id="tv_lista"  class="on" onclick="tSetView('lista')"  title="Tudo agrupado por etapa, numa lista só">☰ Lista</button>
     <button id="tv_quadro" onclick="tSetView('quadro')" title="Colunas para arrastar">▦ Quadro</button>
     <button id="tv_equipe" onclick="tSetView('equipe')" title="Uma coluna para cada sócio">👥 Equipe</button>
-    <div style="margin-left:auto;display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding-bottom:6px">
-     <select id="tFiltro" onchange="renderTarefas()" style="padding:6px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;background:var(--card);color:var(--ink)"><option value="">Todos</option></select>
+    </div>
+    <div class="cu-acoes" style="margin-left:auto;display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding-bottom:6px">
+     <select id="tFiltro" onchange="renderTarefas()" aria-label="Filtrar por responsável" style="padding:6px 9px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;background:var(--card);color:var(--ink)"><option value="">Todos</option></select>
      <button class="btn ghost" style="padding:6px 11px;font-size:12.5px" onclick="tarefasCarregar()">🔄 Atualizar</button>
      <button class="btn ghost" style="padding:6px 11px;font-size:12.5px" onclick="tSalvarTudo()" title="Empurra todas as tarefas pra nuvem agora">💾 Salvar</button>
-     <button class="btn" style="padding:6px 13px;font-size:12.5px" onclick="tAbrir(null)">＋ Nova tarefa</button>
+     <button class="btn mb-esconde" style="padding:6px 13px;font-size:12.5px" onclick="tAbrir(null)">＋ Nova tarefa</button>
     </div>
    </div>
    <div id="tResumo" class="cu-resumo"></div>
@@ -752,20 +1009,22 @@ tbody tr:hover{background:#f0f5ec}
   <section class="view" id="calendario">
    <div class="toolbar calbar">
     <button class="calnav" onclick="calNav(-1)" title="Mês anterior">&lsaquo;</button>
-    <span class="mes" id="calMesLbl">—</span>
+    <span class="mes" id="calMesLbl">·</span>
     <button class="calnav" onclick="calNav(1)" title="Próximo mês">&rsaquo;</button>
     <button class="btn ghost" onclick="calHoje()">Hoje</button>
     <input type="text" id="calBusca" placeholder="Buscar cliente, cidade, produto..." oninput="renderCalendario()">
+    <div class="tb-rola">
     <select id="calEstagio" onchange="renderCalendario()"><option value="">Todos os estágios</option></select>
     <label class="chk"><input type="checkbox" id="calConcluidos" onchange="renderCalendario()"> Mostrar entregues/perdidos</label>
-    <div style="flex:1"></div>
-    <button class="btn" onclick="openForm()">+ Novo atendimento</button>
+    </div>
+    <div class="mb-esconde" style="flex:1"></div>
+    <button class="btn mb-esconde" onclick="openForm()">+ Novo atendimento</button>
    </div>
 
    <div class="kpis" id="calKpis"></div>
 
    <div class="panel wide" style="margin-bottom:18px">
-    <h3>📅 Eventos do mês — arraste um cartão para outro dia</h3>
+    <h3>📅 Eventos do mês (arraste um cartão para outro dia)</h3>
     <div class="calgrid" id="calDows"></div>
     <div class="calgrid" id="calGrid" style="margin-top:2px"></div>
    </div>
@@ -842,10 +1101,10 @@ tbody tr:hover{background:#f0f5ec}
    <input type="text" id="t_titulo" class="cu-titulo" placeholder="Nome da tarefa" autocomplete="off">
 
    <div class="cu-chips">
-    <span class="cu-chip" id="chip_resp" title="Responsáveis — clique para marcar mais de um">👤 <span id="t_resp"></span></span>
+    <span class="cu-chip" id="chip_resp" title="Responsáveis: clique para marcar mais de um">👤 <span id="t_resp"></span></span>
     <label class="cu-chip" id="chip_prazo" title="Data de vencimento">📅 <input type="date" id="t_prazo" onchange="tPintarChips()"></label>
     <label class="cu-chip" id="chip_urg" title="Prioridade"><span id="urgFlag">🏳️</span> <select id="t_urg" onchange="tPintarChips()"></select></label>
-    <label class="cu-chip" id="chip_tags" title="Etiquetas — separe por vírgula">🏷️ <input type="text" id="t_tags" placeholder="Etiquetas" oninput="tPintarChips()" style="max-width:190px"></label>
+    <label class="cu-chip" id="chip_tags" title="Etiquetas: separe por vírgula">🏷️ <input type="text" id="t_tags" placeholder="Etiquetas" oninput="tPintarChips()" style="max-width:190px"></label>
    </div>
 
    <div class="cu-sec">Descrição</div>
@@ -971,7 +1230,7 @@ function fmtTs(iso){try{const d=new Date(iso);const hoje=todayISO(),dia=iso.slic
 async function renderAtividades(){const el=document.getElementById("actFeed");if(!el)return;
  if(!SHEET_URL){el.innerHTML='<div class="mini">Disponível apenas conectado à nuvem.</div>';return;}
  const acts=await actFetch();
- if(acts===null){el.innerHTML='<div class="mini">Tabela de atividades ainda não criada — rode o SQL "criar_tabela_atividades.sql" no Supabase.</div>';return;}
+ if(acts===null){el.innerHTML='<div class="mini">Tabela de atividades ainda não criada: rode o SQL "criar_tabela_atividades.sql" no Supabase.</div>';return;}
  el.innerHTML=acts.length?acts.map(a=>'<div style="display:flex;gap:9px;padding:7px 4px;border-bottom:1px solid var(--line);font-size:12.5px"><span>🔔</span><div><b style="color:var(--green-dk)">'+esc(a.usuario)+'</b> '+esc(a.acao)+'<div style="color:var(--muted);font-size:11px">'+fmtTs(a.ts)+'</div></div></div>').join(''):'<div class="mini">Nenhuma atividade registrada ainda.</div>';}
 function syncOrder(o){if(SHEET_URL)apiPost("upsert",o);}
 function syncDelete(id){if(SHEET_URL)apiPost("delete",{id});}
@@ -1004,10 +1263,48 @@ const dBR=s=>{if(!s)return"";const p=s.split("-");return p.length===3?p[2]+"/"+p
 const esc=s=>(s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const todayISO=()=>new Date().toISOString().slice(0,10);
 
+/* ===================== CELULAR (15/10/2026) =====================
+   mbCel(): a tela está no tamanho de celular (o mesmo corte do CSS, 700 px).
+   O botão principal da aba fica no topo, compacto, ao lado do título; as
+   abas sem ação principal não mostram botão nenhum. */
+function mbCel(){try{return window.matchMedia("(max-width:700px)").matches;}catch(e){return false;}}
+var MB_ACAO={tarefas:["Nova","Nova tarefa"],atendimentos:["Novo","Novo atendimento"],calendario:["Novo","Novo atendimento"]};
+function mbTopo(v){var b=document.getElementById('topAcao');if(!b)return;var a=MB_ACAO[v];
+ b.classList.toggle('on',!!a);b.setAttribute('data-v',v||'');
+ if(a){b.innerHTML='<b aria-hidden="true">＋</b> '+a[0];b.setAttribute('aria-label',a[1]);b.title=a[1];}}
+function mbAcao(){var b=document.getElementById('topAcao'),v=b?b.getAttribute('data-v'):'';
+ if(v==='tarefas')tAbrir(null);else openForm();}
+/* girou o celular ou mudou o tamanho da janela: a lista de Pedidos troca entre
+   cartões e tabela (Tarefas é só CSS, não precisa redesenhar) */
+(function(){try{var mq=window.matchMedia("(max-width:700px)"),f=function(){
+ if(typeof state!=="undefined"&&state&&state.orders&&document.getElementById('tableView'))renderAtend();};
+ if(mq.addEventListener)mq.addEventListener('change',f);else if(mq.addListener)mq.addListener(f);}catch(e){}})();
+/* aviso no rodapé, com um botão opcional (ex.: Desfazer). Some em 6 s. */
+function mbAviso(txt,acao,fn){var el=document.getElementById('mbAviso');
+ if(!el){el=document.createElement('div');el.id='mbAviso';el.className='mb-aviso';el.setAttribute('role','status');document.body.appendChild(el);}
+ clearTimeout(el._t);el.innerHTML='<span>'+esc(txt)+'</span>'+(acao?'<button type="button">'+esc(acao)+'</button>':'');
+ if(acao)el.querySelector('button').onclick=function(){el.classList.remove('on');clearTimeout(el._t);if(fn)fn();};
+ el.classList.add('on');el._t=setTimeout(function(){el.classList.remove('on');},6000);}
+
+/* ===================== PAGAMENTO À VISTA (15/10/2026) =====================
+   O dono quer saber na hora se o pedido está pago. Conta como PAGO para
+   produzir: statusPag "Pago" ou "Sinal pago" (o sinal de 30% do WhatsApp já
+   libera a produção). Qualquer outro valor ("", "Pendente", "Estornado") é
+   NÃO PAGO. O aviso do Telegram (n8n) segue a mesma lista. */
+var PAG_OK=["Pago","Sinal pago"];
+function pagOk(o){return PAG_OK.indexOf(o&&o.statusPag)>=0;}
+function pagChip(o){var s=(o&&o.statusPag)||"",c,t;
+ if(s==="Pago"){c=PAY_COLORS["Pago"];t="✓ Pago";}
+ else if(s==="Sinal pago"){c=PAY_COLORS["Sinal pago"];t="Sinal pago · falta 70%";}
+ else if(s==="Estornado"){c=PAY_COLORS["Estornado"];t="Estornado · não pago";}
+ else{c=PAY_COLORS["Pendente"];t="Não pago";}
+ return '<span class="pag-chip'+(tClaro(c)?' claro':'')+'" style="--c:'+c+'" title="Pagamento: '+esc(s||'sem status')+'">'+t+'</span>';}
+
 document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(b.dataset.v).classList.add('active');
  const v=b.dataset.v;document.getElementById('ttl').textContent=(b.getAttribute('data-ttl')||b.textContent).trim();try{history.replaceState(null,'','#'+v);}catch(e){}document.getElementById('sub').textContent=SUBS[v];
+ mbTopo(v);
  if(v==='painel')renderPainel();if(v==='clientes')renderClientes();if(v==='produtos')renderProdutos();if(v==='caixa')renderCaixa();if(v==='sazonal')renderSazonal();if(v==='cadastros')renderCadastros();if(v==='tarefas')tarefasCarregar();if(v==='calendario')renderCalendario();if(v==='producao')renderProducao();document.body.classList.remove('menu-open');});
 function toggleMenu(){document.body.classList.toggle('menu-open');}
 function setView(m){viewMode=m;[['vbTable','table'],['vbSheet','sheet'],['vbKanban','kanban']].forEach(function(x){var b=document.getElementById(x[0]);if(b)b.classList.toggle('active',m===x[1]);});
@@ -1070,7 +1367,7 @@ function renderMensal(){const el=document.getElementById('chartMes');if(!el)retu
   return '<div class="mcol'+(m===cur?' cur':'')+'" title="'+lbl(m)+': '+BRL(v)+'"><div class="mval">'+fmtK(v)+'</div><div class="mtrack"><div class="mfill" style="height:'+h+'%"></div></div><div class="mlbl">'+lbl(m)+'</div></div>';}).join('');}
 function chart(id,data,fmt){const max=Math.max(1,...data.map(d=>d[1]));document.getElementById(id).innerHTML=data.length?data.map(d=>`<div class="bar-row"><div class="name" title="${esc(d[0])}">${esc(d[0])}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(d[1]/max*100)}%"></div></div><div class="num">${fmt(d[1])}</div></div>`).join(''):'<div class="mini">Sem dados</div>';}
 
-function fillSelect(el,arr,sel){el.innerHTML=arr.map(v=>`<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(v)||'—'}</option>`).join('');}
+function fillSelect(el,arr,sel){el.innerHTML=arr.map(v=>`<option value="${esc(v)}" ${v===sel?'selected':''}>${esc(v)||'(vazio)'}</option>`).join('');}
 function initFilters(){document.getElementById('fEstagio').innerHTML='<option value="">Todos os estágios</option>'+STAGES.map(s=>`<option>${s}</option>`).join('');
  document.getElementById('fTipo').innerHTML='<option value="">Todos os tipos</option>'+TIPOS.map(s=>`<option>${s}</option>`).join('');}
 function filtered(){const q=(document.getElementById('search').value||'').toLowerCase(),fe=document.getElementById('fEstagio').value,ft=document.getElementById('fTipo').value;
@@ -1083,6 +1380,10 @@ function clearDates(){var a=document.getElementById('fDe'),b=document.getElement
 function setResumo(rows){var el=document.getElementById('atendResumo');if(!el)return;var fat=0,sin=0;rows.forEach(function(o){var c=calc(o);fat+=c.vt;sin+=c.sinal;});var be=document.getElementById('fDateBase'),d1=(document.getElementById('fDe')||{}).value||'',d2=(document.getElementById('fAte')||{}).value||'';var per=(d1||d2)?(' · período '+(d1?dBR(d1):'…')+' a '+(d2?dBR(d2):'…')+' ('+(be&&be.value==='data'?'fechamento':'evento')+')'):'';el.textContent=rows.length+' pedidos · Faturamento '+BRL(fat)+' · Sinais '+BRL(sin)+per;}
 function renderAtend(){viewMode==='table'?renderTable():viewMode==='sheet'?renderSheet():renderKanban();updateSelBar();}
 function renderTable(){const rows=filtered();setResumo(rows);
+ const tv=document.getElementById('tableView');
+ /* no celular a tabela de 21 colunas vira lista de cartões; tocar abre o mesmo modal */
+ if(mbCel()){tv.classList.add('pc-modo');tv.innerHTML=pcCartoes(rows);updateSelBar();return;}
+ tv.classList.remove('pc-modo');
  const head=["#","Data","Cliente","WhatsApp","Cidade","Canal","Tipo","Evento","Data ev.","Produto","Qtd","V.unit","V.total","Custo prod.","Entrega R$","Margem","Mg%","Estágio","Pgto","Follow-up",""];
  let h='<table><thead><tr><th style="width:32px;text-align:center"><input type="checkbox" onclick="selAll(this.checked)" title="Selecionar todos"></th>'+head.map((x,i)=>`<th class="${i===2?'cli':''} ${[10,11,12,13,14,15,16].includes(i)?'num':''}">${x}</th>`).join('')+'</tr></thead><tbody>';
  if(!rows.length)h+='<tr><td colspan="22" style="padding:24px;text-align:center;color:#999">Nenhum atendimento aqui. Clique em “+ Novo atendimento”.</td></tr>';
@@ -1095,11 +1396,34 @@ function renderTable(){const rows=filtered();setResumo(rows);
    <td>${o.statusPag?`<span class="badge" style="--c:${PAY_COLORS[o.statusPag]||'#8a94a6'}">${esc(o.statusPag)}</span>`:''}</td>
    <td class="${od?'overdue':''}">${dBR(o.followup)}</td><td class="row-actions"><button onclick="event.stopPropagation();openForm(${o.id})">✏️</button></td></tr>`;});
  h+='</tbody></table>';document.getElementById('tableView').innerHTML=h;updateSelBar();}
-function selCell(id,key,val,arr){return '<select onchange="updCell('+id+',\''+key+'\',this.value)">'+arr.map(v=>'<option value="'+esc(v)+'"'+(v===val?' selected':'')+'>'+(esc(v)||'—')+'</option>').join('')+'</select>';}
+/* cartões de pedido no celular: mais novo primeiro (a tabela do computador
+   continua na ordem de sempre) e de 60 em 60 para o iPhone não engasgar com
+   os mais de mil pedidos */
+var pcLimite=60;
+function pcCartoes(rows){
+ if(!rows.length)return '<div class="pc-vazio">Nenhum atendimento aqui. Toque em “＋ Novo” lá em cima.</div>';
+ var hoje=todayISO(),lista=rows.slice().sort(function(a,b){return String(b.data||'').localeCompare(String(a.data||''))||(Number(b.id)-Number(a.id));});
+ var n=Math.min(lista.length,pcLimite);
+ var h=lista.slice(0,n).map(function(o){
+  var c=calc(o),col=STAGE_COLORS[o.estagio]||'#8a94a6',site=Number(o.id)>=FIN_ID_SITE&&!o.produto;
+  var ev=(o.tipoEv?'🎉 '+esc(o.tipoEv):'')+(o.dataEv?(o.tipoEv?' · ':'')+'📅 '+dBR(o.dataEv):'');
+  var prod=site?'🛒 Pedido do site (itens na Yampi)':((Number(o.qtd)||0)+' un · '+esc(o.produto||'sem produto'));
+  var fu=o.followup&&o.followup<hoje&&DONE.indexOf(o.estagio)<0;
+  return '<div class="pc-card" style="border-left-color:'+col+'" onclick="openForm('+o.id+')" role="button" tabindex="0" title="Abrir o atendimento #'+o.id+'">'
+   +'<div class="pc-l1"><span class="pc-cli">'+esc(o.cliente||'(sem nome)')+'</span><span class="pc-val">'+BRL(c.vt)+'</span></div>'
+   +'<div class="pc-meta">'+(ev||'Sem data de evento')+'</div>'
+   +'<div class="pc-meta">'+prod+'</div>'
+   +'<div class="pc-chips"><span class="badge" style="--c:'+col+'">'+esc(o.estagio||'sem estágio')+'</span>'+pagChip(o)
+   +(fu?'<span class="badge" style="--c:#b00020">🔔 follow-up '+dBR(o.followup).slice(0,5)+'</span>':'')
+   +(o.whats?'<a class="wa pc-wa" target="_blank" rel="noopener" onclick="event.stopPropagation()" href="https://wa.me/55'+String(o.whats).replace(/\D/g,'')+'">🟢 WhatsApp</a>':'')
+   +'</div></div>';}).join('');
+ if(lista.length>n)h+='<button type="button" class="btn ghost pc-mais" onclick="pcLimite+=60;renderTable()">Mostrar mais ('+(lista.length-n)+' restantes)</button>';
+ return '<div class="pc-lista">'+h+'</div>';}
+function selCell(id,key,val,arr){return '<select onchange="updCell('+id+',\''+key+'\',this.value)">'+arr.map(v=>'<option value="'+esc(v)+'"'+(v===val?' selected':'')+'>'+(esc(v)||'(vazio)')+'</option>').join('')+'</select>';}
 function inCell(id,key,val,type,w){return '<input type="'+(type||'text')+'" value="'+esc(val==null?'':val)+'" '+(w?'style="min-width:'+w+'px"':'')+' onchange="updCell('+id+',\''+key+'\',this.value)">';}
 function renderSheet(){const rows=filtered();setResumo(rows);
  const head=["#","Data","Cliente","WhatsApp","Cidade","Canal","Tipo","Evento","Data ev.","Produto","Qtd","V.unit","V.total","Sinal 30%","Margem","Estágio","Pgto","Forma","Entrega","Custo entr.","Follow-up","Obs",""];
- let h='<div style="padding:10px 12px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;background:var(--cream)"><button class="btn" onclick="quickAdd()">＋ Linha rápida</button><span class="mini">Clique em qualquer célula e edite direto — salva sozinho ao sair do campo. Dê Tab para ir para a próxima.</span></div>';
+ let h='<div style="padding:10px 12px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;background:var(--cream)"><button class="btn" onclick="quickAdd()">＋ Linha rápida</button><span class="mini">Clique em qualquer célula e edite direto: salva sozinho ao sair do campo. Dê Tab para ir para a próxima.</span></div>';
  h+='<table><thead><tr>'+head.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>';
  if(!rows.length)h+='<tr><td colspan="23" style="padding:24px;text-align:center;color:#999">Nada aqui. Clique em "＋ Linha rápida" para começar.</td></tr>';
  rows.forEach(o=>{const c=calc(o);
@@ -1200,7 +1524,7 @@ function renderFinBlocos(r,bk){const el=document.getElementById("finBlocos");if(
   +Object.keys(A.cat).filter(c=>!CUSTOS.some(x=>x[0]===c)&&A.cat[c]).map(c=>card("fr",esc(c),BRL(A.cat[c]),c==="Histórico sem detalhe"?"total do mês na planilha antiga, sem separar por categoria":var_(c))).join('')
   +'</div></div>';
  el.innerHTML=h;}
-const SAZONAL=[["02-16","Carnaval","Volta às aulas: lembrancinha escolar",false],["03-08","Dia da Mulher","Presente + oferta para empresas (RH)",false],["03-15","Dia do Consumidor","Grande data de e-commerce",false],["04-05","Páscoa","Pré-venda do Dia das Mães começa AGORA",false],["05-10","DIA DAS MÃES","PICO Nº1 — investimento máximo, agenda trava",true],["06-12","Dia dos Namorados","Presente para casal",false],["07-26","Dia dos Avós","Presente afetivo + formaturas",false],["08-09","DIA DOS PAIS","Pico médio — personalizado masculino",true],["09-01","Setembro Amarelo","Empresas e clínicas compram lembrancinhas temáticas — prospectar B2B",false],["09-15","Dia do Cliente","Fidelização + primavera (alta de plantas)",false],["09-22","Primavera","Melhor época orgânica de plantas",false],["10-01","OUTUBRO ROSA","Kits temáticos p/ empresas, clínicas e salões — B2B de margem alta o mês inteiro",true],["10-12","Dia das Crianças","Lembrancinha escolar em lote",false],["10-15","Dia dos Professores","Escolas compram em LOTE — prospectar antes",false],["11-27","BLACK FRIDAY","PICO Nº2 — kits + captação de lista",true],["12-25","NATAL","PICO Nº3 — corporativo de fim de ano (margem alta)",true]];
+const SAZONAL=[["02-16","Carnaval","Volta às aulas: lembrancinha escolar",false],["03-08","Dia da Mulher","Presente + oferta para empresas (RH)",false],["03-15","Dia do Consumidor","Grande data de e-commerce",false],["04-05","Páscoa","Pré-venda do Dia das Mães começa AGORA",false],["05-10","DIA DAS MÃES","PICO Nº1: investimento máximo, agenda trava",true],["06-12","Dia dos Namorados","Presente para casal",false],["07-26","Dia dos Avós","Presente afetivo + formaturas",false],["08-09","DIA DOS PAIS","Pico médio: personalizado masculino",true],["09-01","Setembro Amarelo","Empresas e clínicas compram lembrancinhas temáticas; prospectar B2B",false],["09-15","Dia do Cliente","Fidelização + primavera (alta de plantas)",false],["09-22","Primavera","Melhor época orgânica de plantas",false],["10-01","OUTUBRO ROSA","Kits temáticos p/ empresas, clínicas e salões: B2B de margem alta o mês inteiro",true],["10-12","Dia das Crianças","Lembrancinha escolar em lote",false],["10-15","Dia dos Professores","Escolas compram em LOTE: prospectar antes",false],["11-27","BLACK FRIDAY","PICO Nº2: kits + captação de lista",true],["12-25","NATAL","PICO Nº3: corporativo de fim de ano (margem alta)",true]];
 function mesLabel(m){const MN=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];const p=m.split("-");return MN[+p[1]-1]+"/"+p[0];}
 function cxAdd(tipo){tipo=tipo==="Entrada"?"Entrada":"Saída";const d={id:finNovoId(),data:todayISO(),tipo:tipo,categoria:tipo==="Entrada"?"Outra entrada":"Materiais",descr:"",valor:0,quem:userName(),conta:"",pedido_id:null,origem:"manual"};state.caixa.push(d);logAct("criou um lançamento no Caixa");save();syncCx(d);const sel=document.getElementById("cxMes");if(sel&&sel.value!=="tudo")sel.value=d.data.slice(0,7);renderCaixa();setTimeout(()=>{const tr=document.getElementById("cxr"+d.id);if(tr){const i=tr.querySelector("input[type=text]");if(i)i.focus();}},50);}
 function cxUpd(id,key,val){const o=state.caixa.find(x=>x.id===id);if(!o)return;if(key==="valor")val=parseFloat(String(val).replace(",","."))||0;o[key]=val;if(key==="tipo"){const l=val==="Entrada"?CX_ENTRADAS:CX_SAIDAS;if(!l.includes(o.categoria))o.categoria=val==="Entrada"?"Outra entrada":"Materiais";}logAct("editou um lançamento do Caixa ("+(o.descr||o.categoria)+")");save();syncCx(o);if(key==="data"||key==="tipo"||key==="valor")renderCaixa();}
@@ -1225,7 +1549,7 @@ function renderCaixa(){
  document.getElementById("cxKpis").innerHTML=
   '<div class="kpi g"><div class="ic">🏁</div><div class="lbl">Saldo inicial (base do caixa)</div><div class="val" style="display:flex;align-items:center;gap:4px">R$ <input type="number" step="0.01" value="'+(state.caixaBase||0)+'" onchange="cxSetBase(this.value)" style="width:120px;border:1px dashed var(--line);border-radius:8px;padding:4px 8px;font-size:18px;font-weight:800;color:var(--green-dk);background:var(--card)"></div></div>'
   +[["Entradas"+(mSel==="tudo"?"":" · "+mesLabel(mSel)),BRL(K.e),"","📥",dE],["Saídas"+(mSel==="tudo"?"":" · "+mesLabel(mSel)),BRL(K.s),"t","📤",dS],["Resultado"+(mSel==="tudo"?"":" do mês"),BRL(K.r),K.r>=0?"":"t","🧮",dR],["SALDO ATUAL (base + tudo)",BRL(saldo),saldo>=0?"g":"t","🏦",""]].map(x=>'<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div>'+(x[4]||"")+'</div>').join("");
- (function(){var sIn=0,s70=0,realizado=0,nAb=0,rMes=0,r3m=0,rMarco=0;var cm=todayISO().slice(0,7);var _d3=new Date();_d3.setUTCMonth(_d3.getUTCMonth()-2);var lim3=_d3.toISOString().slice(0,7);var marco=(state.resetMarco||"");(state.orders||[]).forEach(function(o){var c=calc(o);if(o.statusPag==="Sinal pago"){sIn+=c.sinal;s70+=c.saldo;nAb++;}else if(o.statusPag==="Pago"){realizado+=c.vt;var mk=(o.data||"").slice(0,7);if(mk===cm)rMes+=c.vt;if(mk>=lim3)r3m+=c.vt;if(marco&&(o.data||"")>=marco)rMarco+=c.vt;}});var totAb=sIn+s70;var elS=document.getElementById("cxSinais");if(elS){elS.innerHTML='<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:0 0 10px">'+'<div class="kpi g"><div class="ic">💵</div><div class="lbl">Sinais 30% já no caixa (pedidos em aberto)</div><div class="val">'+BRL(sIn)+'</div></div>'+'<div class="kpi t"><div class="ic">📥</div><div class="lbl">Falta entrar (70% desses pedidos)</div><div class="val">'+BRL(s70)+'</div></div>'+'<div class="kpi"><div class="ic">🧾</div><div class="lbl">Valor total desses pedidos (100%)</div><div class="val">'+BRL(totAb)+'</div></div>'+'<div class="kpi"><div class="ic">✅</div><div class="lbl">Já realizado · TOTAL (histórico todo)</div><div class="val">'+BRL(realizado)+'</div></div>'+'</div>'+'<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(165px,1fr));margin:0 0 8px">'+'<div class="kpi"><div class="ic">📅</div><div class="lbl">Realizado · este mês</div><div class="val">'+BRL(rMes)+'</div></div>'+'<div class="kpi"><div class="ic">📆</div><div class="lbl">Realizado · últimos 3 meses</div><div class="val">'+BRL(r3m)+'</div></div>'+'<div class="kpi '+(marco?'g':'')+'"><div class="ic">📌</div><div class="lbl">Realizado · desde o reset'+(marco?' ('+dBR(marco)+')':'')+'</div><div class="val">'+(marco?BRL(rMarco):'—')+'</div></div>'+'</div>'+'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px"><span class="mini" style="color:var(--muted)">📌 Marco do reset (início da fase atual):</span><input type="date" value="'+esc(marco)+'" onchange="setMarco(this.value)" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:13px"><span class="mini" style="color:var(--muted)">separa o histórico antigo do atual</span></div>'+'<p class="mini" style="color:var(--muted);margin:0">São '+nAb+' pedido(s) em aberto. O sinal de 30% ('+BRL(sIn)+') já está no caixa, mas é de pedido que ainda não fechou. Quando entra o 70% e você finaliza, o pedido vira 100% realizado e sai desta lista. O TOTAL inclui todo o histórico (inclusive a fase antiga em que as finanças estavam misturadas); use o mês, os 3 meses ou o marco do reset pra ver só a fase atual.</p>';}})();
+ (function(){var sIn=0,s70=0,realizado=0,nAb=0,rMes=0,r3m=0,rMarco=0;var cm=todayISO().slice(0,7);var _d3=new Date();_d3.setUTCMonth(_d3.getUTCMonth()-2);var lim3=_d3.toISOString().slice(0,7);var marco=(state.resetMarco||"");(state.orders||[]).forEach(function(o){var c=calc(o);if(o.statusPag==="Sinal pago"){sIn+=c.sinal;s70+=c.saldo;nAb++;}else if(o.statusPag==="Pago"){realizado+=c.vt;var mk=(o.data||"").slice(0,7);if(mk===cm)rMes+=c.vt;if(mk>=lim3)r3m+=c.vt;if(marco&&(o.data||"")>=marco)rMarco+=c.vt;}});var totAb=sIn+s70;var elS=document.getElementById("cxSinais");if(elS){elS.innerHTML='<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:0 0 10px">'+'<div class="kpi g"><div class="ic">💵</div><div class="lbl">Sinais 30% já no caixa (pedidos em aberto)</div><div class="val">'+BRL(sIn)+'</div></div>'+'<div class="kpi t"><div class="ic">📥</div><div class="lbl">Falta entrar (70% desses pedidos)</div><div class="val">'+BRL(s70)+'</div></div>'+'<div class="kpi"><div class="ic">🧾</div><div class="lbl">Valor total desses pedidos (100%)</div><div class="val">'+BRL(totAb)+'</div></div>'+'<div class="kpi"><div class="ic">✅</div><div class="lbl">Já realizado · TOTAL (histórico todo)</div><div class="val">'+BRL(realizado)+'</div></div>'+'</div>'+'<div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(165px,1fr));margin:0 0 8px">'+'<div class="kpi"><div class="ic">📅</div><div class="lbl">Realizado · este mês</div><div class="val">'+BRL(rMes)+'</div></div>'+'<div class="kpi"><div class="ic">📆</div><div class="lbl">Realizado · últimos 3 meses</div><div class="val">'+BRL(r3m)+'</div></div>'+'<div class="kpi '+(marco?'g':'')+'"><div class="ic">📌</div><div class="lbl">Realizado · desde o reset'+(marco?' ('+dBR(marco)+')':'')+'</div><div class="val">'+(marco?BRL(rMarco):'·')+'</div></div>'+'</div>'+'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px"><span class="mini" style="color:var(--muted)">📌 Marco do reset (início da fase atual):</span><input type="date" value="'+esc(marco)+'" onchange="setMarco(this.value)" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:13px"><span class="mini" style="color:var(--muted)">separa o histórico antigo do atual</span></div>'+'<p class="mini" style="color:var(--muted);margin:0">São '+nAb+' pedido(s) em aberto. O sinal de 30% ('+BRL(sIn)+') já está no caixa, mas é de pedido que ainda não fechou. Quando entra o 70% e você finaliza, o pedido vira 100% realizado e sai desta lista. O TOTAL inclui todo o histórico (inclusive a fase antiga em que as finanças estavam misturadas); use o mês, os 3 meses ou o marco do reset pra ver só a fase atual.</p>';}})();
  const opts=(lista,val)=>((lista.includes(val)||!val)?lista:[val].concat(lista)).map(c=>'<option'+(c===val?' selected':'')+'>'+esc(c)+'</option>').join('');
  const pedLink=o=>{if(!o.pedido_id)return'<span style="color:var(--muted)">·</span>';const pid=Number(o.pedido_id),n=pid>=FIN_ID_SITE?'site':'#'+pid;return (state.orders||[]).some(x=>Number(x.id)===pid)?'<a href="#" onclick="openForm('+pid+');return false">'+n+'</a>':n;};
  let h='<table><thead><tr><th>Data</th><th>Tipo</th><th>Categoria</th><th>Descrição</th><th>Valor (R$)</th><th>Conta</th><th>Pedido</th><th>Quem</th><th></th></tr></thead><tbody>';
@@ -1246,10 +1570,10 @@ function renderCaixa(){
  const byM={};cx.forEach(o=>{const m=(o.data||"").slice(0,7);if(!m)return;byM[m]=byM[m]||{e:0,s:0};const v=Number(o.valor)||0;o.tipo==="Entrada"?byM[m].e+=v:byM[m].s+=v;});
  const mk=Object.keys(byM).sort();let acc=state.caixaBase||0;
  let mh='<table><thead><tr><th>Mês</th><th class="num">Entradas</th><th class="num">Saídas</th><th class="num">Resultado</th><th class="num">vs mês anterior</th><th class="num">Saldo do caixa</th></tr></thead><tbody>';
- mh+='<tr style="background:var(--cream)"><td><b>🏁 Saldo inicial</b></td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num"><b>'+BRL(state.caixaBase||0)+'</b></td></tr>';
+ mh+='<tr style="background:var(--cream)"><td><b>🏁 Saldo inicial</b></td><td class="num">·</td><td class="num">·</td><td class="num">·</td><td class="num">·</td><td class="num"><b>'+BRL(state.caixaBase||0)+'</b></td></tr>';
  let prevR=null;
  mk.forEach(m=>{const r=byM[m].e-byM[m].s;acc+=r;
-  const cmp=prevR===null?"—":(r>=prevR?'<span style="color:var(--good);font-weight:700">▲ '+BRL(r-prevR)+'</span>':'<span style="color:var(--danger);font-weight:700">▼ '+BRL(r-prevR)+'</span>');
+  const cmp=prevR===null?"·":(r>=prevR?'<span style="color:var(--good);font-weight:700">▲ '+BRL(r-prevR)+'</span>':'<span style="color:var(--danger);font-weight:700">▼ '+BRL(r-prevR)+'</span>');
   mh+='<tr'+(m===curM?' style="background:var(--hover);font-weight:700"':'')+'><td>'+mesLabel(m)+'</td><td class="num">'+BRL(byM[m].e)+'</td><td class="num">'+BRL(byM[m].s)+'</td><td class="num" style="color:'+(r>=0?"#2e7d46":"#b00020")+'">'+BRL(r)+'</td><td class="num">'+cmp+'</td><td class="num">'+BRL(acc)+'</td></tr>';
   prevR=r;});
  mh+='</tbody></table>';document.getElementById("cxMeses").innerHTML=mh;}
@@ -1361,7 +1685,7 @@ function calListaDia(){
  if(!calDiaSel){t.textContent='Clique num dia';l.innerHTML='<div class="mini">Nenhum dia selecionado.</div>';return;}
  var list=calFiltered().filter(function(o){return o.dataEv===calDiaSel;});
  var tot=list.reduce(function(s,o){return s+calc(o).vt;},0);
- t.textContent='📌 '+dBR(calDiaSel)+' — '+list.length+' pedido(s) · '+BRL(tot);
+ t.textContent='📌 '+dBR(calDiaSel)+' · '+list.length+' pedido(s) · '+BRL(tot);
  l.innerHTML=list.length?list.map(function(o){return calItem(o,false);}).join(''):'<div class="mini">Nenhum evento neste dia.</div>';}
 
 function renderCalendario(){
@@ -1429,7 +1753,7 @@ function renderCalendario(){
   :'<div class="mini">Nenhum pedido em aberto sem data de evento. 👏</div>';
 }
 
-/* mover a data do evento — espelho do moveStage: muta, logAct, save, syncOrder, re-render */
+/* mover a data do evento: espelho do moveStage: muta, logAct, save, syncOrder, re-render */
 function moveData(id,dia){
  var o=state.orders.find(function(x){return x.id===id;});if(!o)return;
  if(o.dataEv===dia)return;
@@ -1500,6 +1824,8 @@ function pdPostarAte(o){var a=pdArte(o);return a?pdSomaUteis(a,PROD_POSTAR_DU):"
 /* chega até: postagem (ou hoje, se já atrasou) + 5 dias úteis dos Correios.
    Sem arte aprovada, conta como se a arte fosse aprovada hoje. */
 function pdChegaAte(o,hoje){var pa=pdPostarAte(o)||pdSomaUteis(hoje,PROD_POSTAR_DU);if(pa<hoje)pa=hoje;return pdSomaUteis(pa,PROD_CORREIOS_DU);}
+/* entra na aba, mas pedido sem pagamento (ver pagOk) vai para o grupo do topo
+   "Aguardando pagamento: não produzir", não conta para postar e não avança */
 function pdEntra(o){
  if(!o||o.postado_em)return false;
  if(DONE.indexOf(o.estagio)>=0)return false;
@@ -1511,6 +1837,7 @@ function pdAtiva(){var s=document.getElementById('producao');return !!(s&&s.clas
 function pdPedido(id){return (state.orders||[]).find(function(x){return x.id===id;});}
 
 function pdGrupoDe(o,hoje,prox,fimSem){
+ if(!pagOk(o))return "pag";   // sem pagamento: não produzir (vem antes de tudo)
  var pa=pdPostarAte(o);
  /* sem arte e com o evento já no passado: quase sempre pedido antigo que ninguém marcou como Entregue
     (eram 109 de 194 em 15/10/2026). Vai para um grupo próprio, recolhido, para não afogar o resto. */
@@ -1528,7 +1855,8 @@ function pdMeta(o){
  return oq+(site?'🛒 Pedido do site (itens na Yampi)':esc(o.produto||'sem produto'))+(o.tipoEv?' · '+esc(o.tipoEv):'');}
 function pdCartao(o,hoje){
  var et=pdEtapa(o),cor=PROD_COR[et],pa=pdPostarAte(o),i=PROD_ETAPAS.indexOf(et),prox=PROD_ETAPAS[i+1];
- var pode=pdPodeGravar(),dis=pode?'':' disabled title="Falta rodar o schema_producao.sql no Supabase"';
+ var pago=pagOk(o);
+ var pode=pdPodeGravar()&&pago,dis=pode?'':(pago?' disabled title="Falta rodar o schema_producao.sql no Supabase"':' disabled title="Confirme o pagamento no pedido"');
  var meta=pdMeta(o);
  var datas='';
  if(pa){var d=calDias(pa),cls=pa<hoje?' late':(pa===hoje?' hoje':'');
@@ -1543,18 +1871,19 @@ function pdCartao(o,hoje){
   pl='<div class="mini">📋 Planilha: '+esc(p.status||'sem status')+' · Arte '+sn(p.arte)+' · Tag '+sn(p.tag)+'</div>';}
  var wa=o.whats?' <a class="wa" target="_blank" rel="noopener" href="https://wa.me/55'+String(o.whats).replace(/\D/g,'')+'">🟢 WhatsApp</a>':'';
  var botao=prox
-  ?'<button type="button" class="btn pd-avancar" onclick="pdAvancar('+o.id+')"'+dis+'>Avançar ▸ '+esc(prox)+'</button>'
-  :'<button type="button" class="btn pd-avancar" onclick="pdIrPara('+o.id+',&#39;Postado&#39;)"'+dis+'>Confirmar postagem</button>';
+  ?'<button type="button" class="btn pd-avancar" onclick="pdAvancar('+o.id+')"'+dis+'>'+(pago?'':'🔒 ')+'Avançar ▸ '+esc(prox)+'</button>'
+  :'<button type="button" class="btn pd-avancar" onclick="pdIrPara('+o.id+',&#39;Postado&#39;)"'+dis+'>'+(pago?'':'🔒 ')+'Confirmar postagem</button>';
+ var trava=pago?'':'<div class="pd-trava">🔒 Não produzir: confirme o pagamento no pedido (toque no nome do cliente).</div>';
  var menu='<select class="pd-menu" onchange="pdIrPara('+o.id+',this.value);this.value=&#39;&#39;"'+(pode?'':' disabled')+' aria-label="Voltar ou mudar a etapa">'
-  +'<option value="">↩ Voltar / mudar</option>'
+  +'<option value="">↩ Mudar etapa</option>'
   +PROD_ETAPAS.filter(function(x){return x!==et;}).map(function(x){return '<option value="'+esc(x)+'">'+(PROD_ETAPAS.indexOf(x)<i?'↩ ':'')+esc(x)+'</option>';}).join('')
   +'</select>';
  return '<div class="pd-card" style="border-left-color:'+cor+'">'
   +'<div class="pd-top"><button type="button" class="pd-cli" onclick="openForm('+o.id+')" title="Abrir o atendimento #'+o.id+'">'+esc(o.cliente||'(sem nome)')+'</button>'
   +'<span class="badge" style="--c:'+cor+'">'+esc(et)+'</span></div>'
   +'<div class="pd-meta">'+meta+wa+'</div>'
-  +'<div class="pd-datas">'+datas+'</div>'
-  +alerta+arte+pl
+  +'<div class="pd-datas">'+pagChip(o)+datas+'</div>'
+  +alerta+arte+pl+trava
   +'<div class="pd-acoes">'+botao+menu+'</div>'
   +'</div>';}
 
@@ -1563,6 +1892,7 @@ function pdCartaoPostado(o){
   +'<div class="pd-top"><button type="button" class="pd-cli" onclick="openForm('+o.id+')">'+esc(o.cliente||'(sem nome)')+'</button>'
   +'<span class="badge" style="--c:'+PROD_COR.Postado+'">Postado '+esc(pdDiaSem(o.postado_em))+'</span></div>'
   +'<div class="pd-meta">'+pdMeta(o)+'</div>'
+  +'<div class="pd-datas">'+pagChip(o)+'</div>'
   +'<div class="pd-acoes"><button type="button" class="pd-desfazer" onclick="pdDesfazerPostado('+o.id+')"'+(pdPodeGravar()?'':' disabled')+'>↩ Desfazer a postagem</button></div>'
   +'</div>';}
 
@@ -1573,7 +1903,7 @@ function renderProducao(){
  var hoje=calHojeISO(),amanha=pdSomaDias(hoje,1),prox=pdSomaUteis(hoje,1),fimSem=pdFimSemana(hoje);
  var todos=state.orders.filter(pdEntra);
  /* badge da barra lateral: atrasados + postar hoje */
- var nUrg=todos.filter(function(o){var pa=pdPostarAte(o);return pa&&pa<=hoje;}).length;
+ var nUrg=todos.filter(function(o){var pa=pdPostarAte(o);return pagOk(o)&&pa&&pa<=hoje;}).length;   // sem pagamento não conta
  var bd=document.getElementById('pdBadge');if(bd){bd.textContent=nUrg?String(nUrg):'';bd.style.display=nUrg?'':'none';}
  var box=document.getElementById('pdLista');if(!box)return;
 
@@ -1597,7 +1927,7 @@ function renderProducao(){
   if(q){var b=((o.cliente||'')+' '+(o.produto||'')+' '+(o.descr||'')+' '+(o.tipoEv||'')+' '+(o.cidade||'')).toLowerCase();if(b.indexOf(q)<0)return false;}
   return true;});
 
- var G={atras:[],hoje:[],amanha:[],semana:[],depois:[],arte:[],passou:[]};
+ var G={pag:[],atras:[],hoje:[],amanha:[],semana:[],depois:[],arte:[],passou:[]};
  vis.forEach(function(o){G[pdGrupoDe(o,hoje,prox,fimSem)].push(o);});
  var porData=function(a,b){var x=pdPostarAte(a),y=pdPostarAte(b);if(x!==y)return x<y?-1:1;
   var ea=pdEv(a)||'9999',eb=pdEv(b)||'9999';if(ea!==eb)return ea<eb?-1:1;return a.id-b.id;};
@@ -1610,7 +1940,7 @@ function renderProducao(){
  document.getElementById('pdKpis').innerHTML=k.map(function(x){
   return '<div class="kpi '+x[2]+'"><div class="ic">'+x[3]+'</div><div class="lbl">'+x[0]+'</div><div class="val">'+x[1]+'</div></div>';}).join('');
 
- var grupos=[["atras","Atrasados","#b00020"],["hoje","Postar hoje","#c2693f"],["amanha",lblAmanha,"#d99a2b"],
+ var grupos=[["pag","Aguardando pagamento: não produzir",PAY_COLORS["Pendente"]],["atras","Atrasados","#b00020"],["hoje","Postar hoje","#c2693f"],["amanha",lblAmanha,"#d99a2b"],
              ["semana","Esta semana","#3b82c4"],["depois","Depois","#6aa17a"],["arte","Aguardando arte","#8a94a6"],
              ["passou","Evento já passou, sem arte","#7a8676"]];
  var h=grupos.filter(function(g){return G[g[0]].length;}).map(function(g){
@@ -1619,7 +1949,8 @@ function renderProducao(){
    +'<div class="cu-ghead" onclick="pdToggle(&#39;'+g[0]+'&#39;)"><span class="cu-caret">▼</span>'
    +'<span class="cu-status" style="background:'+g[2]+';color:'+tTextoSobre(g[2])+'">'+esc(g[1])+'</span>'
    +'<span class="cu-gcount">'+lista.length+'</span></div>'
-   +(g[0]==='passou'?'<div class="pd-grid"><div class="mini" style="grid-column:1/-1;line-height:1.5">Pedidos sem arte aprovada cujo evento já passou. Se já foram entregues, abra "↩ Voltar / mudar" e escolha Postado: o pedido vai para Entregue e sai daqui.</div></div>':'')
+   +(g[0]==='pag'?'<div class="pd-grid"><div class="mini" style="grid-column:1/-1;line-height:1.5;font-size:13px">Pedido fechado sem pagamento confirmado: não produza. Quando o pagamento entrar, abra o pedido e marque <b>Pago</b> ou <b>Sinal pago</b>; ele sai daqui sozinho.</div></div>':'')
+   +(g[0]==='passou'?'<div class="pd-grid"><div class="mini" style="grid-column:1/-1;line-height:1.5">Pedidos sem arte aprovada cujo evento já passou. Se já foram entregues, abra "↩ Mudar etapa" e escolha Postado: o pedido vai para Entregue e sai daqui.</div></div>':'')
    +'<div class="pd-grid">'+lista.map(function(o){return pdCartao(o,hoje);}).join('')+'</div></div>';}).join('');
  if(!h)h='<div class="pd-vazio">'+(q||fResp?'Nenhum pedido com esse filtro.':'Nenhum pedido para produzir agora. Pedido fechado ou pago aparece aqui sozinho. 👏')+'</div>';
 
@@ -1651,6 +1982,7 @@ function pdAplicar(o,et){
 function pdIrPara(id,et){
  if(!et)return;if(!pdPodeGravar()){pdSemColuna();return;}
  var o=pdPedido(id);if(!o||PROD_ETAPAS.indexOf(et)<0||pdEtapa(o)===et&&et!=="Postado")return;
+ if(!pagOk(o)){alert("Este pedido ainda não está pago. Confirme o pagamento no pedido (Pago ou Sinal pago) antes de produzir.");renderProducao();return;}
  if(et==="Postado"&&!confirm('Marcar '+(o.cliente||'#'+id)+' como POSTADO hoje?\nO pedido sai da Produção e vai para "Entregue".'))return;
  pdAplicar(o,et);pdGravar(o,'produção: marcou "'+et+'"');}
 function pdAvancar(id){var o=pdPedido(id);if(!o)return;var i=PROD_ETAPAS.indexOf(pdEtapa(o));pdIrPara(id,PROD_ETAPAS[Math.min(i+1,PROD_ETAPAS.length-1)]);}
@@ -1692,7 +2024,7 @@ window.addEventListener('hashchange',function(){if(typeof state!=="undefined"&&s
 function openForm(id){currentId=id||null;
  fillSelect(f_canal,CANAIS);fillSelect(f_tipo,TIPOS);fillSelect(f_evento,EVENTOS);fillSelect(f_produto,PRODUTOS);fillSelect(f_estagio,STAGES);fillSelect(f_statuspag,PAGSTATUS);fillSelect(f_formapag,PAGFORMA);fillSelect(f_entrega,ENTREGA);
  const o=id?state.orders.find(x=>x.id===id):null,g=(k,d='')=>o?o[k]:d;
- document.getElementById('mTitle').textContent=o?('Atendimento #'+o.id+' — '+o.cliente):'Novo atendimento';document.getElementById('delBtn').style.display=o?'':'none';
+ document.getElementById('mTitle').textContent=o?('Atendimento #'+o.id+' · '+o.cliente):'Novo atendimento';document.getElementById('delBtn').style.display=o?'':'none';
  f_data.value=g('data',todayISO());f_cliente.value=g('cliente');f_whats.value=g('whats');f_cidade.value=g('cidade');f_canal.value=g('canal','Indicação');f_tipo.value=g('tipoCli','Evento');f_evento.value=g('tipoEv','');f_dataEv.value=g('dataEv');
  f_produto.value=g('produto',PRODUTOS[0]);f_qtd.value=g('qtd',0);f_descr.value=g('descr');f_valor.value=o?o.valorUnit:state.precos[PRODUTOS[0]];f_estagio.value=g('estagio','Lead novo');f_statuspag.value=g('statusPag','');f_formapag.value=g('formaPag','');f_entrega.value=g('entrega','');f_custoent.value=g('custoEntrega',0);f_followup.value=g('followup');f_obs.value=g('obs');
  const _pl=document.getElementById('f_planilha');if(_pl)_pl.innerHTML=o?plInfo(o):'';
@@ -1720,9 +2052,9 @@ function renderClientes(){const q=(document.getElementById('searchCli').value||'
  document.querySelectorAll('#clientesView [data-cli]').forEach(el=>el.addEventListener('change',()=>{const cli=el.dataset.cli,k=el.dataset.k;state.clientsMeta[cli]=state.clientsMeta[cli]||{};state.clientsMeta[cli][k]=el.value;save();syncConfig();}));}
 
 function renderProdutos(){if(!state.fixos)state.fixos=defaultData().fixos;const f=state.fixos;const i=state.insumos;
- const ins=[["planta","Planta","un"],["rotulo","Rótulo / Tag","un"],["pedraSaco","Pedra (saco 20 kg)","saco"],["pedraGramas","Pedra — gramas por unidade","g"],["cachepo","Cachepô de juta","un"],["embalagem","Embalagem / caixa","un"],["cola","Cola","un"],["palitoPacote","Palitinho (pacote 500 un)","pacote"],["maodeobra","Mão de obra por unidade","un"]];
+ const ins=[["planta","Planta","un"],["rotulo","Rótulo / Tag","un"],["pedraSaco","Pedra (saco 20 kg)","saco"],["pedraGramas","Pedra: gramas por unidade","g"],["cachepo","Cachepô de juta","un"],["embalagem","Embalagem / caixa","un"],["cola","Cola","un"],["palitoPacote","Palitinho (pacote 500 un)","pacote"],["maodeobra","Mão de obra por unidade","un"]];
  let h='<table class="itable"><thead><tr><th>Insumo</th><th>Valor</th><th>Unid.</th><th class="num">Custo/un</th></tr></thead><tbody>';
- ins.forEach(([k,nm,u])=>{const cu=k==='pedraSaco'?pedraUnit():(k==='palitoPacote'?palitoUnit():(k==='pedraGramas'?null:i[k]));h+=`<tr><td>${nm}</td><td><input type="number" step="0.01" value="${i[k]}" data-ins="${k}"></td><td>${u}</td><td class="num">${k==='pedraGramas'?'—':BRL(cu)}</td></tr>`;});
+ ins.forEach(([k,nm,u])=>{const cu=k==='pedraSaco'?pedraUnit():(k==='palitoPacote'?palitoUnit():(k==='pedraGramas'?null:i[k]));h+=`<tr><td>${nm}</td><td><input type="number" step="0.01" value="${i[k]}" data-ins="${k}"></td><td>${u}</td><td class="num">${k==='pedraGramas'?'·':BRL(cu)}</td></tr>`;});
  h+='</tbody></table>';
  h+='<div style="margin-top:16px;font-weight:700;color:var(--titulo);font-family:Georgia,serif">Custos fixos / operação</div>';
  h+='<table class="itable" style="margin-top:8px"><thead><tr><th>Item</th><th>Valor</th><th>Período</th><th class="num">Por mês (≈)</th></tr></thead><tbody>';
@@ -1816,7 +2148,7 @@ async function sbFetch(path,opts){
 }
 
 async function gate(){_sess=loadSess();if(_sess&&_sess.refresh_token&&await refreshToken()){SHEET_URL=SUPA_URL;agendarRenovacao();var _n=userName();if(!_n||_n==="Equipe")_n=(_sess.email&&_sess.email.split("@")[0])||"";afterAuth(_n);return;}showLogin();}
-/* ===================== TAREFAS — no formato do ClickUp =====================
+/* ===================== TAREFAS: no formato do ClickUp =====================
    Estudei o ClickUp real do Luan (workspace SPRINTS MARKETING, lista
    "Sprint 20") pela API antes de escrever isto. O que copiei de la:
 
@@ -2008,14 +2340,18 @@ function tRenderResumo(vis){
  var comDono=vis.filter(function(t){return !!t.responsavel;}).length;
  var pct=vis.length?Math.round(comDono*100/vis.length):0;
  var atras=abertas.filter(function(t){return t.prazo&&t.prazo<todayISO();}).length;
- function card(cor,ic,titulo,sub){
+ /* .cu-mob: no celular o cartão vira só número grande + rótulo curto */
+ function card(cor,ic,titulo,sub,num,rot,corNum){
   return '<div class="cu-card"><span class="ic" style="background:'+cor+'22;color:'+cor+'">'+ic+'</span>'
-   +'<div><b>'+titulo+'</b><span>'+sub+'</span></div></div>';
+   +'<div><b>'+titulo+'</b><span>'+sub+'</span></div>'
+   +'<div class="cu-mob"><strong'+(corNum?' style="color:'+corNum+'"':'')+'>'+num+'</strong><em>'+rot+'</em></div></div>';
  }
  el.innerHTML =
-   card("#008844","✓","Lista de pendências",vis.length+(vis.length===1?" tarefa":" tarefas")+" · "+abertas.length+" em aberto")
-  +card("#3e63dd","👤","Atribuído",pct+"% com responsável")
-  +card(atras?"#f50000":"#8d8d8d",atras?"⚠":"✓","Prazo",atras?(atras+(atras===1?" atrasada":" atrasadas")):"nada atrasado");
+   card("#008844","✓","Lista de pendências",vis.length+(vis.length===1?" tarefa":" tarefas")+" · "+abertas.length+" em aberto",
+        abertas.length,"em aberto de "+vis.length,"")
+  +card("#3e63dd","👤","Atribuído",pct+"% com responsável",pct+"%","com responsável","")
+  +card(atras?"#f50000":"#8d8d8d",atras?"⚠":"✓","Prazo",atras?(atras+(atras===1?" atrasada":" atrasadas")):"nada atrasado",
+        atras,atras===1?"atrasada":"atrasadas",atras?"var(--danger)":"");
 }
 
 /* ---------- LISTA agrupada por etapa (a visao principal) ---------- */
@@ -2059,7 +2395,11 @@ function tLinha(t,et){
   +' ondrop="event.stopPropagation();tDrop(event,\''+esc(et)+'\','+t.id+')"'
   +' onclick="tAbrir('+t.id+')">'
   +'<span class="cu-nome">'
-    +'<i class="cu-dot'+(feito?' cheio':'')+'" style="color:'+c+'"></i>'
+    /* no celular o círculo é o botão de concluir (alvo de 44 px); no computador
+       o CSS deixa o clique passar e a linha abre a tarefa, como sempre */
+    +'<button type="button" class="cu-chk" tabindex="-1" onclick="event.stopPropagation();tConcluir('+t.id+')"'
+    +' aria-label="'+(feito?'Reabrir a tarefa':'Concluir a tarefa')+'">'
+    +'<i class="cu-dot'+(feito?' cheio':'')+'" style="color:'+c+'"></i></button>'
     +'<span class="cu-tt">'+esc(t.titulo||'(sem título)')+'</span>'
     +(marcas?'<span class="cu-marcas">'+marcas+'</span>':'')
     +(tags.length?'<span class="cu-tags">'+tags.slice(0,3).map(function(g){
@@ -2069,9 +2409,44 @@ function tLinha(t,et){
   +'<span class="cu-avs">'+(tResps(t).length
      ?tResps(t).map(function(p){return '<i class="cu-av" style="background:'+tCorPessoa(p)+'" title="'+esc(p)+'">'+esc(tIniciais(p))+'</i>';}).join('')
      :'<i class="cu-av vazio" title="sem responsável">+</i>')+'</span>'
-  +'<span class="cu-due '+(feito?'':d.cls)+'">'+(d.txt?esc(d.txt):'—')+'</span>'
+  +'<span class="cu-due '+(feito?'':d.cls)+'">'+(d.txt?esc(d.txt):'·')+'</span>'
   +'<span class="cu-prio">'+tBandeira(urg)+esc(tUrgLbl(urg))+'</span>'
+  +tChipsCel(t,feito,d,urg,tags,nAnex,nCom)
   +'</div>';
+}
+/* linha 2 da tarefa no celular: chips pequenos, alinhados à esquerda e quebrando
+   linha. Prazo (vermelho se passou), prioridade (Normal é o padrão e não ocupa
+   espaço), etiquetas, responsáveis em bolinhas sobrepostas, anexo e comentário. */
+function tChipsCel(t,feito,d,urg,tags,nAnex,nCom){
+ var h='';
+ if(d.txt)h+='<span class="mc'+(feito||d.cls==='vazio'?'':(d.cls?' '+d.cls:''))+'">📅 '+esc(d.txt)+'</span>';
+ if(urg!=='media')h+='<span class="mc">'+tBandeira(urg)+esc(tUrgLbl(urg))+'</span>';
+ tags.slice(0,3).forEach(function(g){var tc=tCorTag(g);h+='<span class="mc" style="background:'+tc+'22;color:'+tc+'">'+esc(g)+'</span>';});
+ if(tags.length>3)h+='<span class="mc">+'+(tags.length-3)+'</span>';
+ var rs=tResps(t);
+ if(rs.length)h+='<span class="mc-avs">'+rs.map(function(p){return '<i class="cu-av" style="background:'+tCorPessoa(p)+'" title="'+esc(p)+'">'+esc(tIniciais(p))+'</i>';}).join('')+'</span>';
+ if(nAnex)h+='<span class="mc" title="'+nAnex+' anexo(s)">📎 '+nAnex+'</span>';
+ if(nCom)h+='<span class="mc" title="'+nCom+' comentário(s)">💬 '+nCom+'</span>';
+ return '<span class="cu-chips-m">'+h+'</span>';
+}
+
+/* concluir pelo círculo (celular). Leva a tarefa para o fim de "Feito" e mostra
+   "Desfazer" por 6 s. Tocar no círculo de uma tarefa feita reabre ela na etapa
+   em que estava (ou em "A fazer"). */
+function tConcluir(id){
+ var t=tarefas.find(function(x){return x.id===id;});if(!t)return;
+ var de=t.etapa||T_ETAPAS[0],posDe=t.pos,concDe=t.concluido_em||null,antesDe=t._antes||null;
+ var para=(de==="Feito")?((t._antes&&t._antes!=="Feito")?t._antes:T_ETAPAS[0]):"Feito";
+ var naPara=tarefas.filter(function(x){return x.id!==id&&(x.etapa||T_ETAPAS[0])===para;}).sort(function(a,b){return (a.pos||0)-(b.pos||0);});
+ t._antes=(para==="Feito")?de:null;
+ t.etapa=para;t.pos=tEntre(naPara.length?naPara[naPara.length-1].pos:null,null);
+ t.concluido_em=(para==="Feito")?new Date().toISOString():null;
+ renderTarefas();setSave("saving");
+ var nome=(t.titulo||'').slice(0,60);
+ tSync(tPick(t)).then(function(ok){if(ok&&typeof logAct==='function')logAct((para==="Feito"?'concluiu':'reabriu')+' a tarefa "'+nome+'"');});
+ mbAviso(para==="Feito"?'✓ Tarefa concluída':'Tarefa reaberta em '+para,'Desfazer',function(){
+  t.etapa=de;t.pos=posDe;t.concluido_em=concDe;t._antes=antesDe;renderTarefas();setSave("saving");
+  tSync(tPick(t)).then(function(ok){if(ok&&typeof logAct==='function')logAct('desfez: a tarefa "'+nome+'" voltou para '+de);});});
 }
 
 /* criar tarefa na propria linha, sem abrir modal - e o jeito do ClickUp e
@@ -2079,7 +2454,7 @@ function tLinha(t,et){
 function tNovaInline(et){
  var box=document.getElementById('novo_'+tSlug(et));if(!box)return;
  if(box.querySelector('input')){box.querySelector('input').focus();return;}
- box.innerHTML='<div class="cu-novo"><input type="text" placeholder="Nome da tarefa e Enter" '
+ box.innerHTML='<div class="cu-novo"><input type="text" enterkeyhint="done" placeholder="Nome da tarefa e Enter" '
   +'onkeydown="tNovaInlineTecla(event,\''+esc(et)+'\')" onblur="tNovaInlineFecha(this,\''+esc(et)+'\')">'
   +'<span style="font-size:11px;color:var(--muted)">Enter salva · Esc cancela</span></div>';
  box.querySelector('input').focus();
@@ -2310,13 +2685,13 @@ async function tEnviarArquivos(files){
   return;
  }
  if(!tTemAnexos){
-  tUpStat("O banco ainda não tem a coluna de anexos — rode o schema_tarefas_v2.sql no Supabase.",true);
+  tUpStat("O banco ainda não tem a coluna de anexos: rode o schema_tarefas_v2.sql no Supabase.",true);
   return;
  }
  var pasta=tPasta();
  for(var i=0;i<files.length;i++){
   var f=files[i];
-  if(f.size>50*1024*1024){tUpStat('"'+f.name+'" tem '+tTamanho(f.size)+' — o limite é 50 MB.',true);continue;}
+  if(f.size>50*1024*1024){tUpStat('"'+f.name+'" tem '+tTamanho(f.size)+'; o limite é 50 MB.',true);continue;}
   tUpStat("Enviando "+(i+1)+" de "+files.length+"... ("+tTamanho(f.size)+")");
   var nome=tNomeSeguro(f.name||("colado-"+(tTipoDe(f.type,"")==="video"?"video.mp4":"print.png")));
   var caminho=pasta+"/"+Date.now()+"-"+i+"-"+nome;
@@ -2468,7 +2843,7 @@ function tComTecla(ev){
 async function tCarregarComentarios(id){
  var el=document.getElementById('tComsBox');if(!el)return;
  tComentarios=[];
- if(!id){el.innerHTML='<div class="tcomvazio">Salve a tarefa primeiro — aí o comentário tem onde ficar.</div>';return;}
+ if(!id){el.innerHTML='<div class="tcomvazio">Salve a tarefa primeiro: aí o comentário tem onde ficar.</div>';return;}
  if(!SHEET_URL){el.innerHTML='<div class="tcomvazio">Comentário precisa da nuvem (entre com e-mail e senha).</div>';return;}
  el.innerHTML='<div class="tcomvazio">Carregando...</div>';
  try{
@@ -2476,7 +2851,7 @@ async function tCarregarComentarios(id){
   if(!r.ok)throw new Error("HTTP "+r.status+" "+(await r.text()).slice(0,120));
   tComentarios=await r.json();
  }catch(e){
-  el.innerHTML='<div class="tcomvazio" style="color:var(--danger)">Não consegui carregar os comentários.<br><span style="color:var(--muted)">'+esc(String(e.message||e))+'</span><br>Se aparecer <b>401</b>, sua sessão venceu — recarregue a página (Ctrl+R). Se aparecer <b>404</b>, rode o <b>schema_tarefas_v2.sql</b> no Supabase.</div>';
+  el.innerHTML='<div class="tcomvazio" style="color:var(--danger)">Não consegui carregar os comentários.<br><span style="color:var(--muted)">'+esc(String(e.message||e))+'</span><br>Se aparecer <b>401</b>, sua sessão venceu: recarregue a página (Ctrl+R). Se aparecer <b>404</b>, rode o <b>schema_tarefas_v2.sql</b> no Supabase.</div>';
   return;
  }
  tRenderComentarios();
@@ -2676,6 +3051,9 @@ function aplicarTema(t){
  var b2=document.getElementById("btnTemaTop");
  if(b2){b2.textContent=escuro?"☀️ Claro":"🌙 Escuro";
         b2.title=escuro?"Voltar para o tema claro":"Mudar para o tema escuro";}
+ /* a barra de status do celular (Android e app instalado) acompanha o tema */
+ var tc=document.querySelector('meta[name="theme-color"]');
+ if(tc)tc.setAttribute("content",escuro?"#121814":"#14532D");
  /* as cores das etapas trocam junto com o tema, entao o quadro repinta */
  if(typeof renderTarefas==='function'&&document.getElementById('tBoard'))renderTarefas();
 }
