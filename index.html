@@ -101,6 +101,10 @@ svg.i.pp{width:16px;height:16px}
 .so-leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 ::-webkit-scrollbar{height:10px;width:10px}::-webkit-scrollbar-thumb{background:var(--linha-forte);border-radius:8px}
 :focus-visible{outline:2px solid var(--tx);outline-offset:2px}
+/* controle transparente por cima do chip, pílula ou ordem: o anel aparece no desenho visível (revisão 1) */
+.toq:has(:focus-visible)>.chip,.toq:has(:focus-visible)>.chip-st,.pilula:has(:focus-visible)>span,.ordem-pil:has(:focus-visible),
+.cx-data:has(:focus-visible),html.kb .busca:focus-within{outline:2px solid var(--tx);outline-offset:2px}
+.titulo-campo:focus-visible{border-color:var(--tx);outline:0}
 
 /* tipografia */
 .t-tela{font-size:26px;line-height:32px;font-weight:700;letter-spacing:-.4px}
@@ -309,7 +313,7 @@ button.prog:active i{transform:scale(.88)}
 
 /* propriedades (detalhe estilo Notion): o valor é o próprio campo, alinhado como texto */
 .props{background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);overflow:hidden;margin:8px 0 20px}
-.prop{position:relative;display:grid;grid-template-columns:42% minmax(0,1fr);align-items:center;min-height:48px;padding:2px 12px;width:100%;text-align:left}
+.prop{position:relative;display:grid;grid-template-columns:42% minmax(0,1fr);column-gap:12px;align-items:center;min-height:48px;padding:2px 12px;width:100%;text-align:left}
 .prop+.prop::before{content:"";position:absolute;left:12px;right:0;top:0;height:1px;background:var(--linha)}
 .prop .rot{display:flex;align-items:center;gap:8px;font-size:15px;line-height:22px;color:var(--tx-2);padding:11px 0;align-self:start}
 .prop .rot svg{color:var(--tx-3)}
@@ -323,6 +327,18 @@ button.prog:active i{transform:scale(.88)}
 .prop input::placeholder,.prop textarea::placeholder{color:var(--tx-3);opacity:1}
 .prop input[type=date]{min-width:0}
 .prop.so-ler .valor{padding:11px 0}
+/* R$ cinza à esquerda dos campos de dinheiro (como em Produtos) */
+.campo-rs{display:flex;align-items:center;min-width:0}
+.campo-rs .pre{flex:none;font-size:17px;color:var(--tx-3);margin-right:2px}
+.prop .campo-rs input{margin-left:0;padding-left:2px}
+/* WhatsApp: fora do foco aparece formatado, (11) 93506-0000; ao tocar, o número cru para editar */
+.wa-campo{position:relative;display:block;min-width:0}
+.wa-fmt{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);pointer-events:none;font-size:17px;line-height:22px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wa-campo input:not(:focus):not(:placeholder-shown){-webkit-text-fill-color:transparent}
+.wa-campo input:focus+.wa-fmt,.wa-campo input:placeholder-shown+.wa-fmt{display:none}
+/* aviso da planilha logo abaixo dos chips da ficha */
+.pf-aviso{display:flex;gap:8px;align-items:flex-start;margin:8px 0 2px;padding:10px 12px;border-radius:var(--r2);background:var(--alerta-bg);color:var(--alerta);font-size:15px;line-height:20px;font-weight:600}
+.pf-aviso svg{flex:none;margin-top:1px}
 
 /* campos */
 .campo{width:100%;min-height:44px;border-radius:10px;border:1px solid var(--linha-forte);background:var(--sup);padding:10px 12px;font-size:17px;color:var(--tx);outline:0}
@@ -495,6 +511,9 @@ body:has(.overlay.open){overflow:hidden}
 .cu-row .t-due,.cu-row .t-prio,.t-cols{display:none}
 .cu-row .sub .meta svg.i{color:var(--tx-3)}
 .cu-row.feita .sub .dt-atras,.cu-row.feita .sub .dt-hoje{color:var(--tx-2);font-weight:400}
+/* tarefa feita: bandeira (bandeiraSvg cinza) e prazo em cinza, na lista e no quadro */
+.cu-row.feita .t-due,.cu-row.feita .t-prio,.tcard.done .tmeta .meta{color:var(--tx-3);font-weight:400}
+.cu-row .tit:focus-visible{outline:2px solid var(--tx);outline-offset:2px;border-radius:4px}
 .cu-novo{display:flex;gap:8px;align-items:center;padding:8px 12px 8px 48px;border-top:1px solid var(--linha)}
 .cu-novo input{flex:1;min-width:0}
 .cu-novo .dica{margin:0;flex:none}
@@ -718,8 +737,20 @@ body:has(.overlay.open){overflow:hidden}
 .pag .t-salvar{min-height:44px;padding:0 18px;margin-right:2px}
 #tOverlay .titulo-campo{margin-top:6px}
 .t-chips{margin-top:8px}
-.t-resp{display:inline-flex;gap:6px;flex-wrap:wrap}
-.t-resp .pilula>span{padding:0 11px 0 5px}
+/* responsáveis: um chip com os avatares e os nomes; a lista dos 3 abre na folha tResps */
+.t-resp-chip{gap:7px;padding-left:5px;max-width:100%}
+.t-resp-chip .avs .av{border-color:var(--sup-2)}
+.t-resp-chip .nm{min-width:0;overflow:hidden;text-overflow:ellipsis}
+#chip_resp{max-width:100%}
+.t-resp-lista{background:var(--sup);border:1px solid var(--linha);border-radius:var(--r2);overflow:hidden;margin-top:6px}
+.t-resp-item{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:0 14px;text-align:left;font-size:17px;color:var(--tx)}
+.t-resp-item+.t-resp-item::before{content:"";position:absolute;left:52px;right:0;top:0;height:1px;background:var(--linha)}
+.t-resp-item .av{width:28px;height:28px;font-size:12px;border:0}
+.t-resp-item .nm{flex:1}
+.t-resp-item .ok-ic{display:none;color:var(--tx)}
+.t-resp-item.on{font-weight:600}
+.t-resp-item.on .ok-ic{display:inline}
+.t-resp-item:active{background:var(--sup-2)}
 .t-tags-ver{display:contents}
 .t-tags-prop{margin:10px 0 0}
 #tUrgChip .band{margin-right:1px}
@@ -729,6 +760,7 @@ body:has(.overlay.open){overflow:hidden}
 .t-anexo .rot{min-width:0;color:var(--tx);text-decoration:none;font-size:16px}
 .t-anexo .rot img{width:32px;height:32px;border-radius:6px;object-fit:cover;flex:none;background:var(--sup-2)}
 .t-anexo .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.t-anexar{grid-template-columns:minmax(0,1fr)}
 .t-anexar .rot{color:var(--tx-2)}
 .t-anexar:active{background:var(--sup-2)}
 .tup{font-size:15px;color:var(--tx-2);margin:-12px 2px 16px}
@@ -783,13 +815,15 @@ td.num,th.num{text-align:right}
 .ini-grade{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 /* cartão de número: tocável vira botão com a seta no canto */
 .ncard{position:relative;text-align:left;width:100%;min-width:0;font:inherit;color:var(--tx)}
-.ncard .r{overflow-wrap:anywhere}
 .ncard .n{font-size:clamp(19px,5.6vw,22px);overflow-wrap:normal}
 .ncard .n .rs{font-size:.72em;font-weight:600;letter-spacing:0;margin-right:1px}
 .ncard .n.perigo{color:var(--perigo)}
 .ncard .n.alerta{color:var(--alerta)}
 .ncard .n.zero{color:var(--tx-3)}
-.ncard .v{display:block;margin-top:2px;overflow-wrap:anywhere}
+.ncard .v{display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* cartões do mesmo tamanho (spec 4.12): rótulo e linha de apoio numa linha, com reticências */
+.ncard .r{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ncard .delta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ncard .v .sobe,.ncard .delta.up{color:var(--sucesso);font-weight:600}
 .ncard .v .desce,.ncard .delta.down{color:var(--perigo);font-weight:600}
 .ncard .v .neutro,.ncard .delta.neutro{color:var(--tx-2);font-weight:600}
@@ -797,8 +831,9 @@ td.num,th.num{text-align:right}
 .ncard.esq{border:0}
 button.ncard{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .07s ease}
 button.ncard:active{transform:scale(.98);background:var(--sup-2)}
-.ncard.toca .r{padding-right:20px}
-.ncard .seta{position:absolute;right:8px;top:10px;color:var(--tx-3)}
+.ncard.toca .r{padding-right:14px}
+.ncard{padding-right:10px}
+.ncard .seta{position:absolute;right:5px;top:10px;color:var(--tx-3)}
 .tx-alerta{color:var(--alerta)}
 .tx-perigo{color:var(--perigo)}
 /* caixa branca com título (gráfico, custos no computador) */
@@ -848,8 +883,13 @@ button.ncard:active{transform:scale(.98);background:var(--sup-2)}
  .ini-custos .note{margin-bottom:10px}
  .mchart{height:220px;justify-content:space-between}
  .mcol{flex:1 1 0;min-width:30px}
- .panels{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+ /* estágio, canal e evento em 3 colunas; top clientes e atividades em 2 de 50% (sem buraco na grade) */
+ .panels{grid-template-columns:repeat(6,minmax(0,1fr));align-items:start}
+ .panel{grid-column:span 2}
+ .panel:nth-child(n+4){grid-column:span 3}
 }
+/* os 8 cartões de Faturamento e caixa em 4 colunas quando cabem (sem a última linha pela metade) */
+@media (min-width:1100px){.ini-grade.g4{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .esq-grupo{margin-top:8px}
 
 
@@ -1215,7 +1255,7 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
        <option value="30d">Últimos 30 dias</option>
        <option value="90d">Últimos 90 dias</option>
       </select></label>
-     <label class="pilula" id="plBase"><span><span id="pBaseTxt">Por data do pedido</span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg></span>
+     <label class="pilula" id="plBase"><span><span id="pBaseTxt">Data do pedido</span><svg class="i pp" aria-hidden="true"><use href="#i-baixo"/></svg></span>
       <select id="pBase" onchange="renderPainel()" aria-label="Base da data">
        <option value="data">Por data do pedido</option>
        <option value="dataEv">Por data do evento</option>
@@ -1439,8 +1479,9 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
 <div class="overlay" id="overlay">
  <div class="pag" role="dialog" aria-modal="true" aria-labelledby="mTitle">
   <div class="pag-topo">
-   <button type="button" class="voltar" onclick="closeForm()"><svg class="i" aria-hidden="true"><use href="#i-esq"/></svg><span id="pfVoltar">Atendimentos</span></button>
+   <button type="button" class="voltar" id="pfVoltarBtn" onclick="closeForm()"><svg class="i" aria-hidden="true"><use href="#i-esq"/></svg><span id="pfVoltar">Atendimentos</span></button>
    <span class="esp"></span>
+   <span class="salvo" id="saveStatPed" aria-hidden="true"><i></i></span>
   </div>
   <div class="pag-corpo">
    <h2 id="mTitle" hidden>Novo atendimento</h2>
@@ -1455,6 +1496,7 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
     <button type="button" class="toq" onclick="pfIrEvento()"><span class="chip" id="pfEvChip"><svg class="i pp" aria-hidden="true"><use href="#i-presente"/></svg><span id="pfEvTxt">Evento</span></span></button>
     <label class="toq" title="Próximo follow-up"><span class="chip" id="pfFuChip"><svg class="i pp" aria-hidden="true"><use href="#i-sino"/></svg><span id="pfFuTxt">Follow-up</span></span><input type="date" id="f_followup" aria-label="Próximo follow-up" onchange="pfTopo()"></label>
    </div>
+   <div id="pfAviso"></div>
    <div class="acoes2">
     <a class="btn btn-sec" id="pfWhats" target="_blank" rel="noopener" href="#"><svg class="i p" aria-hidden="true"><use href="#i-whats"/></svg>WhatsApp</a>
     <a class="btn btn-sec" id="pfLigar" href="#"><svg class="i p" aria-hidden="true"><use href="#i-tel"/></svg>Ligar</a>
@@ -1465,10 +1507,10 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
    <div class="props">
     <div class="prop"><label class="rot" for="f_produto"><svg class="i p" aria-hidden="true"><use href="#i-planta"/></svg>Produto</label><select id="f_produto" onchange="onProdChange()"></select></div>
     <div class="prop"><label class="rot" for="f_qtd"><svg class="i p" aria-hidden="true"><use href="#i-camadas"/></svg>Quantidade</label><input type="number" id="f_qtd" min="0" value="0" inputmode="numeric" oninput="calcModal()"></div>
-    <div class="prop"><label class="rot" for="f_valor"><svg class="i p" aria-hidden="true"><use href="#i-cifrao"/></svg>Valor unitário</label><input type="number" id="f_valor" step="0.01" min="0" inputmode="decimal" oninput="calcModal()"></div>
+    <div class="prop"><label class="rot" for="f_valor"><svg class="i p" aria-hidden="true"><use href="#i-cifrao"/></svg>Valor unitário</label><span class="campo-rs"><span class="pre" aria-hidden="true">R$</span><input type="number" id="f_valor" step="0.01" min="0" inputmode="decimal" oninput="calcModal()"></span></div>
     <div class="prop"><label class="rot" for="f_descr"><svg class="i p" aria-hidden="true"><use href="#i-texto"/></svg>Descrição</label><textarea id="f_descr" rows="1" placeholder="Adicionar" oninput="pfCresce(this)"></textarea></div>
-    <div class="prop"><label class="rot" for="f_evento"><svg class="i p" aria-hidden="true"><use href="#i-presente"/></svg>Tipo de evento</label><select id="f_evento" onchange="pfTopo()"></select></div>
-    <div class="prop"><label class="rot" for="f_dataEv"><svg class="i p" aria-hidden="true"><use href="#i-cal"/></svg>Data do evento</label><input type="date" id="f_dataEv" onchange="pfTopo()"></div>
+    <div class="prop"><label class="rot" for="f_evento"><svg class="i p" aria-hidden="true"><use href="#i-presente"/></svg>Evento</label><select id="f_evento" onchange="pfTopo()"></select></div>
+    <div class="prop"><label class="rot" for="f_dataEv"><svg class="i p" aria-hidden="true"><use href="#i-cal"/></svg>Data</label><input type="date" id="f_dataEv" onchange="pfTopo()"></div>
    </div>
    <h3 class="t-secao">Pagamento</h3>
    <div class="props">
@@ -1480,15 +1522,15 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
    <h3 class="t-secao">Entrega</h3>
    <div class="props">
     <div class="prop"><label class="rot" for="f_entrega"><svg class="i p" aria-hidden="true"><use href="#i-caminhao"/></svg>Forma</label><select id="f_entrega"></select></div>
-    <div class="prop"><label class="rot" for="f_custoent"><svg class="i p" aria-hidden="true"><use href="#i-cifrao"/></svg>Custo</label><input type="number" id="f_custoent" step="0.01" min="0" value="0" inputmode="decimal" oninput="calcModal()"></div>
+    <div class="prop"><label class="rot" for="f_custoent"><svg class="i p" aria-hidden="true"><use href="#i-cifrao"/></svg>Custo</label><span class="campo-rs"><span class="pre" aria-hidden="true">R$</span><input type="number" id="f_custoent" step="0.01" min="0" value="0" inputmode="decimal" oninput="calcModal()"></span></div>
    </div>
    <h3 class="t-secao">Contato e origem</h3>
    <div class="props">
-    <div class="prop"><label class="rot" for="f_whats"><svg class="i p" aria-hidden="true"><use href="#i-whats"/></svg>WhatsApp</label><input type="tel" id="f_whats" inputmode="tel" placeholder="11999998888" oninput="pfTopo()"></div>
+    <div class="prop"><label class="rot" for="f_whats"><svg class="i p" aria-hidden="true"><use href="#i-whats"/></svg>WhatsApp</label><span class="wa-campo"><input type="tel" id="f_whats" inputmode="tel" placeholder="11999998888" oninput="pfTopo()"><span class="wa-fmt" id="pfWhatsFmt" aria-hidden="true"></span></span></div>
     <div class="prop"><label class="rot" for="f_cidade"><svg class="i p" aria-hidden="true"><use href="#i-local"/></svg>Cidade</label><input type="text" id="f_cidade" placeholder="Adicionar"></div>
     <div class="prop"><label class="rot" for="f_canal"><svg class="i p" aria-hidden="true"><use href="#i-megafone"/></svg>Canal</label><select id="f_canal" onchange="pfTopo()"></select></div>
-    <div class="prop"><label class="rot" for="f_tipo"><svg class="i p" aria-hidden="true"><use href="#i-pessoa"/></svg>Tipo de cliente</label><select id="f_tipo"></select></div>
-    <div class="prop"><label class="rot" for="f_data"><svg class="i p" aria-hidden="true"><use href="#i-cal"/></svg>Data do contato</label><input type="date" id="f_data" onchange="pfTopo()"></div>
+    <div class="prop"><label class="rot" for="f_tipo"><svg class="i p" aria-hidden="true"><use href="#i-pessoa"/></svg>Tipo</label><select id="f_tipo"></select></div>
+    <div class="prop"><label class="rot" for="f_data"><svg class="i p" aria-hidden="true"><use href="#i-cal"/></svg>Contato em</label><input type="date" id="f_data" onchange="pfTopo()"></div>
    </div>
    <details class="pf-custos">
     <summary><span class="t-secao">Custo e margem</span><svg class="i p" aria-hidden="true"><use href="#i-baixo"/></svg></summary>
@@ -1528,7 +1570,7 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
    <textarea id="t_titulo" class="titulo-campo cu-titulo" rows="1" placeholder="Nome da tarefa" autocomplete="off" aria-label="Nome da tarefa" enterkeyhint="done"
     onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" oninput="this.value=this.value.replace(/\n/g,' ');pfCresce(this)"></textarea>
    <div class="chips toques t-chips">
-    <span class="toq" id="chip_resp" title="Responsáveis: toque para marcar mais de um"><span id="t_resp" class="t-resp" role="group" aria-label="Responsáveis"></span></span>
+    <button type="button" class="toq" id="chip_resp" title="Responsáveis: toque para marcar mais de um" aria-haspopup="dialog" onclick="folhaAbrir('tResps')"><span class="chip" id="tRespChip"></span></button>
     <label class="toq" id="chip_prazo" title="Prazo"><span class="chip" id="tPrazoChip"><svg class="i pp" aria-hidden="true"><use href="#i-cal"/></svg><span id="tPrazoTxt">Prazo</span></span><input type="date" id="t_prazo" onchange="tPintarChips()" aria-label="Prazo"></label>
     <label class="toq" id="chip_urg" title="Prioridade"><span class="chip" id="tUrgChip"><span id="urgFlag"></span><span id="tUrgTxt">Prioridade</span></span><select id="t_urg" onchange="tPintarChips()" aria-label="Prioridade"></select></label>
     <span id="tTagsVer" class="t-tags-ver"></span>
@@ -1561,6 +1603,13 @@ body:has(.overlay.open) #calDia,body:has(.overlay.open) #calDiaVeu{display:none}
    </div>
   </div>
  </div>
+ <div class="veu" id="tRespsVeu" onclick="folhaFechar('tResps')"></div>
+ <section class="folha-baixo" id="tResps" role="dialog" aria-modal="true" aria-labelledby="tRespsTit">
+  <div class="alca" aria-hidden="true"></div>
+  <div class="folha-cab"><span></span><h3 id="tRespsTit">Responsáveis</h3><button type="button" class="fechar-x" onclick="folhaFechar('tResps')" aria-label="Fechar"><span><svg class="i pp" aria-hidden="true"><use href="#i-x"/></svg></span></button></div>
+  <div id="t_resp" class="t-resp-lista" role="group" aria-label="Responsáveis"></div>
+  <button type="button" class="btn btn-pri btn-larga" style="margin-top:12px" onclick="folhaFechar('tResps')">Pronto</button>
+ </section>
  <div class="veu" id="tAcoesVeu" onclick="folhaFechar('tAcoes')"></div>
  <section class="folha-baixo" id="tAcoes" role="dialog" aria-modal="true" aria-labelledby="tAcoesTit">
   <div class="alca" aria-hidden="true"></div>
@@ -1657,8 +1706,9 @@ function logAct(acao){if(!SHEET_URL)return;const row={id:Date.now()*1000+Math.fl
  fetch(sbUrl("atividades"),{method:"POST",headers:sbHeaders(),body:JSON.stringify([row])}).catch(e=>{});}
 let _cfgLogT=0;function logCfg(){const n=Date.now();if(n-_cfgLogT>10*60*1000){_cfgLogT=n;logAct("atualizou custos/preços (Produtos & Custos)");}}
 async function actFetch(){try{const r=await fetch(sbUrl("atividades?select=*&order=id.desc&limit=20"),{headers:sbHeaders()});if(!r.ok)return null;return await r.json();}catch(e){return null;}}
-function fmtTs(iso){try{const d=new Date(iso);const hoje=todayISO(),dia=iso.slice(0,10);const hm=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
- if(dia===hoje)return "hoje às "+hm;const ont=new Date(Date.now()-864e5).toISOString().slice(0,10);if(dia===ont)return "ontem às "+hm;return dBR(dia)+" "+hm;}catch(e){return iso;}}
+function fmtTs(iso){try{const d=new Date(iso);if(isNaN(d.getTime()))return String(iso||"");
+ const dia=d.getFullYear()+"-"+cal2(d.getMonth()+1)+"-"+cal2(d.getDate()),hm=cal2(d.getHours())+":"+cal2(d.getMinutes());
+ const t=dataCurta(dia);return t.charAt(0).toLowerCase()+t.slice(1)+" · "+hm;}catch(e){return iso;}}
 /* Atividades recentes: 5 e "Ver tudo" (sem rolagem própria dentro da página) */
 var actTudo=false;
 async function renderAtividades(){const el=document.getElementById("actFeed");if(!el)return;
@@ -1776,7 +1826,8 @@ function dataCurta(iso,hoje){iso=String(iso||"").slice(0,10);if(!/^\d{4}-\d{2}-\
 function dataCls(iso,hoje){iso=String(iso||"").slice(0,10);if(!iso)return "";hoje=hoje||calHojeISO();return iso<hoje?"dt-atras":iso===hoje?"dt-hoje":"";}
 /* prioridade: sempre bandeira (Normal não aparece na linha) */
 var PRIO_UI={urgente:["--pr-urgente","--pr-urgente-b"],alta:["--pr-alta","--pr-alta-b"],media:["--pr-normal","--pr-normal-b"],baixa:["--pr-baixa","--pr-baixa-b"]};
-function bandeiraSvg(u){var c=PRIO_UI[u]||PRIO_UI.media;
+/* cinza=true: tarefa feita (bandeira apagada, sem a cor da prioridade) */
+function bandeiraSvg(u,cinza){var c=cinza?["--sup-2","--tx-3"]:(PRIO_UI[u]||PRIO_UI.media);
  return '<svg class="band" viewBox="0 0 16 16" style="--c:var('+c[0]+');--cb:var('+c[1]+')" aria-hidden="true"><line x1="3.5" y1="2" x2="3.5" y2="14.5"/><path d="M3.5 2.5h8.5l-2 3 2 3H3.5z"/></svg>';}
 function avatar(p){return '<i class="av" style="--c:'+tCorPessoa(p)+'" title="'+esc(p)+'">'+esc(tIniciais(p))+'</i>';}
 function chipGrupo(nome,cor,icone){return '<span class="chip-st" style="--c:'+cor+';--ct:'+tTextoSobre(cor)+'">'+(icone?ic(icone):'')+esc(nome)+'</span>';}
@@ -1785,11 +1836,35 @@ function grupoCab(nome,cor,n,fechado,onclick,icone,extra,id){
  return '<div class="grupo-cab'+(fechado?' fechado':'')+'"'+(id?' id="'+id+'"':'')+'><button type="button" class="abrir" onclick="'+onclick+'" aria-expanded="'+(fechado?'false':'true')+'">'
   +ic('baixo','i p seta')+chipGrupo(nome,cor,icone)+'<span class="grupo-n">'+n+'</span></button>'+(extra||'')+'</div>';}
 /* folha que sobe (celular) ou janela no meio (computador): .folha-baixo + véu com o mesmo id e sufixo Veu */
-function folhaAbrir(id){var f=document.getElementById(id),v=document.getElementById(id+'Veu');if(!f)return;f.classList.add('on');if(v)v.classList.add('on');
+function folhaAbrir(id){var f=document.getElementById(id),v=document.getElementById(id+'Veu');if(!f)return;f._quem=document.activeElement;f.classList.add('on');if(v)v.classList.add('on');
  var x=f.querySelector('.fechar-x');if(x)setTimeout(function(){try{x.focus({preventScroll:true});}catch(e){}},30);}
-function folhaFechar(id){var f=document.getElementById(id),v=document.getElementById(id+'Veu');if(f)f.classList.remove('on');if(v)v.classList.remove('on');}
-document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;var f=document.querySelectorAll('.folha-baixo.on');if(f.length){folhaFechar(f[f.length-1].id);return;}
+function folhaFechar(id){var f=document.getElementById(id),v=document.getElementById(id+'Veu');if(f){var era=f.classList.contains('on');f.classList.remove('on');
+  /* o foco volta para quem abriu a folha (se o foco estava dentro dela) */
+  if(era&&f._quem&&f._quem.isConnected&&f.contains(document.activeElement)){try{f._quem.focus({preventScroll:true});}catch(e){}}}if(v)v.classList.remove('on');}
+/* teclado (JEV revisão 1, "completo" 100%): Esc fecha a folha de cima, depois a ficha aberta, depois o menu;
+   Tab fica preso dentro da folha ou da ficha aberta (não vai para o menu e a lista que estão atrás do véu) */
+function focaveis(box){return [].slice.call(box.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'))
+ .filter(function(x){return x.getClientRects().length&&getComputedStyle(x).visibility!=='hidden';});}
+function camadaAberta(){var f=[].slice.call(document.querySelectorAll('.folha-baixo.on')).filter(function(x){return x.getClientRects().length;});if(f.length)return f[f.length-1];
+ var o=[].slice.call(document.querySelectorAll('.overlay.open'));if(o.length){var u=o[o.length-1];return u.querySelector('.pag')||u.querySelector('.folha-baixo')||u;}
+ if(document.body.classList.contains('menu-open'))return document.getElementById('menu');return null;}
+document.addEventListener('keydown',function(e){
+ if(e.key==='Tab'){var c=camadaAberta();if(!c)return;var l=focaveis(c);if(!l.length)return;var a=document.activeElement,i=l.indexOf(a);
+  if(!c.contains(a)){e.preventDefault();l[0].focus();return;}
+  if(e.shiftKey&&i<=0){e.preventDefault();l[l.length-1].focus();}else if(!e.shiftKey&&i===l.length-1){e.preventDefault();l[0].focus();}return;}
+ if(e.key!=='Escape'||e.defaultPrevented)return;var f=document.querySelectorAll('.folha-baixo.on');
+ for(var k=f.length-1;k>=0;k--){if(f[k].getClientRects().length){if(f[k].id==='pdFolha')pdFolhaFechar();else if(f[k].id==='calDia')calFecharDia();else folhaFechar(f[k].id);return;}}
+ if(document.getElementById('tOverlay').classList.contains('open')){tFechar();return;}
+ if(document.getElementById('overlay').classList.contains('open')){closeForm();return;}
+ if(document.getElementById('instOverlay').classList.contains('open')){instFechar();return;}
  if(document.body.classList.contains('menu-open'))fecharMenu();});
+/* teclado x toque: o anel forte da busca só aparece quando a pessoa navega com Tab (html.kb) */
+document.addEventListener('keydown',function(e){if(e.key==='Tab')document.documentElement.classList.add('kb');},true);
+document.addEventListener('pointerdown',function(){document.documentElement.classList.remove('kb');},true);
+/* quem abriu a ficha recebe o foco de volta ao fechar */
+var _focoAntes=null;
+function focoGuardar(){_focoAntes=document.activeElement&&document.activeElement!==document.body?document.activeElement:null;}
+function focoDevolver(){var a=_focoAntes;_focoAntes=null;if(a&&a.isConnected){try{a.focus({preventScroll:true});}catch(e){}}}
 
 document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!b.dataset.v)return;
  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
@@ -1860,8 +1935,17 @@ function fillPeriodos(){const sel=document.getElementById('pPeriodo');if(!sel)re
  h+='<optgroup label="Ano">'+ys.map(x=>'<option value="a:'+x+'">'+x+'</option>').join('')+'</optgroup>';
  sel.innerHTML=h;sel.value=[...sel.options].some(o=>o.value===prev)?prev:"mes";
  /* o texto das pílulas acompanha o que está escolhido nos selects (que ficam transparentes por cima) */
- const t=document.getElementById('pPeriodoTxt');if(t){const o=sel.options[sel.selectedIndex];t.textContent=o?o.text:'Período';}
- const b=document.getElementById('pBase'),bt=document.getElementById('pBaseTxt');if(b&&bt){const o=b.options[b.selectedIndex];bt.textContent=o?o.text:'';}}
+ const t=document.getElementById('pPeriodoTxt');if(t)t.textContent=perCurto(sel.value);
+ const b=document.getElementById('pBase'),bt=document.getElementById('pBaseTxt');if(b&&bt)bt.textContent=b.value==='dataEv'?'Data do evento':'Data do pedido';}
+/* rótulo curto da pílula de período: "Tudo", "Este mês", "30 dias", "out/2026", "2026" */
+function perCurto(v){v=String(v||'');if(v==='tudo')return 'Tudo';if(v==='mes')return 'Este mês';if(v==='mes-1')return 'Mês passado';
+ if(v==='30d')return '30 dias';if(v==='90d')return '90 dias';if(v.indexOf('m:')===0)return MES_CURTO[+v.slice(7,9)-1]+'/'+v.slice(2,6);
+ if(v.indexOf('a:')===0)return v.slice(2);return 'Período';}
+/* linha do período numa linha só: "1 a 31/out · vs set" */
+function perLinha(r){if(!r)return 'Todos os pedidos';var a=r.d1,b=r.d2,mc=function(x){return MES_CURTO[+x.slice(5,7)-1];};
+ var t=a.slice(0,7)===b.slice(0,7)?(+a.slice(8))+' a '+(+b.slice(8))+'/'+mc(b)+(b.slice(0,4)!==calHojeISO().slice(0,4)?'/'+b.slice(2,4):'')
+  :(+a.slice(8))+'/'+mc(a)+(a.slice(0,4)!==b.slice(0,4)?'/'+a.slice(2,4):'')+' a '+(+b.slice(8))+'/'+mc(b)+(b.slice(0,4)!==calHojeISO().slice(0,4)?'/'+b.slice(2,4):'');
+ return t+' · '+vsTxt(r);}
 /* Início, "Precisa de ação": 6 cartões que levam para a aba já filtrada (painelIr). Não dependem do período. */
 function atFalta(o){if(!o||o.estagio==="Perdido"||o.statusPag==="Pago")return 0;const c=calc(o);
  if(o.statusPag==="Sinal pago")return c.saldo;return PAG_DESDE.indexOf(o.estagio)>=0?c.vt:0;}
@@ -1878,8 +1962,8 @@ function painelAcao(){const el=document.getElementById('pAcao');if(!el||typeof s
   ncardH("Postar hoje",G.hoje.length,"na Produção",{onclick:"painelIr('producao','hoje')",ncls:cor(G.hoje.length,'alerta')})
   +ncardH("Atrasados",G.atras.length,"postagem passou",{onclick:"painelIr('producao','atras')",ncls:cor(G.atras.length,'perigo')})
   +ncardH("Follow-ups vencidos",fu,"em Atendimentos",{onclick:"painelIr('atendimentos','followup')",ncls:cor(fu,'perigo')})
-  +ncardH("A receber",BRL(aR),nR+(nR===1?" pedido":" pedidos"),{onclick:"painelIr('atendimentos','areceber')"})
-  +ncardH("Sem pagamento",G.pag.length,BRL(sp)+" em pedidos fechados",{onclick:"painelIr('producao','pag')",ncls:cor(G.pag.length,'perigo')})
+  +ncardH("A receber (todos)",BRL(aR),nR+(nR===1?" pedido":" pedidos"),{onclick:"painelIr('atendimentos','areceber')",title:"Saldo de todos os pedidos fechados, de qualquer data"})
+  +ncardH("Sem pagamento",G.pag.length,BRL(sp),{onclick:"painelIr('producao','pag')",ncls:cor(G.pag.length,'perigo'),title:"Pedidos fechados sem pagamento: "+BRL(sp)})
   +ncardH("Minhas tarefas",mt,mtA?'<span class="desce">'+mtA+(mtA===1?' atrasada':' atrasadas')+'</span>':"nenhuma atrasada",{onclick:"painelIr('tarefas','minhas')",ncls:cor(mt,'')});}
 /* abre a aba do cartão já filtrada: Produção rola até o grupo; Atendimentos liga o filtro rápido (pílula que sai
    com um toque); Tarefas mostra as minhas */
@@ -1898,18 +1982,18 @@ function renderPainel(){fillPeriodos();
  const os=r?state.orders.filter(o=>inRange(o,bk,r.d1,r.d2)):state.orders;
  const prevOs=r?state.orders.filter(o=>inRange(o,bk,r.p1,r.p2)):null;
  const K=kpiSet(os),P=prevOs?kpiSet(prevOs):null;renderFinBlocos(r,bk);
- const info=document.getElementById('pInfo');if(info)info.textContent=r?(dBR(r.d1)+" a "+dBR(r.d2)+" · comparado com "+r.cmp):"Todos os pedidos";
+ const info=document.getElementById('pInfo');if(info){info.textContent=perLinha(r);info.title=r?(dBR(r.d1)+" a "+dBR(r.d2)+", comparado com "+r.cmp):"";}
  painelAcao();
  const od=state.orders.filter(o=>o.followup&&o.followup<todayISO()).length;
  const D=(k)=>P?delta(K[k],P[k],true):"";
  document.getElementById('kpis').innerHTML=
-  ncardH("A receber",BRL(K.aReceber),"saldo dos pedidos do período")
+  ncardH("A receber do período",BRL(K.aReceber),"saldo dos pedidos")
   +ncardH("Custo de produtos",BRL(K.cus),D("cus"))
   +ncardH("Custo por entrega",BRL(K.nent?K.ent/K.nent:0),"média de "+K.nent+(K.nent===1?" entrega":" entregas"))
   +ncardH("Margem média",PCT(K.fat?K.mg/K.fat:0),"do faturamento")
   +ncardH("Em negociação",BRL(K.pipe),"orçamento e negociação")
-  +ncardH("Pagamento pendente",BRL(K.pend),"status Pendente")
-  +ncardH("Follow-ups atrasados",od,"de todos os períodos",{ncls:od?"perigo":""})
+  +ncardH("Pendente do período",BRL(K.pend),"status Pendente")
+  +ncardH("Follow-ups (todos)",od,"vencidos",{ncls:od?"perigo":"",title:"Follow-ups vencidos de todos os períodos (o mesmo número de Precisa de ação)"})
   +ncardH("Conversão",PCT(K.conv),"pedidos que fecharam");
  const byStage=STAGES.map(st=>[st,os.filter(o=>o.estagio===st).length]).filter(x=>x[1]>0);chart('chartEstagio',byStage,v=>v,estCor);
  const bc={};os.forEach(o=>{const k1=o.canal||"(sem canal)";bc[k1]=(bc[k1]||0)+calc(o).vt;});chart('chartCanal',Object.entries(bc).sort((a,b)=>b[1]-a[1]),BRL);
@@ -2187,10 +2271,15 @@ function custoNoPeriodo(r){const d1=r?r.d1:"0000-00-00",d2=r?r.d2:"9999-12-31",d
  const ps=custoPedidos().filter(dentro);const comRec=new Set(ps.map(p=>Number(p.o.id)));
  const fora=(state.orders||[]).filter(o=>Number(o.id)<FIN_ID_SITE&&o.estagio!=="Perdido"&&PAG_OK.includes(o.statusPag)&&(o.data||"")>=CUSTO_INICIO&&o.data>=d1&&o.data<=d2&&!comRec.has(Number(o.id)));
  return {ads,ult,pedidos:ps.length,semCusto:ps.filter(p=>p.semCusto).length,fora:fora.length,foraValor:fora.reduce((s,o)=>s+calc(o).vt,0),antes:!!r&&r.d2<CUSTO_INICIO};}
-function custoSubAnuncio(r){if(CUSTO_EXT!==true)return "recargas lançadas, até ligar o gasto real do Meta e do Google";const k=custoNoPeriodo(r);if(k.antes)return "recargas lançadas (antes de 09/2026)";
- const ate=p=>k.ult[p]?" até "+dBR(k.ult[p]).slice(0,5):" (sem dado ainda)";return "Meta "+BRL(k.ads.meta)+ate("meta")+"<br>Google "+BRL(k.ads.google)+ate("google");}
+/* linha de apoio numa linha só (revisão 1); o detalhe de Meta e Google e dos pedidos sem custo vai para a dica */
+function custoSubAnuncio(r){if(CUSTO_EXT!==true)return "recargas lançadas";const k=custoNoPeriodo(r);if(k.antes)return "recargas lançadas";
+ const u=[k.ult.meta,k.ult.google].filter(Boolean).sort();return "Meta e Google"+(u.length?" até "+dBR(u[0]).slice(0,5):"");}
+function custoDicaAnuncio(r){if(CUSTO_EXT!==true)return "Recargas lançadas no Caixa, até ligar o gasto real do Meta e do Google";const k=custoNoPeriodo(r);if(k.antes)return "Recargas lançadas (antes de 09/2026)";
+ const ate=p=>k.ult[p]?" até "+dBR(k.ult[p]).slice(0,5):" (sem dado ainda)";return "Meta "+BRL(k.ads.meta)+ate("meta")+" · Google "+BRL(k.ads.google)+ate("google");}
 function custoSubPlantas(r){if(CUSTO_EXT!==true)return "depois do SQL de custos";const k=custoNoPeriodo(r);if(k.antes)return "a partir de 09/2026";
- return k.pedidos+" pedidos"+(k.semCusto?' · <b class="tx-alerta">'+k.semCusto+" sem produto ou quantidade (custo zero)</b>":"");}
+ return k.semCusto?'<b class="tx-alerta">'+k.semCusto+' sem custo</b> de '+k.pedidos:k.pedidos+" pedidos";}
+function custoDicaPlantas(r){if(CUSTO_EXT!==true)return "Custo de plantas e materiais, calculado dos pedidos";const k=custoNoPeriodo(r);
+ return "Custo de plantas e materiais, calculado dos pedidos"+(k.semCusto?". "+k.semCusto+" pedidos sem produto ou quantidade entram com custo zero":"");}
 function custoAviso(r){if(!SHEET_URL)return "";
  if(CUSTO_EXT===false)return '<div class="note custo-aviso">Falta rodar o SQL de custos (<b>crm_custos_automaticos_rodar_no_supabase.sql</b>). Até lá o anúncio vem das recargas do Caixa e as plantas, das compras lançadas.</div>';
  if(CUSTO_EXT!==true)return "";const k=custoNoPeriodo(r);if(k.antes||!k.fora)return "";
@@ -2207,26 +2296,27 @@ function renderFinBlocos(r,bk){const el=document.getElementById("finBlocos");if(
  const site=L.filter(x=>x.origem==="site"&&(!r||dentro(x,r.d1,r.d2))),siteV=site.reduce((s,x)=>s+(Number(x.valor)||0),0);
  const cb=finCresc(A.bruto,P?P.bruto:null),cl=finCresc(A.liquido,P?P.liquido:null),vs=vsTxt(r);
  /* crescimento na linha de apoio: verde quando sobe, vermelho quando cai (faturamento que cai é ruim) */
- const cres=(c,ant)=>c.txt==="sem comparação"?"":'<span class="'+(c.cls==="up"?"sobe":c.cls==="down"?"desce":"")+'">'+c.txt+'</span> '+vs+(ant!=null?' ('+BRL(ant)+')':'');
+ const cres=(c,ant)=>c.txt==="sem comparação"?"":'<span class="'+(c.cls==="up"?"sobe":c.cls==="down"?"desce":"")+'">'+c.txt+'</span> '+vs;
+ const ant=(rot,v)=>v!=null?rot+": "+BRL(v)+" no período anterior":rot;
  const ate=r?dBR(r.d2):"hoje";
  /* Faturamento e caixa (o grafite do resto da tela; a cor fica só na variação) */
- const h='<h2 class="t-secao ini-sec">Faturamento e caixa</h2><div class="ini-grade">'
-  +ncardH("Faturamento bruto",BRL(A.bruto),cres(cb,P?P.bruto:null)||"sinal + pagamento integral",{title:"Sinal 30% + pagamento integral 70%"})
-  +ncardH("Faturamento líquido",BRL(A.liquido),cres(cl,P?P.liquido:null)||"bruto menos todos os custos",{ncls:A.liquido<0?"perigo":"",title:"Bruto menos todos os custos"})
+ const h='<h2 class="t-secao ini-sec">Faturamento e caixa</h2><div class="ini-grade g4">'
+  +ncardH("Faturamento bruto",BRL(A.bruto),cres(cb,P?P.bruto:null)||"sinal + integral",{title:ant("Sinal 30% + pagamento integral 70%",P?P.bruto:null)})
+  +ncardH("Faturamento líquido",BRL(A.liquido),cres(cl,P?P.liquido:null)||"bruto menos custos",{ncls:A.liquido<0?"perigo":"",title:ant("Bruto menos todos os custos",P?P.liquido:null)})
   +ncardH("Sinal 30%",BRL(A.sinal),"sinais recebidos")
-  +ncardH("Integral 70%",BRL(A.integral),"na entrega e pagos à vista (site)")
-  +ncardH("Caixa",BRL(caixa),"saldo inicial + tudo até "+ate,{ncls:caixa<0?"perigo":""})
-  +ncardH("Ticket médio",BRL(ped.length?vtp/ped.length:0),"pedidos fechados no CRM")
+  +ncardH("Integral 70%",BRL(A.integral),"na entrega e no site",{title:"Na entrega e pagos à vista (site)"})
+  +ncardH("Caixa",BRL(caixa),"saldo até "+(r?dBR(r.d2).slice(0,5):"hoje"),{ncls:caixa<0?"perigo":"",title:"Saldo inicial + tudo até "+ate})
+  +ncardH("Ticket médio",BRL(ped.length?vtp/ped.length:0),"pedidos fechados",{title:"Pedidos fechados no CRM"})
   +ncardH("Pedidos fechados",ped.length,"no CRM, no período")
   +ncardH("Vendas do site",BRL(siteV),site.length+(site.length===1?" pedido pago":" pedidos pagos"))
   +'</div>';
  /* Custos: cor neutra (gasto normal não é alerta); vermelho só para resultado negativo, lá em cima */
  const CUSTOS=[["Materiais","Materiais"],["Frete","Frete"],["Anúncio","Anúncio"],["Suculentas","Suculentas"],[CAT_PLANTAS,"Plantas e materiais"],["Ambiente","Ambiente"],["Funcionários","Funcionários"],["Impostos","Impostos"],["Software e assinaturas","Software"],["Pró-labore","Pró-labore"]];
- const var_=c=>{if(!P)return"";const f=finCresc(A.cat[c]||0,P.cat[c]||0);return f.txt==="0%"||f.txt==="sem comparação"?"":'<span class="neutro">'+f.txt+'</span> '+vs;};
+ const var_=c=>{if(!P)return"";const f=finCresc(A.cat[c]||0,P.cat[c]||0);if(f.txt==="novo")return "sem valor em "+vs.replace(/^vs /,"");return f.txt==="0%"||f.txt==="sem comparação"?"":'<span class="neutro">'+f.txt+'</span> '+vs;};
  const ch='<div class="ini-custos"><h2 class="t-secao ini-sec">Custos <span class="sep">·</span> '+BRL(A.saidas)+'</h2>'
   +(A.saidas?'':'<div class="note">Nenhum custo lançado neste período. Lance no Caixa (+ Saída) para o líquido ficar certo.</div>')+custoAviso(r)
   +'<div class="ini-grade">'
-  +CUSTOS.map(([c,l])=>ncardH(l,BRL(A.cat[c]||0),c==="Anúncio"?custoSubAnuncio(r):c===CAT_PLANTAS?custoSubPlantas(r):var_(c),{title:c===CAT_PLANTAS?"Custo de plantas e materiais, calculado dos pedidos":c})).join('')
+  +CUSTOS.map(([c,l])=>ncardH(l,BRL(A.cat[c]||0),c==="Anúncio"?custoSubAnuncio(r):c===CAT_PLANTAS?custoSubPlantas(r):var_(c),{title:c==="Anúncio"?custoDicaAnuncio(r):c===CAT_PLANTAS?custoDicaPlantas(r):c})).join('')
   +Object.keys(A.cat).filter(c=>!CUSTOS.some(x=>x[0]===c)&&A.cat[c]).map(c=>ncardH(esc(c),BRL(A.cat[c]),c==="Histórico sem detalhe"?"total do mês na planilha antiga, sem separar por categoria":var_(c))).join('')
   +'</div></div>';
  el.innerHTML=h;const ec=document.getElementById("finCustos");if(ec)ec.innerHTML=ch;else el.insertAdjacentHTML("beforeend",ch);}
@@ -2322,12 +2412,11 @@ function renderCaixa(){
 // CRM (ids 500000001 a 599999999, a planilha manda neles); pedido do site e digitado so recebem status e producao.
 const PL_URL="https://docs.google.com/spreadsheets/d/1kGCIPN_YS6zxq33eTvA82-iTwYEd3CJkCPcWmTS0cmc/edit";
 function plDaPlanilha(o){const n=Number(o&&o.id);return n>=FIN_ID_PLANILHA&&n<FIN_ID_SITE;}
-/* seção PLANILHA da ficha (pedido que existe na planilha Pedidos Sucs): selo, status num chip, arte/tag/vídeo
-   e, quando o estágio do CRM diverge do status da planilha, uma linha âmbar dizendo qual vale */
+/* seção PLANILHA da ficha (pedido que existe na planilha Pedidos Sucs): selo, status num chip e arte/tag/vídeo.
+   A divergência de estágio (qual vale) fica no topo da ficha, logo abaixo dos chips (plDiverge). */
 function plInfo(o){const p=o&&o.producao;if(!p)return'';const sn=v=>{v=String(v||'').trim();return /^sim$/i.test(v)?'sim':/^n[aã]o$/i.test(v)?'não':'sem marcação';};
- const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\(.*?\)/g,'').trim();
  const linha=(rot,val)=>'<div class="prop so-ler"><span class="rot">'+rot+'</span><span class="valor">'+val+'</span></div>';
- const doPl=plDaPlanilha(o),diverge=p.status&&o.estagio&&norm(p.status)!==norm(o.estagio);
+ const doPl=plDaPlanilha(o);
  return '<h3 class="t-secao">Planilha Pedidos Sucs</h3><div class="props">'
   +linha('Status',p.status?'<span class="chip">'+esc(p.status)+'</span>':'<span class="vazio">sem status</span>')
   +(p.aba||p.semana?linha('Aba',esc((p.aba||'')+(p.semana?' · '+p.semana:''))):'')
@@ -2335,10 +2424,14 @@ function plInfo(o){const p=o&&o.producao;if(!p)return'';const sn=v=>{v=String(v|
   +(p.nome_tag?linha('Nome na tag',esc(p.nome_tag)):'')
   +(p.logistica?linha('Entrega',esc(p.logistica)):'')
   +(p.obs?linha('Obs.',esc(p.obs)):'')
-  +(diverge?'<div class="grupo-nota pl-diverge">'+ic('alerta','i p')+'<span>A planilha diz “'+esc(p.status)+'” e o CRM diz “'+esc(estCurto(o.estagio))+'”. '+(doPl?'Vale a planilha: edite lá, o que mudar aqui volta na próxima sincronização.':'Vale o CRM: a planilha só manda o status da produção.')+'</span></div>'
-   :(doPl?'<div class="grupo-nota neutra">Este pedido vem da planilha: o que mudar aqui volta ao que está nela na próxima sincronização. Edite na planilha.</div>':''))
+  +(doPl?'<div class="grupo-nota neutra">Este pedido vem da planilha: o que mudar aqui volta ao que está nela na próxima sincronização. Edite na planilha.</div>':'')
   +'<a class="prop pl-link" href="'+PL_URL+'" target="_blank" rel="noopener"><span class="rot">'+ic('planilha','i p')+'Abrir a planilha</span><span class="valor">'+ic('dir','i p')+'</span></a>'
   +'</div>';}
+/* estágio do CRM diferente do status da planilha: linha âmbar logo abaixo dos chips da ficha (revisão 1), dizendo qual vale */
+function plDiverge(o,est){const p=o&&o.producao;if(!p||!p.status||!est)return '';
+ const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\(.*?\)/g,'').trim();
+ if(norm(p.status)===norm(est))return '';
+ return '<div class="pf-aviso">'+ic('alerta','i p')+'<span>A planilha diz “'+esc(p.status)+'”; vale '+(plDaPlanilha(o)?'a planilha':'o CRM')+'.</span></div>';}
 async function plSyncMostrar(){const el=document.getElementById("plSync");if(!el||!SHEET_URL)return;
  try{const r=await fetch(sbUrl("pedidos_sync?select=em,resumo&order=id.desc&limit=1"),{headers:sbHeaders()});
   if(!r.ok){el.innerHTML='Planilha de pedidos: <b>ainda não ligada</b><a class="folha-link" href="'+PL_URL+'" target="_blank" rel="noopener">'+ic('planilha','i p')+'Abrir a planilha</a>';return;}
@@ -2364,7 +2457,7 @@ function renderKanban(){const rows=filtered(),box=document.getElementById('kanba
    +`<div class="kcab"><i class="tdot" style="background:${estCor(st)}"></i><b>${esc(estCurto(st))}</b><span class="cnt">${list.length} · ${BRL(tot)}</span></div>`+
    (list.length?list.map(o=>{const c=calc(o),ev=[o.tipoEv,o.dataEv?dataCurta(o.dataEv,hoje):''].filter(Boolean).join(' ');
     /* o select de estágio virou o chip "Mudar estágio": o select fica transparente por cima (seletor do iPhone), mesmo moveStage */
-    return `<div class="kcard" draggable="true" ondragstart="dragStart(event,${o.id})" onclick="openForm(${o.id})" role="button" tabindex="0" title="Abrir o atendimento #${o.id}">`
+    return `<div class="kcard" draggable="true" ondragstart="dragStart(event,${o.id})" onclick="openForm(${o.id})" onkeydown="if((event.key==='Enter'||event.key===' ')&&event.target===this){event.preventDefault();openForm(${o.id});}" role="button" tabindex="0" title="Abrir o atendimento #${o.id}">`
      +`<div class="kc-l1"><span class="kc-name">${esc(o.cliente||'(sem nome)')}</span><span class="kc-val num">${BRL(c.vt)}</span></div>`
      +`<div class="kc-meta">${esc(ev||((Number(o.qtd)||0)+' un · '+(o.produto||'sem produto')))}</div>`
      +`<div class="kc-l3">${pagChip(o,false,true)||'<span></span>'}<label class="toq" onclick="event.stopPropagation()"><span class="chip">Mudar estágio${ic('baixo','i pp')}</span>`
@@ -2777,7 +2870,7 @@ function pdFolhaPintar(){
   +'<p class="t-sub" style="text-align:center;margin:0">#'+o.id+(pdQtd(o)?' · '+pdQtd(o):'')+' · '+pdMeta(o)+'</p>'
   +'<div class="props">'
   +prop('camadas','Etapa',pdEtapaTxt(et))
-  +'<div class="prop"><label class="rot" for="pdArteData">'+ic('check','i p')+'Arte aprovada em</label><input type="date" id="pdArteData" value="'+esc(pdArte(o))+'" onchange="pdMudarArte('+o.id+',this.value)"'+(pode&&!o.postado_em?'':' disabled')+'></div>'
+  +'<div class="prop"><label class="rot" for="pdArteData">'+ic('check','i p')+'Arte aprovada</label><input type="date" id="pdArteData" value="'+esc(pdArte(o))+'" onchange="pdMudarArte('+o.id+',this.value)"'+(pode&&!o.postado_em?'':' disabled')+'></div>'
   +prop('caixa','Postar até',pa?'<span class="'+(o.postado_em?'':dataCls(pa,hoje))+'">'+esc(pdDiaSem(pa))+'</span>':'<span class="vazio">falta a arte</span>')
   +(o.postado_em?prop('caminhao','Postado em',esc(pdDiaSem(o.postado_em))):prop('caminhao','Chega até',esc(pdDiaSem(pdChegaAte(o,hoje)))))
   +prop('presente','Evento',ev?esc((o.tipoEv?o.tipoEv+' ':'')+pdDiaSem(ev)):'<span class="vazio">sem data</span>')
@@ -2862,17 +2955,19 @@ function openForm(id){currentId=id||null;
  const _pl=document.getElementById('f_planilha');if(_pl)_pl.innerHTML=o?plInfo(o):'';
  /* "< voltar" com o nome da aba de onde a ficha abriu */
  var vt=document.getElementById('pfVoltar'),tt=document.getElementById('ttl');if(vt)vt.textContent=(tt&&tt.textContent)||'Voltar';
- calcModal();pfTopo();document.getElementById('overlay').classList.add('open');
+ focoGuardar();calcModal();pfTopo();document.getElementById('overlay').classList.add('open');
  var pg=document.querySelector('#overlay .pag');if(pg)pg.scrollTop=0;
  [f_cliente,f_descr,f_obs].forEach(pfCresce);
- if(!o)setTimeout(function(){try{f_cliente.focus();}catch(e){}},60);}
-function closeForm(){document.getElementById('overlay').classList.remove('open');currentId=null;if(pdAtiva())renderProducao();}
+ /* novo: o nome; existente: o "voltar" (não abre o teclado do celular) */
+ setTimeout(function(){try{if(!o)f_cliente.focus();else document.getElementById('pfVoltarBtn').focus({preventScroll:true});}catch(e){}},60);}
+function closeForm(){var ov=document.getElementById('overlay'),era=ov.classList.contains('open');ov.classList.remove('open');currentId=null;if(pdAtiva())renderProducao();if(era)focoDevolver();}
 function onProdChange(){f_valor.value=state.precos[f_produto.value]??0;calcModal();}
 function calcModal(){const c=calc({qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,produto:f_produto.value,custoEntrega:+f_custoent.value||0});c_vt.textContent=BRL(c.vt);c_sinal.textContent=BRL(c.sinal);c_cu.textContent=BRL(c.cu);c_ct.textContent=BRL(c.ct);c_de.textContent=BRL(c.de);c_mg.textContent=BRL(c.mg);c_mp.textContent=PCT(c.mp);
  /* topo da ficha: "qtd × unitário · margem" (verde; vermelho só se a margem for negativa) e o saldo de 70% */
  var s=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
  s('c_saldo',BRL(c.saldo));s('c_mgTopo',BRL(c.mg));s('c_mpTopo',PCT(c.mp));s('pfQxU',(+f_qtd.value||0)+' un × '+BRL(+f_valor.value||0));
- var m=document.getElementById('pfMargem');if(m)m.className=c.mg<0?'dt-atras':'dt-ok';}
+ var m=document.getElementById('pfMargem');if(m)m.className=c.mg<0?'dt-atras':'dt-ok';
+ if(f_statuspag.value==='Sinal pago'){var pt=document.getElementById('pfPagTxt');if(pt)pt.textContent='Sinal pago · falta '+BRL(c.saldo);}}
 /* área de texto que cresce com o conteúdo (nome, descrição, observações) */
 function pfCresce(t){if(!t||!t.style)return;t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px';}
 /* chips do topo: estágio (chip cheio na cor), pagamento, evento e follow-up (vazio = tracejado) */
@@ -2885,7 +2980,10 @@ function pfTopo(){
  /* antes de Fechado o pagamento sem status fica neutro: o vermelho é só para dinheiro que falta em pedido fechado */
  var fechado=PAG_DESDE.indexOf(est)>=0;
  if(pc)pc.className='chip '+(sp?info.cls:(fechado?'perigo':'vazio'));
- if(pt)pt.textContent=sp==='Sinal pago'?'Sinal pago':(sp||(fechado?'Não pago':'Pagamento'));
+ var cv=calc({qtd:+f_qtd.value||0,valorUnit:+f_valor.value||0,produto:f_produto.value,custoEntrega:+f_custoent.value||0});
+ if(pt)pt.textContent=sp==='Sinal pago'?'Sinal pago · falta '+BRL(cv.saldo):(sp||(fechado?'Não pago':'Pagamento'));
+ var pa=document.getElementById('pfAviso'),oa=currentId?state.orders.find(function(x){return x.id===currentId;}):null;if(pa)pa.innerHTML=oa?plDiverge(oa,est):'';
+ var wf=document.getElementById('pfWhatsFmt');if(wf)wf.textContent=cadFone(f_whats.value);
  var ps=document.getElementById('pfPagStatus');if(ps)ps.innerHTML=sp?'<span class="'+(info.pg)+'" style="font-size:17px">'+esc(sp)+'</span>':'<span class="vazio">'+(fechado?'Não pago':'Sem status')+'</span>';
  var ev=f_evento.value,dv=f_dataEv.value,evc=document.getElementById('pfEvChip'),evt=document.getElementById('pfEvTxt');
  if(evc)evc.className='chip'+(ev||dv?'':' vazio');if(evt)evt.textContent=(ev||dv)?((ev||'Evento')+(dv?' '+dataCurta(dv,hoje):'')):'Evento';
@@ -2998,9 +3096,9 @@ async function init(){
  if(SHEET_URL){const cx=await cxFetch();if(cx!==null)state.caixa=cx;await cxDetectarExt();await prodDetectarExt();await custoDetectarExt();plSyncMostrar();}
  state.seqC=state.caixa.reduce((m,o)=>Math.max(m,Number(o.id)||0),0)+1;
  save();initFilters();renderAll();setStatus();abrirAbaDoEndereco();
- /* contagens do menu: tarefas e cadastros novos carregam já na abertura (só leitura) */
- tarefasCarregar();
- cadContar();
+ /* contagens do menu: tarefas e cadastros novos carregam logo depois do primeiro desenho (só leitura) */
+ var _cont=function(){if(!document.getElementById('tarefas').classList.contains('active'))tarefasCarregar();cadContar();};
+ try{if(window.requestIdleCallback)requestIdleCallback(_cont,{timeout:800});else setTimeout(_cont,200);}catch(e){setTimeout(_cont,200);}
 }
 var _cadNovos=0;
 async function cadContar(){if(!SHEET_URL)return;try{var r=await fetch(sbUrl("cadastros?select=id,status"),{headers:sbHeaders()});if(!r.ok)return;
@@ -3043,7 +3141,7 @@ var lastSaveErr="";
    faixa de largura total embaixo do topo (com Tentar de novo), em vez de espremer o título. */
 function setSave(st){var e=document.getElementById("saveStat");if(!e)return;
  var cls=st==="saving"?"salvando":st==="ok"?"ok":"erro",txt=st==="saving"?"Salvando":st==="ok"?"Salvo":"Não salvou";
- [e,document.getElementById("saveStatMenu")].forEach(function(x){if(!x)return;x.classList.remove("ok","salvando","erro");x.classList.add(cls);x.title=txt;x.setAttribute("aria-label",txt);});
+ [e,document.getElementById("saveStatMenu"),document.getElementById("saveStatPed")].forEach(function(x){if(!x)return;x.classList.remove("ok","salvando","erro");x.classList.add(cls);x.title=txt;x.setAttribute("aria-label",txt);});
  var t=e.querySelector(".txt");if(t)t.textContent=txt;
  var f=document.getElementById("faixaErro");if(f){if(st==="ok")f.classList.remove("on");else if(st!=="saving")f.classList.add("on");}}
 async function salvarTudo(){if(!SHEET_URL){alert("Você está em modo local (sem nuvem). Faça login para salvar para a equipe.");return;}setSave("saving");var ok=true,msg="";try{var os=(state.orders||[]).map(pickCols);for(var i=0;i<os.length;i+=200){var r=await fetch(sbUrl("pedidos?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify(os.slice(i,i+200))});if(!r.ok){ok=false;msg="pedidos -> HTTP "+r.status+" "+(await r.text()).slice(0,160);break;}}if(ok){var rc=await fetch(sbUrl("config?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify([{id:1,dados:{insumos:state.insumos,precos:state.precos,clientsMeta:state.clientsMeta,fixos:state.fixos,caixaBase:state.caixaBase||0,resetMarco:state.resetMarco||""}}])});if(!rc.ok){ok=false;msg="config (saldo/precos) -> HTTP "+rc.status+" "+(await rc.text()).slice(0,160);}}if(ok&&(state.caixa||[]).length){var cs=state.caixa.map(pickCx);for(var j=0;j<cs.length;j+=200){var rr=await fetch(sbUrl("caixa?on_conflict=id"),{method:"POST",headers:sbHeaders({"Prefer":"resolution=merge-duplicates"}),body:JSON.stringify(cs.slice(j,j+200))});if(!rr.ok){ok=false;msg="caixa -> HTTP "+rr.status+" "+(await rr.text()).slice(0,160);break;}}}}catch(e){ok=false;msg=String((e&&e.message)||e);}if(ok){setSave("ok");alert("Tudo salvo na nuvem com sucesso ✓");}else{setSave("err");alert("NAO consegui salvar. Motivo:\n\n"+msg+"\n\nProvavel causa: a tabela config/caixa nao existe ou esta bloqueada no Supabase. Rode o SQL schema_completo_supabase.sql e tente de novo.");}}
@@ -3167,13 +3265,19 @@ function tResps(t){return String((t&&t.responsavel)||"").split(",")
 function tTemResp(t,p){return tResps(t).indexOf(p)>=0;}
 
 var tRespSel=[];
+/* responsáveis (revisão 1, spec 5.7): um chip só com os avatares sobrepostos e os nomes; tocar abre a lista dos 3
+   (folha tResps), onde cada pessoa liga e desliga. Sem ninguém, chip tracejado "Responsável". */
 function tRespRender(){
- var el=document.getElementById('t_resp');if(!el)return;
- el.innerHTML=T_EQUIPE.map(function(p){
+ var el=document.getElementById('t_resp');
+ if(el)el.innerHTML=T_EQUIPE.map(function(p){
   var on=tRespSel.indexOf(p)>=0;
-  return '<button type="button" class="pilula com-av cu-pessoa'+(on?' on':'')+'" aria-pressed="'+on+'"'
-   +' onclick="tRespToggle(\''+p+'\')"><span>'+avatar(p)+esc(p)+'</span></button>';
+  return '<button type="button" class="t-resp-item cu-pessoa'+(on?' on':'')+'" aria-pressed="'+on+'"'
+   +' onclick="tRespToggle(\''+p+'\')">'+avatar(p)+'<span class="nm">'+esc(p)+'</span>'+ic('check','i p ok-ic')+'</button>';
  }).join('');
+ var ch=document.getElementById('tRespChip');
+ if(ch){var sel=T_EQUIPE.filter(function(p){return tRespSel.indexOf(p)>=0;}).concat(tRespSel.filter(function(p){return T_EQUIPE.indexOf(p)<0;}));
+  ch.className='chip'+(sel.length?' t-resp-chip':' vazio');
+  ch.innerHTML=sel.length?'<span class="avs">'+sel.slice(0,3).map(avatar).join('')+'</span><span class="nm">'+esc(sel.join(', '))+'</span>':ic('pessoa','i pp')+'Responsável';}
 }
 function tRespToggle(p){
  var i=tRespSel.indexOf(p);
@@ -3265,6 +3369,9 @@ function tCasaBusca(t,q){if(!q)return true;return ((t.titulo||"")+" "+(t.descric
 /* ---------- as tres visoes, como as abas do ClickUp ---------- */
 var tView=(function(){try{var v=localStorage.getItem("crm_tview");return (v==='quadro'||v==='equipe')?v:'lista';}catch(e){return 'lista';}})();
 var tFechados={"Feito":true};   // Feito começa recolhido
+var tFechadosB={};             // durante a busca os grupos com resultado abrem sozinhos (revisão 1)
+var tNovas=[];                 // criadas nesta sessão: aparecem logo acima do campo de criar, fora do limite (JEV revisão 1: 87% e 90%)
+function tFech(et){return tBuscaAtual()?!!tFechadosB[et]:!!tFechados[et];}
 var tLim={};                    // "Ver mais" por etapa
 function tSetView(v){
  tView=v;
@@ -3274,7 +3381,7 @@ function tSetView(v){
  });
  renderTarefas();
 }
-function tToggleGrupo(et){tFechados[et]=!tFechados[et];renderTarefas();}
+function tToggleGrupo(et){var m=tBuscaAtual()?tFechadosB:tFechados;m[et]=!tFech(et);renderTarefas();}
 function tMais(et){tLim[et]=(tLim[et]||25)+25;renderTarefas();}
 
 function renderTarefas(){
@@ -3285,7 +3392,7 @@ function renderTarefas(){
  ['lista','quadro','equipe'].forEach(function(k){
   var b=document.getElementById('tv_'+k);if(b){b.classList.toggle('on',k===tView);b.setAttribute('aria-selected',k===tView?'true':'false');}
  });
- tPessoasRender();
+ tPessoasRender();pilCorte(document.getElementById('tPessoas'));
  var o=document.getElementById('tOrdem'),ot=document.getElementById('tOrdemTxt');if(o)o.value=tOrdem;if(ot)ot.textContent=tOrdem==="manual"?"manual":"prazo";
  var filtro=tFiltroAtual(),q=tBuscaAtual();
  var vis=tarefas.filter(function(t){return (!filtro||tTemResp(t,filtro))&&tCasaBusca(t,q);});
@@ -3311,22 +3418,29 @@ function tProgUi(et){return T_PROG[et]||T_PROG["A fazer"];}
 
 /* ---------- LISTA agrupada por etapa (a visao principal) ---------- */
 function tListaGrupos(vis){
+ var q=tBuscaAtual();
  return T_ETAPAS.map(function(et){
-  var lista=tOrdenar(vis.filter(function(t){return (t.etapa||T_ETAPAS[0])===et;}),et);
-  var c=tCorEtapa(et), fechado=!!tFechados[et], lim=tLim[et]||25;
+  var todas=tOrdenar(vis.filter(function(t){return (t.etapa||T_ETAPAS[0])===et;}),et);
+  /* durante a busca, etapa sem resultado some (JEV revisão 1: 87% e 90%) */
+  if(q&&!todas.length)return '';
+  var c=tCorEtapa(et), fechado=tFech(et), lim=tLim[et]||25;
   var add='<button type="button" class="btn-icone" onclick="tNovaInline(\''+esc(et)+'\')" aria-label="Nova tarefa em '+esc(et)+'">'+ic('mais','i p')+'</button>';
-  var cab=grupoCab(et,c,lista.length,fechado,"tToggleGrupo(\'"+esc(et)+"\')",null,add);
-  if(fechado)return cab+'<div id="novo_'+tSlug(et)+'"></div>';
-  var linhas=lista.slice(0,lim).map(function(t){return tLinha(t,et);}).join('')
+  var cab=grupoCab(et,c,todas.length,fechado,"tToggleGrupo(\'"+esc(et)+"\')",null,add);
+  if(fechado)return '<section class="gsec">'+cab+'<div id="novo_'+tSlug(et)+'"></div></section>';
+  /* as criadas agora ficam no fim da parte visível, logo acima do campo de criar, mesmo passando do limite */
+  var novas=todas.filter(function(t){return tNovas.indexOf(t.id)>=0;}).sort(function(a,b){return tNovas.indexOf(a.id)-tNovas.indexOf(b.id);});
+  var resto=todas.filter(function(t){return tNovas.indexOf(t.id)<0;});
+  var mostra=resto.slice(0,lim).concat(novas);
+  var linhas=mostra.map(function(t){return tLinha(t,et);}).join('')
    ||'<div class="t-vazio">Nenhuma tarefa aqui. Toque em + para criar.</div>';
-  return cab
+  return '<section class="gsec">'+cab
    +'<div class="grupo cu-grupo" data-etapa="'+esc(et)+'"'
    +' ondragover="tOverLista(event,this)" ondragleave="tLeaveLista(this)" ondrop="tDrop(event,\''+esc(et)+'\',null)">'
    +'<div class="t-cols"><span></span><span>Nome</span><span>Responsável</span><span>Data de vencimento</span><span>Prioridade</span></div>'
    +linhas
    +'<div id="novo_'+tSlug(et)+'"></div>'
-   +(lista.length>lim?'<button type="button" class="mais" onclick="tMais(\''+esc(et)+'\')">Ver mais '+(lista.length-lim)+'</button>':'')
-   +'</div>';
+   +(todas.length>mostra.length?'<button type="button" class="mais" onclick="tMais(\''+esc(et)+'\')">Ver mais '+(todas.length-mostra.length)+'</button>':'')
+   +'</div></section>';
  }).join('');
 }
 
@@ -3340,18 +3454,18 @@ function tLinha(t,et){
  var nAnex=(t.anexos&&t.anexos.length)||0, nCom=tComCount[t.id]||0;
  var tags=tTagsDe(t), rs=tResps(t);
  var dcls=feito?'':(d.cls==='late'?'dt-atras':d.cls==='hoje'?'dt-hoje':'');
- return '<div class="linha cu-row'+(feito?' feita feito':'')+'" draggable="true" data-id="'+t.id+'" role="button" tabindex="0"'
+ return '<div class="linha cu-row'+(feito?' feita feito':'')+'" draggable="true" data-id="'+t.id+'"'
   +' ondragstart="tDragStart(event,'+t.id+')" ondragend="tDragEnd(this)"'
   +' ondragover="tOverLista(event,this.parentNode)"'
   +' ondrop="event.stopPropagation();tDrop(event,\''+esc(et)+'\','+t.id+')"'
-  +' onclick="tAbrir('+t.id+')" onkeydown="if(event.key===\'Enter\')tAbrir('+t.id+')">'
+  +' onclick="tAbrir('+t.id+')">'
   /* o círculo é o botão de concluir (alvo de 44 px), com Desfazer no aviso */
   +'<button type="button" class="prog cu-chk'+(pu[0]==="zero"?' zero':pu[0]==="ok"?' ok':'')+'" style="--c:var('+pu[1]+');--p:'+pu[2]+'"'
   +' onclick="event.stopPropagation();tConcluir('+t.id+')" aria-label="'+(feito?'Reabrir a tarefa':'Concluir a tarefa')+'"><i></i></button>'
-  +'<div class="tit duas">'+esc(t.titulo||'(sem título)')+'</div>'
+  +'<div class="tit duas" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();tAbrir('+t.id+');}">'+esc(t.titulo||'(sem título)')+'</div>'
   +'<div class="dir">'+(rs.length?'<span class="avs">'+rs.slice(0,3).map(avatar).join('')+'</span>':'')+'</div>'
   +'<div class="t-due '+dcls+'">'+(d.txt?esc(d.txt):'')+'</div>'
-  +'<div class="t-prio">'+bandeiraSvg(urg)+esc(tUrgLbl(urg))+'</div>'
+  +'<div class="t-prio">'+(urg!=='media'?bandeiraSvg(urg,feito)+esc(tUrgLbl(urg)):'')+'</div>'
   +tChipsCel(t,feito,d,urg,tags,nAnex,nCom)
   +'</div>';
 }
@@ -3362,7 +3476,7 @@ function tChipsCel(t,feito,d,urg,tags,nAnex,nCom){
  var h='';
  var dcls=feito?'':(d.cls==='late'?' dt-atras':d.cls==='hoje'?' dt-hoje':'');
  if(d.txt)h+='<span class="meta m-so'+dcls+'">'+esc(d.txt)+'</span>';
- if(urg!=='media')h+='<span class="meta m-so">'+bandeiraSvg(urg)+esc(tUrgLbl(urg))+'</span>';
+ if(urg!=='media')h+='<span class="meta m-so">'+bandeiraSvg(urg,feito)+esc(tUrgLbl(urg))+'</span>';
  tags.slice(0,2).forEach(function(g){h+='<span class="tag" style="--c:'+tCorTag(g)+'">'+esc(g)+'</span>';});
  if(tags.length>2)h+='<span class="meta">+'+(tags.length-2)+'</span>';
  if(nAnex)h+='<span class="meta" title="'+nAnex+' anexo(s)">'+ic('clipe','i pp')+nAnex+'</span>';
@@ -3416,7 +3530,7 @@ async function tNovaInlineTecla(ev,et){
  var t={id:tNovoId(),titulo:titulo,descricao:"",responsavel:dono,prazo:null,urgencia:"media",
         etapa:et,pos:tEntre(naEtapa.length?naEtapa[naEtapa.length-1].pos:null,null),
         criado_por:eu,anexos:[],etiquetas:[]};
- tarefas.push(t);
+ tarefas.push(t);tNovas.push(t.id);
  renderTarefas();
  tNovaInline(et);                       /* deixa o campo aberto pra emendar a proxima */
  setSave("saving");
@@ -3457,7 +3571,7 @@ function tColsPessoa(vis){
   var abertas=lista.filter(function(t){return (t.etapa||T_ETAPAS[0])!=="Feito";}).length;
   var atrasadas=lista.filter(function(t){return t.prazo&&t.prazo<todayISO()&&(t.etapa||T_ETAPAS[0])!=="Feito";}).length;
   var cards=lista.map(function(t){return tCard(t,(t.etapa||T_ETAPAS[0])==="Feito",true);}).join('')
-    ||'<div class="tempty">Solte aqui para passar para '+(p?esc(p):'ninguém')+'</div>';
+    ||'<div class="tempty">'+(mbCel()?'Nenhuma tarefa':'Solte aqui para passar para '+(p?esc(p):'ninguém'))+'</div>';
   return '<div class="tcol tcol-p" ondragover="tOver(event,this)" ondragleave="tLeave(this)" ondrop="tDropPessoa(event,\''+esc(p)+'\')">'
    +'<h4><span class="hd">'+(p?avatar(p):'<i class="av vazio" aria-hidden="true">?</i>')
    +'<span>'+esc(p||'Sem responsável')+'</span></span>'
@@ -3502,7 +3616,7 @@ function tCard(t,feito,mostrarEtapa){
   +(mostrarEtapa?'<span class="t-etapa"><i class="tdot" style="background:'+tCorEtapa(etapa)+'"></i>'+esc(etapa)+'</span>'
      :(rs.length?'<span class="avs">'+rs.slice(0,3).map(avatar).join('')+'</span>':''))
   +(d.txt?'<span class="meta'+dcls+'">'+esc(d.txt)+'</span>':'')
-  +(urg!=='media'?'<span class="meta">'+bandeiraSvg(urg)+esc(tUrgLbl(urg))+'</span>':'')
+  +(urg!=='media'?'<span class="meta">'+bandeiraSvg(urg,feito)+esc(tUrgLbl(urg))+'</span>':'')
   +(nAnex?'<span class="meta">'+ic('clipe','i pp')+nAnex+'</span>':'')
   +(nCom?'<span class="meta">'+ic('coment','i pp')+nCom+'</span>':'')
   +'</div></div>';
@@ -3533,6 +3647,7 @@ async function tDrop(ev,etapa,alvoId){
  var id=_tDragId;_tDragId=null;if(!id)return;
  var t=tarefas.find(function(x){return x.id===id;});if(!t)return;
  if(id===alvoId)return;
+ if(tOrdem!=="manual"&&(t.etapa||T_ETAPAS[0])===etapa){mbAviso('Para reordenar, escolha Ordem: manual');return;}
  var naEtapa=tarefas.filter(function(x){return x.id!==id&&(x.etapa||T_ETAPAS[0])===etapa;})
                     .sort(function(a,b){return (a.pos||0)-(b.pos||0);});
  var nova;
@@ -3893,12 +4008,12 @@ function tAbrir(id){
  tRenderAnexos();tUpStat("");
  var cx=document.getElementById('t_com');if(cx)cx.value="";
  tCarregarComentarios(id||null);
- document.getElementById('tOverlay').classList.add('open');
+ focoGuardar();document.getElementById('tOverlay').classList.add('open');
  var pg=document.querySelector('#tOverlay .pag');if(pg)pg.scrollTop=0;
  ['t_titulo','t_descr','t_tags','t_com'].forEach(function(k){pfCresce(document.getElementById(k));});
- setTimeout(function(){var i=document.getElementById('t_titulo');if(i&&!tAtual)i.focus();},60);
+ setTimeout(function(){var i=document.getElementById('t_titulo');if(i&&!tAtual)i.focus();else{var v=document.querySelector('#tOverlay .voltar');if(v)try{v.focus({preventScroll:true});}catch(e){}}},60);
 }
-function tFechar(){folhaFechar('tAcoes');document.getElementById('tOverlay').classList.remove('open');tAtual=null;tPastaAtual="";}
+function tFechar(){folhaFechar('tAcoes');folhaFechar('tResps');var ov=document.getElementById('tOverlay'),era=ov.classList.contains('open');ov.classList.remove('open');tAtual=null;tPastaAtual="";if(era)focoDevolver();}
 
 async function tSalvar(){
  var titulo=(document.getElementById('t_titulo').value||"").trim();
@@ -3909,7 +4024,7 @@ async function tSalvar(){
  if(novo){
   var naEtapa=tarefas.filter(function(x){return (x.etapa||T_ETAPAS[0])===etapa;}).sort(function(a,b){return (a.pos||0)-(b.pos||0);});
   t={id:tNovoId(),pos:tEntre(naEtapa.length?naEtapa[naEtapa.length-1].pos:null,null),criado_por:userName()};
-  tarefas.push(t);
+  tarefas.push(t);tNovas.push(t.id);
  }
  t.titulo=titulo;
  t.descricao=(document.getElementById('t_descr').value||"").trim();
@@ -3921,7 +4036,10 @@ async function tSalvar(){
  t.urgencia=document.getElementById('t_urg').value;
  t.etapa=etapa;
  t.concluido_em=(etapa==="Feito")?(t.concluido_em||new Date().toISOString()):null;
+ if(novo&&tFechados[etapa])tFechados[etapa]=false;
  tFechar();renderTarefas();setSave("saving");
+ if(novo)mbAviso('Tarefa criada','Ver',function(){var el=document.querySelector('#tBoard [data-id="'+t.id+'"]');
+  if(el){try{el.scrollIntoView({block:'center',behavior:'smooth'});}catch(e){el.scrollIntoView();}el.classList.add('novo-luz');setTimeout(function(){el.classList.remove('novo-luz');},2400);}else tAbrir(t.id);});
  var ok=await tSync(tPick(t));
  if(ok&&typeof logAct==='function')logAct((novo?'criou':'editou')+' a tarefa "'+titulo.slice(0,60)+'"');
 }
