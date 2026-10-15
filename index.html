@@ -484,6 +484,10 @@ body:has(.overlay.open){overflow:hidden}
  .cal-mes b{font-size:15px}
  #calendario .folha{padding-left:6px;padding-right:6px}
  #calendario .cal-kpis,#calendario #calSemData{margin-left:10px;margin-right:10px}
+ .cx-l2{gap:6px}
+ .cx-l2 .btn{padding:0 8px;gap:4px}
+ .cx-l2 .pilula>span{padding:0 10px}
+ .cal-l2 .btn{padding:0 10px}
 }
 /* notebook com pouca altura: itens de 34 px para o menu inteiro caber sem rolar */
 @media (min-width:821px) and (max-height:860px) and (hover:hover){
@@ -2629,7 +2633,8 @@ function renderCalendario(){
  var nfb=document.getElementById('calFiltrosN');if(nfb){nfb.textContent=nf?String(nf):'';nfb.style.display=nf?'':'none';}
 
  var p=calMes.split('-'),y=+p[0],m=+p[1]-1,hoje=calHojeISO();
- document.getElementById('calMesLbl').textContent=mesLabel(calMes).replace('/',' ');
+ /* abaixo de 360 px o mês vai abreviado ("out 2026"), senão corta entre as setas */
+ var ml=document.getElementById('calMesLbl');ml.textContent=window.innerWidth<360?MES_CURTO[m]+' '+y:mesLabel(calMes).replace('/',' ');ml.title=mesLabel(calMes).replace('/',' ');
  document.getElementById('calDows').innerHTML=['dom','seg','ter','qua','qui','sex','sáb'].map(function(d){return '<div class="caldow">'+d+'</div>';}).join('');
 
  var rows=calFiltered(),byDay={},semData=[],mesFat=0,mesQtd=0,mesN=0,urgN=0;
